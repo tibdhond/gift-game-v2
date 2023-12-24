@@ -1,0 +1,23 @@
+<div class="container">
+    <h3>Ga naar {{host}} om te beginnen</h3>
+    <div class="row row-marg">
+        <ng-container *ngIf="players$ | async as players; else emptyPlayers">
+            <ng-container *ngFor="let player of players">
+                <div class="col-sm-4">
+                    <div class="card card-shadow.card-marg">
+                        <div class="card-body text-center">
+                            <mat-icon aria-hidden="false" aria-label="player" fontIcon="person"></mat-icon>
+                            <h5 class="card-title">{{player.name}}</h5>
+                            <button class="btn btn-danger" type="submit" style="float:right" name="person"
+                                (click)="onDeletePlayer(player.id)">Verwijder</button>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </ng-container>
+        <ng-template #emptyPlayers>
+            <p>Er zijn nog geen spelers</p>
+        </ng-template>
+    </div>
+    <button class="btn btn-primary" type="submit" style="float:right" (click)="onRoundStart()">Start spel</button>
+</div>

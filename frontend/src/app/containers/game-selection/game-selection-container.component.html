@@ -1,0 +1,9 @@
+<div class="selection-container">
+    <button type="button" class="btn btn-primary" id="host-button" (click)="onNewGame()">HOST</button>
+    <div>of</div>
+    <div class="input-container">
+        <label for="gameSelection">Geef code in om mee te doen:</label>
+        <input type="text" class="form-control" id="gameSelection" [formControl]="gameSelectionControl" />
+        <button type="button" class="btn btn-secondary" (click)="onJoinGame()">JOIN</button>
+    </div>
+</div>  
