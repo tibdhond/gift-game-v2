@@ -1,0 +1,9 @@
+<div class="container" id="container">
+    <h1>Het is jouw beurt om een pakje open te maken!</h1><br />
+    <div class="field">
+        <input class="form-control" id="title" type="text" name="gift" placeholder="Geef een beschrijving in"
+            [formControl]="giftController" />
+        <button class="btn btn-primary" type="submit" (click)="onGiftAdd()">Pakje
+            toevoegen</button>
+    </div>
+</div>

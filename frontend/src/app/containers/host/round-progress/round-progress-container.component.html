@@ -1,0 +1,12 @@
+<ng-container *ngIf="(gift$ | async) as gift; else noGift">
+    <h1 style="color:black">Mensen zijn aan het stemmen voor: {{gift}}</h1>
+    <h2 id="ratio">{{ratio$ | async }}</h2>
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" id="bar" role="progressbar"
+            aria-valuemin="0" aria-valuemax="0" [style]="'width:'+(ratio$ | async)">{{ratio$ | async}}</div>
+    </div>
+</ng-container>
+
+<ng-template #noGift>
+    <p>Het pakje is nog niet geopend.</p>
+</ng-template>

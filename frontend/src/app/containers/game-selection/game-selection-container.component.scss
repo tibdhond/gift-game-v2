@@ -1,0 +1,21 @@
+.selection-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    gap: 10px;
+    text-align: center;
+    align-items: center;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+    align-items: center;
+    gap: 5px;
+}
+
+#host-button {
+    min-width: 50%;
+}
