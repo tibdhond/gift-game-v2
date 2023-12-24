@@ -6,6 +6,7 @@ import { LoginContainerComponent } from './containers/client/login/login-contain
 import { WaitingContainerComponent } from './containers/client/waiting/waiting-container.component';
 import { RoundProgressContainerComponent } from './containers/host/round-progress/round-progress-container.component';
 import { GiftOpenContainerComponent } from './containers/client/gift-open/gift-open-container.component';
+import { VoteContainerComponent } from './containers/client/vote/vote-container.component';
 
 const routes: Routes = [
   {
@@ -35,6 +36,10 @@ const routes: Routes = [
       {
         path: 'gift-opening',
         component: GiftOpenContainerComponent
+      },
+      {
+        path: 'vote',
+        component: VoteContainerComponent
       }
     ]
   },

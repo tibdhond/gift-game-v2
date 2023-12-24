@@ -1,0 +1,17 @@
+<div class="container">
+    <h1 style="color:black">Breng je stem uit voor het huidige cadeau</h1>
+    <div class="row row-marg" *ngIf="players$ | async as players">
+        <ng-container *ngFor="let player of players">
+            <div class="col-sm-4">
+                <div class="card card-shadow card-marg">
+                    <div class="card-body text-center">
+                        <mat-icon aria-hidden="false" aria-label="player" fontIcon="person"></mat-icon>
+                        <h5 class="card-title">{{player.name}}</h5>
+                        <button class="btn btn-primary" type="submit" name="person">{{userId ===
+                            player.id ? 'Mijn Cadeau' : 'Stem'}}</button>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>

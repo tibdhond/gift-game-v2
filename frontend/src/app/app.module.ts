@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { PlayersContainerComponent } from './containers/host/players/players-container.component';
 import { RoundProgressContainerComponent } from './containers/host/round-progress/round-progress-container.component';
 import { GiftOpenContainerComponent } from './containers/client/gift-open/gift-open-container.component';
+import { VoteContainerComponent } from './containers/client/vote/vote-container.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { GiftOpenContainerComponent } from './containers/client/gift-open/gift-o
     LoginContainerComponent,
     WaitingContainerComponent,
     RoundProgressContainerComponent,
-    GiftOpenContainerComponent
+    GiftOpenContainerComponent,
+    VoteContainerComponent
   ],
   imports: [
     CommonModule,
