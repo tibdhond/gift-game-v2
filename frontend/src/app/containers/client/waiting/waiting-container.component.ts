@@ -36,7 +36,7 @@ export class WaitingContainerComponent extends BaseGameContainer implements OnIn
                 if (phase === UserPhase.GIFT_OPENING) {
                     this.router.navigate(['client', gameId, 'gift-opening']);
                 } else if (phase === UserPhase.VOTING) {
-                    this.router.navigate(['cleint', gameId, 'vote']);
+                    this.router.navigate(['client', gameId, 'vote']);
                 }
             })
         }

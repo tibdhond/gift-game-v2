@@ -1,7 +1,7 @@
 import { Component, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { GameCreationResult } from '../entities/entities';
+import { GameCreationResult, PlayersResult } from '../entities/entities';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
@@ -22,5 +22,9 @@ export class GameService {
 
     public startNewGame(): Observable<GameCreationResult> {
         return this.post(`new-game`, {});
+    }
+
+    public getPlayers(gameId: string): Observable<PlayersResult> {
+        return this.get(`${gameId}/players`);
     }
 }
