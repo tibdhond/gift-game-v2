@@ -1,12 +1,19 @@
-import { Component, Injectable } from '@angular/core';
+import { Component, inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { GameCreationResult, PlayersResult } from '../entities/entities';
+import { UtilService } from './util.service';
 
 @Injectable({ providedIn: 'root' })
 export class GameService {
+    private utilService: UtilService = inject(UtilService);
+
     constructor(protected http: HttpClient) { }
-    private apiUrl: string = 'http://localhost:5000/api';
+    private apiUrl: string = '/api';
+
+    private get apiUrl$(): Observable<string> {
+        return this.utilService.getIp()
+    }
 
     protected post<T>(url: string, body: any, headers: HttpHeaders = new HttpHeaders()): Observable<T> {
         return this.http.post<T>(`${this.apiUrl}/${url}`, body, { headers });
