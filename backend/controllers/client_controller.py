@@ -26,7 +26,10 @@ def get_user_phase(game_id: str, user_id: str) -> dict:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
 
-    return { "phase": game.players[user_id].phase }
+    if not game or not game.players:
+        return { "phase": "UNREGISTERED" }
+
+    return { "phase": game.players[user_id].phase if user_id in game.players else "UNREGISTERED" }
 
 def add_gift(game_id: str, user_id: str, description: str) -> None:
     cache: Cache = Cache.get_instance()
@@ -55,6 +58,7 @@ def get_result(game_id: str, user_id: str) -> dict:
             vote: Vote = game.votes[vote_id]
             correct_vote: bool = vote.target_id == round_gift.owner
 
+            # The vote belongs to the user
             if vote.voter_id == user_id:
                 sabotage: bool = (vote.target_id == vote.voter_id or round_gift.owner == user_id) and not correct_vote
                 result["rounds"][round.get_round_number()] = {
@@ -75,13 +79,14 @@ def get_result(game_id: str, user_id: str) -> dict:
                     elif correct_vote:
                         result["self_vote_score"] += 1
                         result["vote_score"] += 1
+            # The vote belongs to another user
             else:
                 if round.valid:
                     if vote.target_id == user_id:
                         if correct_vote:
-                            result["target_correct"] += 1
+                            result["target_correct"] += 1 # De andere gebruiker stemde correct op deze gebruiker
                         else:
-                            result["target_wrong"] += 1
+                            result["target_wrong"] += 1 # De andere gebruiker stemde foutief op deze gebruiker
     return result
 
                 

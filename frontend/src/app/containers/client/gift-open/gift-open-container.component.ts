@@ -32,7 +32,7 @@ export class GiftOpenContainerComponent extends BaseGameContainer {
                     take(1),
                     takeUntil(this.destroy$)
                 ).subscribe(gameId => {
-                    this.router.navigate(['cleint', gameId, 'vote']);
+                    this.router.navigate(['client', gameId, 'vote']);
                 });
             }
         }

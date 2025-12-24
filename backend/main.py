@@ -1,6 +1,8 @@
-from flask import Flask, render_template, make_response, request, send_from_directory
+from flask import Flask, current_app, render_template, make_response, request, send_from_directory
 from flask_cors import CORS, cross_origin
 import os
+from pathlib import Path
+import socket
 
 import controllers.shared_controller as shared
 import controllers.client_controller as client
@@ -9,32 +11,52 @@ import controllers.host_controller as host
 from entities.exceptions import *
 from random import choice
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static/frontend")
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['CORS_ALLOW_HEADERS'] = '*'
 app.config['CORS_METHODS'] = ['GET', 'POST', 'DELETE']
 CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "content-type", "expose_headers": "*"}})
 
+
+ROOT_PATH = Path(app.root_path) / "static" / "frontend"
+
 # region shared 
 @app.route('/', methods=["GET"])
-@app.route('/game/', methods=["GET"])
-@app.route('/game/<path:file_path>', methods=["GET"])
-def index(file_path=None):
-    if file_path:
-        if os.path.exists(f"static/{file_path}"):
-            return send_from_directory("static", file_path)
+@app.route('/<path:path>', methods=["GET"])
+def index(path=""):
+    requested_file = ROOT_PATH / path
+    if path != "" and requested_file.exists():
+        return send_from_directory(ROOT_PATH, path)
 
-    return render_template('index.html')
+    # Otherwise, return index.html for Angular routing
+    return send_from_directory(ROOT_PATH, "index.html")
 
 @app.route('/api/gif', methods=['Get'])
 def get_gif():
-    return send_from_directory('static/images', choice(os.listdir('static/images')))
+    ROOT_PATH = Path(current_app.root_path)
+    file = choice(os.listdir(f'{ROOT_PATH}/static/images'))
+    return send_from_directory(f'{ROOT_PATH}/static/images', file)
 
 
 @app.route('/api/new-game', methods=['POST'])
 def new_game():
     game_id = shared.new_game()
     return make_response({ "game_id": game_id }, 201)
+
+@app.route('/api/ip', methods=['GET'])
+def get_ip():
+    local_hostname = socket.gethostname()
+
+    # Step 2: Get a list of IP addresses associated with the hostname.
+    ip_addresses = socket.gethostbyname_ex(local_hostname)[2]
+
+    # Step 3: Filter out loopback addresses (IPs starting with "127.").
+    filtered_ips = [ip for ip in ip_addresses if not ip.startswith("127.")]
+
+    # Step 4: Extract the first IP address (if available) from the filtered list.
+    first_ip = filtered_ips[:1]
+    return make_response(first_ip)
+
 
 # endregion
 
@@ -97,6 +119,11 @@ def get_game_phase(game_id: str):
 def get_game_result(game_id: str):
     return make_response(host.get_result(game_id), 200)
 
+@app.route('/api/<string:game_id>/round/assign', methods=["POST"])
+def assign_gift(game_id: str):
+    result: bool = host.assign_gift(game_id)
+    return make_response({"result": result}, 201)
+
 # endregion
 
 # region client
@@ -140,11 +167,6 @@ def add_gift(game_id: str):
     except Exception as e:
         print(e)
         return make_response(e, 400)
-    
-@app.route('/api/<string:game_id>/round/assign', methods=["POST"])
-def assign_gift(game_id: str):
-    host.assign_gift(game_id)
-    return make_response("", 201)
 
 @app.route('/api/<string:game_id>/players/<string:user_id>/result', methods=["GET"])
 def get_user_result(game_id: str, user_id: str):

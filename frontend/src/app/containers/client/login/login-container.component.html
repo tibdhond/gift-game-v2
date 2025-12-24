@@ -1,18 +1,18 @@
 <div class="container card-container">
     <div class="row">
-        <div class="col-sm-8 offset-sm-2">
-            <div class="card">
-                <div class="card-body">
-                    <h2 style="text-align:center">Login</h2>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <div class="field">
-                                <label>Naam</label>
-                                <input class="form-control" id="title" type="text" name="Name" required="true" [formControl]="loginControl" />
-                            </div>
+        <div class="card game-card login-card">
+            <div class="card-body">
+                <h2 style="text-align:center">Login</h2>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <div class="field">
+                            <label>Naam</label>
+                            <input class="form-control" id="title" type="text" name="Name" required="true"
+                                [formControl]="loginControl" />
                         </div>
-                    </div><button class="btn btn-primary" type="submit" style="float:right" (click)="onLogin()">Submit</button>
-                </div>
+                    </div>
+                </div><button class="btn game-button" type="submit" style="float:right"
+                    (click)="onLogin()">Submit</button>
             </div>
         </div>
     </div>

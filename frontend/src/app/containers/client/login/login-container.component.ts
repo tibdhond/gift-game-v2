@@ -30,7 +30,6 @@ export class LoginContainerComponent extends BaseGameContainer {
                 take(1),
                 takeUntil(this.destroy$)
             ).subscribe(([result, gameId]) => {
-                console.log(result);
                 localStorage.setItem('userId', result.user_id);
                 this.router.navigate(['client', gameId, 'waiting']);
             })

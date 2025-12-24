@@ -1,0 +1,27 @@
+<h2>Personlijke resultaten</h2>
+<h4>Je stemde <span class="accent">{{voteScore$ | async}}</span> keer op het juiste persoon</h4>
+<h4 *ngIf="giftScore$ | async as gift_score">Je cadeau bleef <span class="accent">{{gift_score}}</span>
+    ronde{{gift_score > 1 ? 's' : ''}} in het spel</h4>
+<h4>Er werd <span class="accent">{{targetCorrect$ | async}}</span> keer correct op jou gestemd</h4>
+<h4>Er werd <span class="accent">{{targetWrong$ | async}}</span> keer foutief op jou gestemd</h4>
+
+<table class="round-table">
+    <thead>
+        <tr>
+            <th>Ronde</th>
+            <th>Cadeau</th>
+            <th>stem</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let round of personalRounds$ | async; index as i"
+            [ngClass]="!round.valid ? 'invalid-row' : round.correct ? 'correct-row' : 'incorrect-row'">
+            <td>{{i}}</td>
+            <td>{{round.gift}}</td>
+            <td>{{round.target}}</td>
+            <td><mat-icon *ngIf="round.sabotage" aria-hidden="false" aria-label="gavel" fontIcon="gavel"></mat-icon>
+            </td>
+        </tr>
+    </tbody>
+</table>

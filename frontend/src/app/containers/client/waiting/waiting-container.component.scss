@@ -4,3 +4,50 @@
     align-items: center;
     justify-content: center;
 }
+
+.image-container {
+    background: white;
+    border-radius: 20px;
+    padding: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    max-width: 90%;
+    margin: 24px auto;
+
+    & img {
+        width: 100%;
+        border-radius: 14px;
+        max-height: 70vh;
+    }
+}
+
+.floating-icon {
+    position: absolute;
+    font-size: 18px;
+    animation: floatSlow 6s ease-in-out infinite, ;
+}
+
+.floating-icon.delay-1 {
+    animation-delay: 0s;
+}
+
+.floating-icon.delay-2 {
+    animation-delay: 2s;
+}
+
+.floating-icon.delay-3 {
+    animation-delay: 4s;
+}
+
+@keyframes floatSlow {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}

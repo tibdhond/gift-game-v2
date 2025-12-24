@@ -1,0 +1,76 @@
+<h2>Finale uitslag</h2>
+<div class="button-container">
+    <button class="game-button correct-button" (click)="onSetSortField('vote_score')">Detective</button>
+    <button class="game-button" (click)="onSetSortField('target_wrong')">Dief</button>
+    <button class="game-button" (click)="onSetSortField('gift_score')">Strategist</button>
+    <button class="game-button" (click)="onSetSortField('sabotage_score')">Saboteur</button>
+</div>
+
+<ng-container *ngIf="sortField$ | async as sortField">
+    <h4 *ngIf="sortField === 'vote_score'">Deze persoon is een echte detective en kon het meeste cadeaus aan de
+        juiste persoon toekennen.</h4>
+    <h4 *ngIf="sortField === 'target_wrong'">Als de cadeaus zouden meegaan met de persoon die de stemmen krijgt zou deze
+        persoon de meeste cadeaus hebben. Deze persoon kreeg de meeste foutieve stemmen.</h4>
+    <h4 *ngIf="sortField === 'gift_score'">Deze persoon koos zijn/haar cadeau strategisch en bleef het langst in het
+        spel.</h4>
+    <h4 *ngIf="sortField === 'sabotage_score'">Deze persoon is een echte grapjas en zorgde er het meeste voor dat de
+        ronde opnieuw moest worden gestart.</h4>
+    <div class="podium">
+        <div *ngIf="thirdPlace$ | async as thirdPlace" class="rank third-place">
+            <h2>3de Plaats</h2>
+            <p>{{thirdPlace.name}}</p>
+            <p *ngIf="sortField === 'vote_score'">Correcte stemmen: {{thirdPlace.target_correct}}</p>
+            <p *ngIf="sortField === 'target_wrong'">Foute stemmen: {{thirdPlace.target_wrong}}</p>
+            <p *ngIf="sortField === 'gift_score'">Levensduur cadeau: {{thirdPlace.gift_score}}</p>
+            <p *ngIf="sortField === 'sabotage_score'">Sabotages van ronde: {{thirdPlace.sabotage_score}}</p>
+        </div>
+        <ng-container *ngIf="secondPlaces$ | async as secondPlaces">
+            <ng-container *ngIf="firstPlaces$ | async as firstPlaces">
+                <div class="rank second-place"
+                    *ngFor="let secondPlace of secondPlaces.slice(0, secondPlaces.length / 2)">
+                    <h2>2de Plaats</h2>
+                    <p>{{secondPlace.name}}</p>
+                    <p *ngIf="sortField === 'vote_score'">Correcte stemmen: {{secondPlace.target_correct}}</p>
+                    <p *ngIf="sortField === 'target_wrong'">Foute stemmen: {{secondPlace.target_wrong}}</p>
+                    <p *ngIf="sortField === 'gift_score'">Levensduur cadeau: {{secondPlace.gift_score}}</p>
+                    <p *ngIf="sortField === 'sabotage_score'">Sabotages van ronde:
+                        {{secondPlace.sabotage_score}}</p>
+                </div>
+
+                <div class="rank first-place" *ngFor="let firstPlace of firstPlaces">
+                    <h2>1ste Plaats</h2>
+                    <p>{{firstPlace.name}}</p>
+                    <p *ngIf="sortField === 'vote_score'">Correcte stemmen: {{firstPlace.target_correct}}</p>
+                    <p *ngIf="sortField === 'target_wrong'">Foute stemmen: {{firstPlace.target_wrong}}</p>
+                    <p *ngIf="sortField === 'gift_score'">Levensduur cadeau: {{firstPlace.gift_score}}</p>
+                    <p *ngIf="sortField === 'sabotage_score'">Sabotages van ronde:
+                        {{firstPlace.sabotage_score}}</p>
+                </div>
+                <div class="rank second-place" *ngFor="let secondPlace of secondPlaces.slice(secondPlaces.length / 2)">
+                    <h2>2de Plaats</h2>
+                    <p>{{secondPlace.name}}</p>
+                    <p *ngIf="sortField === 'vote_score'">Correcte stemmen: {{secondPlace.target_correct}}</p>
+                    <p *ngIf="sortField === 'target_wrong'">Foute stemmen: {{secondPlace.target_wrong}}</p>
+                    <p *ngIf="sortField === 'gift_score'">Levensduur cadeau: {{secondPlace.gift_score}}</p>
+                    <p *ngIf="sortField === 'sabotage_score'">Sabotages van ronde:
+                        {{secondPlace.sabotage_score}}</p>
+                </div>
+            </ng-container>
+        </ng-container>
+    </div>
+
+    <div class="player-container">
+        <ng-container *ngFor="let result of gameResults$ | async">
+            <div class="card card-shadow.card-marg game-card player-card">
+                <div class="card-body text-center">
+                    <mat-icon class="player-icon" aria-hidden="false" aria-label="player" fontIcon="person"></mat-icon>
+                    <h5 class="card-title player-name">{{result.name}}</h5>
+                    <p *ngIf="sortField === 'vote_score'">Correcte stemmen: {{result.target_correct}}</p>
+                    <p *ngIf="sortField === 'target_wrong'">Foute stemmen: {{result.target_wrong}}</p>
+                    <p *ngIf="sortField === 'gift_score'">Levensduur cadeau: {{result.gift_score}}</p>
+                    <p *ngIf="sortField === 'sabotage_score'">Sabotages van ronde: {{result.sabotage_score}}</p>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</ng-container>

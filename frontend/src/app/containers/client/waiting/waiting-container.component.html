@@ -1,6 +1,16 @@
 <div class="container">
-    <h1 style="color:black">Gelieve te wachten tot de volgende ronde start</h1>
+    <h1>Bijna klaar voor de volgende ronde</h1>
     <div class="image-container">
-        <img [src]="gifUrl"/>
+        <img [src]="gifUrl$ | async" />
     </div>
+
+    <!-- <span *ngIf="showIcon1" @flyAcross style="bottom: 40px; " (@flyAcross.done)="onAnimationEvent($event)">
+        <span class="floating-icon delay-1">🎁</span>
+    </span>
+    <span style="bottom: 60px; right: 30px;">
+        <span class="floating-icon delay-2">✨</span>
+    </span>
+    <span style="bottom: 20px; right: 50%;">
+        <span class="floating-icon delay-3">🎄</span>
+    </span> -->
 </div>

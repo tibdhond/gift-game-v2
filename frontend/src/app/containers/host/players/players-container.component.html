@@ -1,23 +1,32 @@
 <div class="container">
-    <h3>Ga naar {{host}} om te beginnen</h3>
-    <div class="row row-marg">
+    <ng-container *ngIf="host$ | async as host">
+        <h3>Ga naar {{host}} en geef code <span class="accent">{{gameId$ | async}}</span> in om te
+            beginnen
+        </h3>
+        <qrcode [qrdata]="host" [width]="256" [errorCorrectionLevel]="'M'" colorLight="#364E43" elementType="svg">
+        </qrcode>
+    </ng-container>
+    <div style="margin-top: 1rem;">
         <ng-container *ngIf="players$ | async as players; else emptyPlayers">
-            <ng-container *ngFor="let player of players">
-                <div class="col-sm-4">
-                    <div class="card card-shadow.card-marg">
+            <h4>{{players.length}} geregistreerde speler{{players.length > 1 ? 's' : ''}}</h4>
+            <div class="player-container">
+                <ng-container *ngFor="let player of players">
+                    <div class="card card-shadow.card-marg game-card player-card">
                         <div class="card-body text-center">
-                            <mat-icon aria-hidden="false" aria-label="player" fontIcon="person"></mat-icon>
-                            <h5 class="card-title">{{player.name}}</h5>
+                            <mat-icon class="player-icon" aria-hidden="false" aria-label="player"
+                                fontIcon="person"></mat-icon>
+                            <h5 class="card-title player-name">{{player.name}}</h5>
                             <button class="btn btn-danger" type="submit" style="float:right" name="person"
                                 (click)="onDeletePlayer(player.id)">Verwijder</button>
                         </div>
                     </div>
-                </div>
-            </ng-container>
+                </ng-container>
+            </div>
         </ng-container>
         <ng-template #emptyPlayers>
             <p>Er zijn nog geen spelers</p>
         </ng-template>
     </div>
-    <button class="btn btn-primary" type="submit" style="float:right" (click)="onRoundStart()">Start spel</button>
+    <button class="btn game-button start-button" type="submit" (click)="onRoundStart()">Spel
+        starten</button>
 </div>

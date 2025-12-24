@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, Observable, Subject, combineLatest, interval, map, startWith, switchMap, take, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, combineLatest, interval, map, shareReplay, startWith, switchMap, take, takeUntil, tap } from 'rxjs';
 import { Player } from 'src/app/entities/entities';
 import { HostService } from 'src/app/services/host.service';
 import { BaseGameContainer } from '../../base-game-container.component';

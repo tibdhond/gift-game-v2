@@ -14,6 +14,12 @@ import { PlayersContainerComponent } from './containers/host/players/players-con
 import { RoundProgressContainerComponent } from './containers/host/round-progress/round-progress-container.component';
 import { GiftOpenContainerComponent } from './containers/client/gift-open/gift-open-container.component';
 import { VoteContainerComponent } from './containers/client/vote/vote-container.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { QRCodeModule } from 'angularx-qrcode';
+import { RoundResultContainerComponent } from './containers/host/round-result/round-result-container.component';
+import { ToPercentPipe } from './pipes/to-percent.pipe';
+import { FinalResultContainerComponent } from './containers/host/final-results/final-results-container.component';
+import { PersonalResultsContainerComponent } from './containers/client/personal-results/personal-results-container.component';
 
 @NgModule({
   declarations: [
@@ -24,15 +30,21 @@ import { VoteContainerComponent } from './containers/client/vote/vote-container.
     WaitingContainerComponent,
     RoundProgressContainerComponent,
     GiftOpenContainerComponent,
-    VoteContainerComponent
+    VoteContainerComponent,
+    RoundResultContainerComponent,
+    FinalResultContainerComponent,
+    PersonalResultsContainerComponent,
+    ToPercentPipe
   ],
   imports: [
     CommonModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
     BrowserModule,
     AppRoutingModule,
-    MatIconModule
+    MatIconModule,
+    QRCodeModule
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent]

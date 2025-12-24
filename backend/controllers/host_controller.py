@@ -2,6 +2,7 @@ from cache import Cache
 from models.game import Game
 from models.gift import Gift
 from models.vote import Vote
+from models.round import Round
 from entities.enums import UserPhase, GamePhase
 from entities.exceptions import OngoingRoundException, InvalidRoundException
 
@@ -47,14 +48,18 @@ def get_round_result(game_id) -> dict:
     if game.is_round_invalid():
         raise InvalidRoundException()
 
-    results: dict = {player.get_id(): {"name": player.name, "votes": 0} for player in game.get_players()}
+    player_results: dict = {player.get_id(): {"name": player.name, "votes": 0} for player in game.get_players()}
 
     for vote_id in game.current_round().votes:
         vote: Vote = game.votes[vote_id]
         if game.self_vote or vote.target_id != vote.voter_id:
-            results[vote.target_id]["votes"] += 1
+            player_results[vote.target_id]["votes"] += 1
 
-    return results
+    round: Round = game.current_round()
+    gift: Gift = game.gifts[round.gift_id]
+    round_result: dict = { "roundNumber": round.get_round_number(), "gift": gift.description, "playerResults": player_results}
+
+    return round_result
 
 def get_game_phase(game_id: str) -> dict:
     cache: Cache = Cache.get_instance()
@@ -66,9 +71,11 @@ def assign_gift(game_id: str) -> None:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
 
-    game.assign_gift()
+    result: bool = game.assign_gift()
 
     cache.store_game(game)
+
+    return result
 
 def get_result(game_id: str) -> list[dict]:
     cache: Cache = Cache.get_instance()
@@ -89,6 +96,7 @@ def get_result(game_id: str) -> list[dict]:
             vote: Vote = game.votes[vote_id]
             correct_vote: bool = vote.target_id == round_gift.owner
 
+            # User did not claim their own gift or tried to claim someone else's gift
             if (vote.target_id == vote.voter_id or round_gift.owner == vote.voter_id) and not correct_vote:
                 user_map[vote.voter_id]["sabotage_score"] += 1
 
