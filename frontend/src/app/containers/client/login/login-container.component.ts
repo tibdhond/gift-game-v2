@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { switchMap, take, takeUntil, withLatestFrom } from 'rxjs';
+import { catchError, EMPTY, switchMap, take, takeUntil, withLatestFrom } from 'rxjs';
 import { GameService } from 'src/app/services/game.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseContainer } from '../../base-container.component';
@@ -28,6 +28,10 @@ export class LoginContainerComponent extends BaseGameContainer {
                 switchMap(gameId => this.clientService.login(gameId, this.loginControl.value)),
                 withLatestFrom(this.gameId$),
                 take(1),
+                catchError(e => {
+                    alert(JSON.stringify(e));
+                    return EMPTY
+                }),
                 takeUntil(this.destroy$)
             ).subscribe(([result, gameId]) => {
                 localStorage.setItem('userId', result.user_id);
