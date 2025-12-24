@@ -16,6 +16,29 @@
     gap: 5px;
 }
 
+.login-card {
+    width: 22rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+
+    & label {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    & input {
+        display: flex;
+        width: 150%
+    }
+}
+
+.row {
+    justify-content: center;
+}
+
 #host-button {
     min-width: 50%;
 }

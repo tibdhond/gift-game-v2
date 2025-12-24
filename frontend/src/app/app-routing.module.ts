@@ -7,6 +7,9 @@ import { WaitingContainerComponent } from './containers/client/waiting/waiting-c
 import { RoundProgressContainerComponent } from './containers/host/round-progress/round-progress-container.component';
 import { GiftOpenContainerComponent } from './containers/client/gift-open/gift-open-container.component';
 import { VoteContainerComponent } from './containers/client/vote/vote-container.component';
+import { RoundResultContainerComponent } from './containers/host/round-result/round-result-container.component';
+import { FinalResultContainerComponent } from './containers/host/final-results/final-results-container.component';
+import { PersonalResultsContainerComponent } from './containers/client/personal-results/personal-results-container.component';
 
 const routes: Routes = [
   {
@@ -19,6 +22,14 @@ const routes: Routes = [
       {
         path: 'round-progress',
         component: RoundProgressContainerComponent
+      },
+      {
+        path: 'round-result',
+        component: RoundResultContainerComponent
+      },
+      {
+        path: 'final-results',
+        component: FinalResultContainerComponent
       }
     ]
   },
@@ -40,6 +51,10 @@ const routes: Routes = [
       {
         path: 'vote',
         component: VoteContainerComponent
+      },
+      {
+        path: 'personal-results',
+        component: PersonalResultsContainerComponent
       }
     ]
   },

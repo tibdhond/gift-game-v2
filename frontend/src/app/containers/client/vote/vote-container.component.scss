@@ -15,6 +15,13 @@
     }
 }
 
+.player-container {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
 .card {
     display: flex;
     flex-direction: column;
@@ -30,4 +37,8 @@
     .mat-icon {
         margin: auto;
     }
+}
+
+.row {
+    justify-content: center;
 }

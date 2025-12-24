@@ -1,0 +1,97 @@
+ .stage {
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     min-height: 100vh;
+     background-color: #2c3e50;
+     padding: 30px;
+ }
+
+ .podium {
+     margin-top: 5rem;
+     display: flex;
+     justify-content: center;
+     gap: 20px;
+     position: relative;
+ }
+
+ /* Common style for each podium element */
+ .rank {
+     text-align: center;
+     padding: 30px;
+     width: 180px;
+     font-size: 1.2rem;
+     border-radius: 15px;
+     transition: transform 0.3s ease, z-index 0.3s ease;
+ }
+
+ /* 1st Place (Middle and Elevated) */
+ .first-place {
+     background-color: #f39c12;
+     color: white;
+     transform: translateY(-50px) scale(1.1);
+     /* Elevated and slightly larger */
+     z-index: 3;
+     /* Higher on top */
+ }
+
+ /* 2nd Place (Left) */
+ .second-place {
+     background-color: #e74c3c;
+     color: white;
+     transform: translateY(-20px);
+     /* At normal level */
+     z-index: 2;
+     /* Below 1st place */
+ }
+
+ /* 3rd Place (Right) */
+ .third-place {
+     background-color: #95a5a6;
+     color: white;
+     transform: translateY(0);
+     /* At normal level */
+     z-index: 1;
+     /* Below 1st place */
+ }
+
+ .player-container {
+     margin-top: 0.5rem;
+     display: flex;
+     flex-direction: row;
+     gap: 0.5rem;
+ }
+
+ .player-card {
+     width: 12rem;
+     display: block;
+     flex: 0 0 33.33%;
+     max-width: 33.33%;
+
+     &>div {
+         display: flex;
+         flex-direction: column;
+
+         &>* {
+             display: flex;
+             justify-content: center;
+             align-self: center;
+         }
+     }
+ }
+
+ .button-container {
+     display: flex;
+     flex-direction: row;
+     justify-content: center;
+     gap: 0.5rem;
+
+     & * {
+         margin: 0;
+     }
+ }
+
+ .correct-button {
+     background-color: #1B5E20;
+ }

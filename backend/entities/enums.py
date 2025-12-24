@@ -5,6 +5,7 @@ class UserPhase(str, Enum):
     VOTING = "VOTING"
     FINISHED = "FINISHED"
     GIFT_OPENING = "GIFT_OPENING"
+    UNREGISTERED = "UNREGISTERED"
 
 class GamePhase(str, Enum):
     STARTING = "STARTING" # Game is being set up

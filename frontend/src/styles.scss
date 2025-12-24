@@ -1,2 +1,60 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'https://fonts.googleapis.com/icon?family=Material+Icons';
+
+$primary-color: linear-gradient(180deg,
+        #1e3d2f 0%,
+        #163024 100%);
+$font-color: #fdf6e3;
+
+body {
+    background-image: $primary-color;
+    color: $font-color !important;
+}
+
+
+.qrcode {
+    display: flex;
+    justify-content: center;
+
+    &>svg {
+        border-radius: 18px;
+    }
+}
+
+.game-card {
+    background: rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(6px);
+    border-radius: 0.75rem;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.game-button {
+    background: #c0392b;
+    color: white;
+    font-size: 20px;
+    padding: 12px 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    cursor: pointer;
+}
+
+input {
+    background-color: #1e3d2f !important;
+    color: $font-color !important;
+
+    &:focus {
+        background-color: #1e3d2f !important;
+        color: $font-color !important;
+    }
+}
+
+$accent-color: #c0392b;
+
+.accent {
+    color: $accent-color;
+}

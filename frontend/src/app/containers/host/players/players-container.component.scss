@@ -1,0 +1,53 @@
+.player-icon {
+    font-size: 42px;
+    width: 42px;
+    height: 42px;
+    opacity: 0.6;
+    margin-bottom: 12px;
+    color: black;
+}
+
+.player-name {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.remove-btn {
+    background: transparent;
+    border: none;
+    color: #c0392b;
+    opacity: 0.6;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.player-container {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.player-card {
+    width: 12rem;
+    display: block;
+    flex: 0 0 33.33%;
+    max-width: 33.33%;
+
+    &>div {
+        display: flex;
+        flex-direction: column;
+
+        &>* {
+            display: flex;
+            justify-content: center;
+            align-self: center;
+        }
+    }
+}
+
+.start-button {
+    margin-top: 2rem;
+}

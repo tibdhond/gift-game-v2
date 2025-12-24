@@ -1,0 +1,107 @@
+{
+    "id": "EB13",
+    "host_id": "a7f08e72c78f4ac18d251ed75d905b3a",
+    "random": false,
+    "self_vote": false,
+    "phase": "MID",
+    "rounds": [
+        {
+            "_Round__id": 0,
+            "votes": [
+                "1c5febc6a76a490b82d87e20ee8ee5af",
+                "81c41734ab5b49b39b7a3b74ed483bae"
+            ],
+            "gift_id": "f278cb521b0b4dd6a741c0babdb60683",
+            "valid": true
+        },
+        {
+            "_Round__id": 1,
+            "votes": [
+                "65e278b6030e43bfbe01c66d006dcf91",
+                "2b0a95bf0344426896f5069537571365"
+            ],
+            "gift_id": "f278cb521b0b4dd6a741c0babdb60683",
+            "valid": true
+        },
+        {
+            "_Round__id": 2,
+            "votes": [],
+            "gift_id": null,
+            "valid": true
+        }
+    ],
+    "votes": {
+        "1c5febc6a76a490b82d87e20ee8ee5af": {
+            "_Vote__id": "1c5febc6a76a490b82d87e20ee8ee5af",
+            "voter_id": "a8c86b01270343dd9fa0e00bcc5a6155",
+            "target_id": "a8c86b01270343dd9fa0e00bcc5a6155",
+            "gift_id": "f278cb521b0b4dd6a741c0babdb60683"
+        },
+        "81c41734ab5b49b39b7a3b74ed483bae": {
+            "_Vote__id": "81c41734ab5b49b39b7a3b74ed483bae",
+            "voter_id": "2a351be31dc34160b8294719a1507a56",
+            "target_id": "a8c86b01270343dd9fa0e00bcc5a6155",
+            "gift_id": "f278cb521b0b4dd6a741c0babdb60683"
+        },
+        "65e278b6030e43bfbe01c66d006dcf91": {
+            "_Vote__id": "65e278b6030e43bfbe01c66d006dcf91",
+            "voter_id": "2a351be31dc34160b8294719a1507a56",
+            "target_id": "2a351be31dc34160b8294719a1507a56",
+            "gift_id": "a2827777d42b49b08af9b75d97efa30a"
+        },
+        "2b0a95bf0344426896f5069537571365": {
+            "_Vote__id": "2b0a95bf0344426896f5069537571365",
+            "voter_id": "a8c86b01270343dd9fa0e00bcc5a6155",
+            "target_id": "2a351be31dc34160b8294719a1507a56",
+            "gift_id": "a2827777d42b49b08af9b75d97efa30a"
+        }
+    },
+    "players": {
+        "a7f08e72c78f4ac18d251ed75d905b3a": {
+            "_User__id": "a7f08e72c78f4ac18d251ed75d905b3a",
+            "name": "host",
+            "is_host": true,
+            "phase": "VOTING",
+            "has_opened_gift": false,
+            "is_finished": false
+        },
+        "a8c86b01270343dd9fa0e00bcc5a6155": {
+            "_User__id": "a8c86b01270343dd9fa0e00bcc5a6155",
+            "name": "Tibo",
+            "is_host": false,
+            "phase": "WAITING",
+            "has_opened_gift": true,
+            "is_finished": false
+        },
+        "2a351be31dc34160b8294719a1507a56": {
+            "_User__id": "2a351be31dc34160b8294719a1507a56",
+            "name": "Test",
+            "is_host": false,
+            "phase": "WAITING",
+            "has_opened_gift": true,
+            "is_finished": false
+        }
+    },
+    "gifts": {
+        "f278cb521b0b4dd6a741c0babdb60683": {
+            "_Gift__id": "f278cb521b0b4dd6a741c0babdb60683",
+            "description": "Dinges",
+            "owner": [
+                "a8c86b01270343dd9fa0e00bcc5a6155"
+            ],
+            "in_play": true,
+            "last_accessed": 1,
+            "assigned": false
+        },
+        "a2827777d42b49b08af9b75d97efa30a": {
+            "_Gift__id": "a2827777d42b49b08af9b75d97efa30a",
+            "description": "Stuff",
+            "owner": [
+                "2a351be31dc34160b8294719a1507a56"
+            ],
+            "in_play": true,
+            "last_accessed": 1,
+            "assigned": false
+        }
+    }
+}

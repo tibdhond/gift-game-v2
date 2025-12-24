@@ -55,9 +55,12 @@ class Game():
             # Link gift with owner
             current_round: Round = self.current_round()
             current_gift: Gift = self.gifts[current_round.gift_id]
-            current_gift.owner = self.get_owner() if current_gift.owner is None else current_gift.owner
+            current_gift.owner = self.get_owner()[0] if current_gift.owner is None else current_gift.owner
         else: 
             self.phase = GamePhase.EARLY
+
+        if self.phase == GamePhase.FINISHED:
+            return
             
         round: Round = Round(len(self.rounds))
         self.rounds.append(round)
@@ -74,8 +77,12 @@ class Game():
                 gift: Gift = gifts[0]
 
             # Link gift to round
+            current_round = self.current_round()
             current_round.gift_id = gift.get_id()
             gift.last_accessed = current_round.get_round_number()
+
+            for player in self.players.values():
+                player.phase = UserPhase.VOTING
             
         else:
             player: User = choice([player for player in self.get_players() if not player.has_opened_gift])
@@ -97,21 +104,33 @@ class Game():
         current_round.gift_id = gift.get_id()
         gift.last_accessed = current_round.get_round_number()
 
-        if len(self.gifts) == len(self.players):
+        # Don't count host
+        if len(self.gifts) == len(self.players)-1:
             self.phase = GamePhase.MID
         
         for player in self.players.values():
             player.phase = UserPhase.VOTING
 
-    def assign_gift(self) -> None:
-        self.gifts[self.current_round().gift_id].assigned = True
+    def assign_gift(self) -> bool:
+        gift = self.gifts[self.current_round().gift_id]
+        gift.assigned = True
 
-        if len(self.get_unassigned_gifts() == 0):
+        owner = gift.owner if gift.owner else self.get_owner()[0]
+        
+        player = self.players[owner]
+        player.is_finished = True
+
+        if len(self.get_unassigned_gifts()) == 0 and len(self.gifts) == len(self.players)-1:
             self.phase = GamePhase.FINISHED
+            self.new_round() # Tie up loose ends (will not start new round due to GamePhase Finished)
 
             for player in self.get_players():
                 player.phase = UserPhase.FINISHED
 
+            return True
+        else:
+            self.new_round()
+            return False
 
     def add_vote(self, voter_id: str, target_id: str) -> None:
         voter: User = self.players[voter_id]
@@ -130,7 +149,7 @@ class Game():
     def reset_round(self) -> None:
         current_round: Round = self.current_round()
         current_round.valid = False
-        new_round: Round = Round(current_round.get_round_number()+1, current_round.gift_id)
+        new_round: Round = Round(current_round.get_round_number()+1, gift_id=current_round.gift_id)
 
         self.rounds.append(new_round)
         for player in self.players.values():

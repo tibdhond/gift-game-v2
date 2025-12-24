@@ -1,0 +1,21 @@
+.round-table {
+    margin-top: 2rem;
+
+    & th,
+    td {
+        padding: 10px;
+    }
+
+    & tr {
+
+        border: 1px solid white;
+    }
+}
+
+.incorrect-row {
+    background-color: #c0392b;
+}
+
+.invalid-row {
+    opacity: 0.5;
+}

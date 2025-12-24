@@ -1,10 +1,21 @@
 <ng-container *ngIf="(gift$ | async) as gift; else noGift">
-    <h1 style="color:black">Mensen zijn aan het stemmen voor: {{gift}}</h1>
-    <h2 id="ratio">{{ratio$ | async }}</h2>
-    <div class="progress">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" id="bar" role="progressbar"
-            aria-valuemin="0" aria-valuemax="0" [style]="'width:'+(ratio$ | async)">{{ratio$ | async}}</div>
-    </div>
+    <ng-container *ngIf="!(invalid$ | async); else invalidGift">
+        <h2>Mensen zijn aan het stemmen voor: <span class="accent">{{gift}}</span></h2>
+        <ng-container *ngIf="ratio$ | async as ratio">
+            <h3 id="ratio">{{ratio}}</h3>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" id="bar"
+                    role="progressbar" aria-valuemin="0" aria-valuemax="0" [style]="'width:'+(ratio)">{{ratio}}</div>
+            </div>
+        </ng-container>
+    </ng-container>
+
+    <ng-template #invalidGift>
+        <h2>Ongeldige ronde voor: <span class="accent">{{gift}}</span></h2>
+        <h4>Het pakje werd niet toegekend of meerdere mensen kenden het pakje aan zichzelf toe.</h4>
+    </ng-template>
+    <button class="btn game-button start-button" style="float: right; margin-top: 1rem;" type="submit"
+        (click)="onResetRound()">Reset</button>
 </ng-container>
 
 <ng-template #noGift>

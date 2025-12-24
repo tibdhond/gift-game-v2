@@ -12,10 +12,10 @@ class Round():
 
         return round
 
-    def __init__(self, round_number: int) -> None:
+    def __init__(self, round_number: int, gift_id: str = None) -> None:
         self.__id: int = round_number
         self.votes: list[str] = []
-        self.gift_id: str = None
+        self.gift_id: str = gift_id
         self.valid: bool = True
 
     def get_round_number(self) -> int:
