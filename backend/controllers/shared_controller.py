@@ -10,9 +10,9 @@ def new_game() -> str:
 
     return game.id
 
-def get_players(game_id: str) -> list[User]:
+def get_players(game_id: str, filtered: bool = False) -> list[User]:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
 
-    return [{"id": player.get_id(), "name": player.name} for player in sorted(game.get_players(), key=lambda user: user.name)]
+    return [{"id": player.get_id(), "name": player.name} for player in sorted(game.get_players(), key=lambda user: user.name) if not filtered or not player.is_finished]
 

@@ -111,12 +111,14 @@ export class RoundResultContainerComponent extends BaseGameContainer implements 
     private fire(particleRatio: number, opts: any) {
         const count = 200,
             defaults = {
-                origin: { y: 0.7 },
+                origin: { y: 0.6 },
+                direction: "top"
             };
 
         confetti(
             Object.assign({}, defaults, opts, {
                 particleCount: Math.floor(count * particleRatio),
+                direction: "top"
             })
         );
     }

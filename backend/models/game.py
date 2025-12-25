@@ -81,12 +81,13 @@ class Game():
             current_round.gift_id = gift.get_id()
             gift.last_accessed = current_round.get_round_number()
 
-            for player in self.players.values():
-                player.phase = UserPhase.VOTING
+            
+            for player_id in self.players.keys():
+                self.set_player_phase(player_id, UserPhase.VOTING)
             
         else:
             player: User = choice([player for player in self.get_players() if not player.has_opened_gift])
-            player.phase = UserPhase.GIFT_OPENING
+            self.set_player_phase(player.get_id(), UserPhase.GIFT_OPENING)
 
 
     def add_gift(self, description: str, user_id: str) -> None:
@@ -108,8 +109,9 @@ class Game():
         if len(self.gifts) == len(self.players)-1:
             self.phase = GamePhase.MID
         
-        for player in self.players.values():
-            player.phase = UserPhase.VOTING
+            
+        for player_id in self.players.keys():
+            self.set_player_phase(player_id, UserPhase.VOTING)
 
     def assign_gift(self) -> bool:
         gift = self.gifts[self.current_round().gift_id]
@@ -124,8 +126,9 @@ class Game():
             self.phase = GamePhase.FINISHED
             self.new_round() # Tie up loose ends (will not start new round due to GamePhase Finished)
 
-            for player in self.get_players():
-                player.phase = UserPhase.FINISHED
+            
+            for player_id in self.players.keys():
+                self.set_player_phase(player_id, UserPhase.FINISHED)
 
             return True
         else:
@@ -139,7 +142,7 @@ class Game():
         if voter.phase == UserPhase.FINISHED:
             raise GameFinishedException()
         
-        voter.phase = UserPhase.WAITING
+        self.set_player_phase(voter.get_id(), UserPhase.WAITING)
 
         current_round: Round = self.rounds[-1]
         vote: Vote = Vote(voter_id, target_id, current_round.gift_id)
@@ -152,8 +155,9 @@ class Game():
         new_round: Round = Round(current_round.get_round_number()+1, gift_id=current_round.gift_id)
 
         self.rounds.append(new_round)
-        for player in self.players.values():
-            player.phase = UserPhase.VOTING
+
+        for player_id in self.players.keys():
+            self.set_player_phase(player_id, UserPhase.VOTING)
 
     def current_round(self) -> Round:
         return self.rounds[-1]
@@ -196,3 +200,9 @@ class Game():
             "players": {id: player.to_json() for (id, player) in self.players.items()},
             "gifts": {id: gifts.to_json() for (id, gifts) in self.gifts.items()}
         })
+    
+    
+
+    # Util
+    def set_player_phase(self, player_id: string, phase: UserPhase):
+        self.players[player_id].phase = phase

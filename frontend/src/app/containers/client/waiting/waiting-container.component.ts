@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { interval, map, Observable, switchMap, take, takeUntil, withLatestFrom } from 'rxjs';
+import { interval, map, Observable, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { GameService } from 'src/app/services/game.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseGameContainer } from '../../base-game-container.component';

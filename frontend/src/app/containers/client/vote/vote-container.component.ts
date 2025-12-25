@@ -27,7 +27,7 @@ export class VoteContainerComponent extends BaseClientContainerComponent impleme
         super.ngOnInit();
 
         this.players$ = this.gameId$.pipe(
-            switchMap(gameId => this.clientService.getPlayers(gameId)),
+            switchMap(gameId => this.clientService.getPlayers(gameId, true)),
             map(playersResult => playersResult.players)
         );
     }

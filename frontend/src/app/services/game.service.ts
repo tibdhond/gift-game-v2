@@ -31,7 +31,11 @@ export class GameService {
         return this.post(`new-game`, {});
     }
 
-    public getPlayers(gameId: string): Observable<PlayersResult> {
-        return this.get(`${gameId}/players`);
+    public getPlayers(gameId: string, filtered?: boolean): Observable<PlayersResult> {
+        let url: string = `${gameId}/players`;
+        if (filtered) {
+            url += '?filtered=true';
+        }
+        return this.get(url);
     }
 }
