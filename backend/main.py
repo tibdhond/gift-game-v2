@@ -64,7 +64,8 @@ def get_ip():
 
 @app.route('/api/<string:game_id>/players', methods=['GET'])
 def get_players(game_id: str):
-    players = shared.get_players(game_id)
+    filtered = request.args.get('filtered')
+    players = shared.get_players(game_id, True if filtered is not None else False)
     return make_response({"players": players})
 
 @app.route('/api/<string:game_id>/players/<string:user_id>', methods=['DELETE'])
