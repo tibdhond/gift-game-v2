@@ -47,4 +47,5 @@ Thumbs.db
 /frontend/node_modules/
 /frontend/.vscode
 /frontend/dist
+/backend/static/frontend/*
 

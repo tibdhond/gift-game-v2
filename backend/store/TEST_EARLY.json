@@ -1,0 +1,32 @@
+{
+  "id": "TEST_EARLY",
+  "host_id": "user-host",
+  "random": false,
+  "self_vote": false,
+  "phase": "EARLY",
+  "rounds": [],
+  "votes": {},
+  "players": {
+    "user-host": { "_User__id": "user-host", "name": "Host User", "is_host": true, "phase": "WAITING", "has_opened_gift": false, "is_finished": false },
+    "user-1": { "_User__id": "user-1", "name": "Player 1", "is_host": false, "phase": "WAITING", "has_opened_gift": false, "is_finished": false },
+    "user-2": { "_User__id": "user-2", "name": "Player 2", "is_host": false, "phase": "WAITING", "has_opened_gift": false, "is_finished": false },
+    "user-3": { "_User__id": "user-3", "name": "Player 3", "is_host": false, "phase": "WAITING", "has_opened_gift": false, "is_finished": false },
+    "user-4": { "_User__id": "user-4", "name": "Player 4", "is_host": false, "phase": "WAITING", "has_opened_gift": false, "is_finished": false },
+    "user-5": { "_User__id": "user-5", "name": "Player 5", "is_host": false, "phase": "WAITING", "has_opened_gift": false, "is_finished": false },
+    "user-6": { "_User__id": "user-6", "name": "Player 6", "is_host": false, "phase": "WAITING", "has_opened_gift": false, "is_finished": false },
+    "user-7": { "_User__id": "user-7", "name": "Player 7", "is_host": false, "phase": "WAITING", "has_opened_gift": false, "is_finished": false },
+    "user-8": { "_User__id": "user-8", "name": "Player 8", "is_host": false, "phase": "WAITING", "has_opened_gift": false, "is_finished": false },
+    "user-9": { "_User__id": "user-9", "name": "Player 9", "is_host": false, "phase": "WAITING", "has_opened_gift": false, "is_finished": false }
+  },
+  "gifts": {
+    "gift-1": { "_Gift__id": "gift-1", "description": "Gift 1", "owner": null, "in_play": true, "last_accessed": 0, "assigned": false },
+    "gift-2": { "_Gift__id": "gift-2", "description": "Gift 2", "owner": null, "in_play": true, "last_accessed": 0, "assigned": false },
+    "gift-3": { "_Gift__id": "gift-3", "description": "Gift 3", "owner": null, "in_play": true, "last_accessed": 0, "assigned": false },
+    "gift-4": { "_Gift__id": "gift-4", "description": "Gift 4", "owner": null, "in_play": true, "last_accessed": 0, "assigned": false },
+    "gift-5": { "_Gift__id": "gift-5", "description": "Gift 5", "owner": null, "in_play": true, "last_accessed": 0, "assigned": false },
+    "gift-6": { "_Gift__id": "gift-6", "description": "Gift 6", "owner": null, "in_play": true, "last_accessed": 0, "assigned": false },
+    "gift-7": { "_Gift__id": "gift-7", "description": "Gift 7", "owner": null, "in_play": true, "last_accessed": 0, "assigned": false },
+    "gift-8": { "_Gift__id": "gift-8", "description": "Gift 8", "owner": null, "in_play": true, "last_accessed": 0, "assigned": false },
+    "gift-9": { "_Gift__id": "gift-9", "description": "Gift 9", "owner": null, "in_play": true, "last_accessed": 0, "assigned": false }
+  }
+}
