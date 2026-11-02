@@ -7,34 +7,42 @@
     color: black;
 }
 
+.delete-icon {
+    color: #c0392b;
+}
+
 .player-name {
     font-size: 20px;
     font-weight: 600;
 }
 
 .remove-btn {
+    opacity: 0.8;
+    margin-left: auto;
     background: transparent;
     border: none;
-    color: #c0392b;
-    opacity: 0.6;
 
     &:hover {
         opacity: 1;
+        cursor: pointer;
     }
 }
 
 .player-container {
     margin-top: 0.5rem;
     display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
+    flex-flow: row wrap;
+    gap: 0.75rem;
+    max-height: 42vh;
+    overflow-y: scroll;
+    justify-content: start;
 }
 
 .player-card {
     width: 12rem;
     display: block;
-    flex: 0 0 33.33%;
-    max-width: 33.33%;
+    flex: 0 0 32%;
+    max-width: 32%;
 
     &>div {
         display: flex;
@@ -49,5 +57,5 @@
 }
 
 .start-button {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
 }

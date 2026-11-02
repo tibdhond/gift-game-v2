@@ -1,9 +1,10 @@
 <div class="container">
     <ng-container *ngIf="host$ | async as host">
-        <h3>Ga naar {{host}} en geef code <span class="accent">{{gameId$ | async}}</span> in om te
+        <h3 style="margin-bottom: 1rem;">Ga naar {{host}} en geef code <span class="accent">{{gameId$ | async}}</span>
+            in om te
             beginnen
         </h3>
-        <qrcode [qrdata]="host" [width]="256" [errorCorrectionLevel]="'M'" colorLight="#364E43" elementType="svg">
+        <qrcode [qrdata]="host" [width]="225" [errorCorrectionLevel]="'M'" colorLight="#364E43" elementType="svg">
         </qrcode>
     </ng-container>
     <div style="margin-top: 1rem;">
@@ -12,12 +13,16 @@
             <div class="player-container">
                 <ng-container *ngFor="let player of players">
                     <div class="card card-shadow.card-marg game-card player-card">
+                        <div>
+                            <button class="remove-btn" type="submit" name="person" (click)="onDeletePlayer(player.id)">
+                                <mat-icon class="delete-icon" aria-hidden="false" aria-label="delete"
+                                    fontIcon="delete"></mat-icon>
+                            </button>
+                        </div>
                         <div class="card-body text-center">
                             <mat-icon class="player-icon" aria-hidden="false" aria-label="player"
                                 fontIcon="person"></mat-icon>
                             <h5 class="card-title player-name">{{player.name}}</h5>
-                            <button class="btn btn-danger" type="submit" style="float:right" name="person"
-                                (click)="onDeletePlayer(player.id)">Verwijder</button>
                         </div>
                     </div>
                 </ng-container>
