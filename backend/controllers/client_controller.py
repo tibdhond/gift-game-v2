@@ -1,3 +1,8 @@
+import os
+from PIL import Image
+from pathlib import Path
+from flask import current_app
+from werkzeug.datastructures import FileStorage
 from cache import Cache
 from models.game import Game
 from models.user import User
@@ -40,7 +45,7 @@ def add_gift(game_id: str, user_id: str, description: str) -> None:
     game.add_gift(description, user_id)
 
     cache.store_game(game)
-    
+
 def get_result(game_id: str, user_id: str) -> dict:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
@@ -90,5 +95,51 @@ def get_result(game_id: str, user_id: str) -> dict:
                         else:
                             result["target_wrong"] += 1 # De andere gebruiker stemde foutief op deze gebruiker
     return result
+
+def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
+    cache: Cache = Cache.get_instance()
+    game: Game = cache.get_game(game_id)
+    if not game:
+        raise Exception("Game not found")
+    
+    player: User = game.players[user_id]
+    
+    # Check file size (limit 4MB)
+    file.seek(0, os.SEEK_END)
+    size = file.tell()
+    file.seek(0)
+    if size > 4 * 1024 * 1024:
+        raise Exception("File too large (max 4MB)")
+
+    # Determine storage path
+    # current_app.root_path is 'backend'
+    base_dir = Path(current_app.root_path) / "static" / "avatars"
+    game_dir = base_dir / game_id
+    game_dir.mkdir(parents=True, exist_ok=True)
+    
+    filepath = game_dir / f"{user_id}.jpg"
+    
+    try:
+        # Open the image from the file stream
+        img = Image.open(file.stream)
+        
+        # Convert to RGB (handles HEIC/HEIF/PNG transparency)
+        if img.mode in ("RGBA", "P") or img.mode != "RGB":
+            img = img.convert("RGB")
+            
+        # Save to the destination
+        img.save(filepath, "JPEG", quality=90)
+        
+        # Update game state
+        player.avatar_path = str(filepath)
+        
+        # Commit to store
+        cache.store_game(game)
+        
+    except Exception as e:
+        # Rollback: delete the file if it was created
+        if filepath.exists():
+            filepath.unlink()
+        raise e
 
                 

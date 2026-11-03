@@ -12,15 +12,17 @@ class User():
         user.phase = json.get("phase", UserPhase.WAITING)
         user.has_opened_gift = json.get("has_opened_gift", False)
         user.is_finished = json.get("is_finished", False)
+        user.avatar_path = json.get("avatar_path")
         return user
 
-    def __init__(self, name: str, is_host=False) -> None:
+    def __init__(self, name: str, is_host=False, avatar_path: str | None = None) -> None:
         self.__id: str = uuid4().hex
         self.name: str = name
         self.is_host: bool = is_host
         self.phase: UserPhase = UserPhase.WAITING
         self.has_opened_gift: bool = False
         self.is_finished: bool = False
+        self.avatar_path: str | None = avatar_path
 
     def get_id(self) -> str:
         return self.__id

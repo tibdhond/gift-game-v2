@@ -1,5 +1,7 @@
 from flask import Flask, current_app, render_template, make_response, request, send_from_directory
+from werkzeug.datastructures import FileStorage
 from flask_cors import CORS, cross_origin
+
 import os
 from pathlib import Path
 import socket
@@ -172,6 +174,20 @@ def add_gift(game_id: str):
 @app.route('/api/<string:game_id>/players/<string:user_id>/result', methods=["GET"])
 def get_user_result(game_id: str, user_id: str):
     return make_response(client.get_result(game_id, user_id), 200)
+
+@app.route('/api/<string:game_id>/players/<string:user_id>/avatar', methods=['POST'])
+def upload_avatar(game_id: str, user_id: str):
+    file: FileStorage = request.files.get('avatar')
+
+    if not file:
+        return make_response({"errCode": "NoFile", "msg": "No avatar file provided"}, 400)
+    
+    try:
+        client.upload_avatar(game_id, user_id, file)
+        return make_response("", 201)
+    except Exception as e:
+        print(e)
+        return make_response({"errCode": "UploadError", "msg": "Something went wrong while uploading the image"}, 500)
 
 @app.after_request
 def apply_global_headers(response):
