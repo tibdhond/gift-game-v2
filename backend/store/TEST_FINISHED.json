@@ -6,97 +6,396 @@
   "phase": "FINISHED",
   "rounds": [
     {
-      "_Round__id": 1,
-      "votes": ["vote-1", "vote-2", "vote-3"],
+      "_Round__id": 0,
+      "votes": [
+        "vote-1",
+        "vote-2",
+        "vote-3",
+        "vote-4",
+        "vote-5",
+        "vote-6",
+        "vote-7",
+        "vote-8",
+        "vote-9"
+      ],
       "valid": true,
       "gift_id": "gift-1"
     },
     {
-      "_Round__id": 2,
-      "votes": ["vote-4"],
+      "_Round__id": 1,
+      "votes": [
+        "vote-10",
+        "vote-11",
+        "vote-12",
+        "vote-13",
+        "vote-14",
+        "vote-15",
+        "vote-16",
+        "vote-17",
+        "vote-18"
+      ],
       "valid": true,
       "gift_id": "gift-2"
     },
     {
-      "_Round__id": 3,
-      "votes": ["vote-5", "vote-6", "vote-7"],
+      "_Round__id": 2,
+      "votes": [
+        "vote-19",
+        "vote-20",
+        "vote-21",
+        "vote-22",
+        "vote-23",
+        "vote-24",
+        "vote-25",
+        "vote-26",
+        "vote-27"
+      ],
       "valid": true,
       "gift_id": "gift-3"
     },
     {
-      "_Round__id": 4,
-      "votes": ["vote-8", "vote-9"],
+      "_Round__id": 3,
+      "votes": [
+        "vote-28",
+        "vote-29",
+        "vote-30",
+        "vote-31",
+        "vote-32",
+        "vote-33",
+        "vote-34",
+        "vote-35",
+        "vote-36"
+      ],
       "valid": true,
       "gift_id": "gift-4"
     },
     {
-      "_Round__id": 5,
-      "votes": ["vote-10"],
+      "_Round__id": 4,
+      "votes": [
+        "vote-37",
+        "vote-38",
+        "vote-39",
+        "vote-40",
+        "vote-41",
+        "vote-42",
+        "vote-43",
+        "vote-44",
+        "vote-45"
+      ],
       "valid": true,
       "gift_id": "gift-5"
     },
     {
-      "_Round__id": 6,
-      "votes": ["vote-11"],
+      "_Round__id": 5,
+      "votes": [
+        "vote-46",
+        "vote-47",
+        "vote-48",
+        "vote-49",
+        "vote-50",
+        "vote-51",
+        "vote-52",
+        "vote-53",
+        "vote-54"
+      ],
       "valid": true,
       "gift_id": "gift-6"
     },
     {
-      "_Round__id": 7,
-      "votes": ["vote-12"],
+      "_Round__id": 6,
+      "votes": [
+        "vote-55",
+        "vote-56",
+        "vote-57",
+        "vote-58",
+        "vote-59",
+        "vote-60",
+        "vote-61",
+        "vote-62",
+        "vote-63"
+      ],
       "valid": true,
       "gift_id": "gift-7"
     },
     {
-      "_Round__id": 8,
-      "votes": ["vote-13"],
+      "_Round__id": 7,
+      "votes": [
+        "vote-64",
+        "vote-65",
+        "vote-66",
+        "vote-67",
+        "vote-68",
+        "vote-69",
+        "vote-70",
+        "vote-71",
+        "vote-72"
+      ],
       "valid": true,
       "gift_id": "gift-8"
     },
     {
-      "_Round__id": 9,
-      "votes": ["vote-14"],
+      "_Round__id": 8,
+      "votes": [
+        "vote-73",
+        "vote-74",
+        "vote-75",
+        "vote-76",
+        "vote-77",
+        "vote-78",
+        "vote-79",
+        "vote-80",
+        "vote-81"
+      ],
       "valid": true,
       "gift_id": "gift-9"
     }
   ],
   "votes": {
-    "vote-1": { "_Vote__id": "vote-1", "voter_id": "user-1", "target_id": "user-2", "gift_id": "gift-1" },
-    "vote-2": { "_Vote__id": "vote-2", "voter_id": "user-2", "target_id": "user-3", "gift_id": "gift-1" },
-    "vote-3": { "_Vote__id": "vote-3", "voter_id": "user-3", "target_id": "user-1", "gift_id": "gift-1" },
-    "vote-4": { "_Vote__id": "vote-4", "voter_id": "user-4", "target_id": "user-5", "gift_id": "gift-2" },
-    "vote-5": { "_Vote__id": "vote-5", "voter_id": "user-5", "target_id": "user-6", "gift_id": "gift-3" },
-    "vote-6": { "_Vote__id": "vote-6", "voter_id": "user-6", "target_id": "user-7", "gift_id": "gift-3" },
-    "vote-7": { "_Vote__id": "vote-7", "voter_id": "user-7", "target_id": "user-8", "gift_id": "gift-3" },
-    "vote-8": { "_Vote__id": "vote-8", "voter_id": "user-8", "target_id": "user-9", "gift_id": "gift-4" },
-    "vote-9": { "_Vote__id": "vote-9", "voter_id": "user-9", "target_id": "user-4", "gift_id": "gift-4" },
-    "vote-10": { "_Vote__id": "vote-10", "voter_id": "user-5", "target_id": "user-1", "gift_id": "gift-5" },
-    "vote-11": { "_Vote__id": "vote-11", "voter_id": "user-6", "target_id": "user-2", "gift_id": "gift-6" },
-    "vote-12": { "_Vote__id": "vote-12", "voter_id": "user-7", "target_id": "user-3", "gift_id": "gift-7" },
-    "vote-13": { "_Vote__id": "vote-13", "voter_id": "user-8", "target_id": "user-4", "gift_id": "gift-8" },
-    "vote-14": { "_Vote__id": "vote-14", "voter_id": "user-9", "target_id": "user-5", "gift_id": "gift-9" }
+    "vote-0": {
+      "_Vote__id": "vote-0",
+      "voter_id": "user-2",
+      "target_id": "user-2",
+      "gift_id": "gift-1"
+    },
+    "vote-1": {
+      "_Vote__id": "vote-1",
+      "voter_id": "user-1",
+      "target_id": "user-2",
+      "gift_id": "gift-1"
+    },
+    "vote-2": {
+      "_Vote__id": "vote-2",
+      "voter_id": "user-3",
+      "target_id": "user-1",
+      "gift_id": "gift-1"
+    },
+    "vote-3": {
+      "_Vote__id": "vote-3",
+      "voter_id": "user-5",
+      "target_id": "user-5",
+      "gift_id": "gift-2"
+    },
+    "vote-4": {
+      "_Vote__id": "vote-4",
+      "voter_id": "user-7",
+      "target_id": "user-7",
+      "gift_id": "gift-3"
+    },
+    "vote-5": {
+      "_Vote__id": "vote-5",
+      "voter_id": "user-9",
+      "target_id": "user-9",
+      "gift_id": "gift-4"
+    },
+    "vote-6": {
+      "_Vote__id": "vote-6",
+      "voter_id": "user-1",
+      "target_id": "user-1",
+      "gift_id": "gift-5"
+    },
+    "vote-7": {
+      "_Vote__id": "vote-7",
+      "voter_id": "user-2",
+      "target_id": "user-2",
+      "gift_id": "gift-6"
+    },
+    "vote-8": {
+      "_Vote__id": "vote-8",
+      "voter_id": "user-3",
+      "target_id": "user-3",
+      "gift_id": "gift-7"
+    },
+    "vote-9": {
+      "_Vote__id": "vote-9",
+      "voter_id": "user-4",
+      "target_id": "user-4",
+      "gift_id": "gift-8"
+    },
+    "vote-10": {
+      "_Vote__id": "vote-10",
+      "voter_id": "user-5",
+      "target_id": "user-5",
+      "gift_id": "gift-9"
+    },
+    "vote-11": {
+      "_Vote__id": "vote-11",
+      "voter_id": "user-6",
+      "target_id": "user-2",
+      "gift_id": "gift-6"
+    },
+    "vote-12": {
+      "_Vote__id": "vote-12",
+      "voter_id": "user-7",
+      "target_id": "user-3",
+      "gift_id": "gift-7"
+    },
+    "vote-13": {
+      "_Vote__id": "vote-13",
+      "voter_id": "user-8",
+      "target_id": "user-4",
+      "gift_id": "gift-8"
+    },
+    "vote-14": {
+      "_Vote__id": "vote-14",
+      "voter_id": "user-9",
+      "target_id": "user-5",
+      "gift_id": "gift-9"
+    }
   },
   "players": {
-    "user-host": { "_User__id": "user-host", "name": "Host User", "is_host": true, "phase": "FINISHED", "has_opened_gift": false, "is_finished": true },
-    "user-1": { "_User__id": "user-1", "name": "Player 1", "is_host": false, "phase": "FINISHED", "has_opened_gift": false, "is_finished": true },
-    "user-2": { "_User__id": "user-2", "name": "Player 2", "is_host": false, "phase": "FINISHED", "has_opened_gift": false, "is_finished": true },
-    "user-3": { "_User__id": "user-3", "name": "Player 3", "is_host": false, "phase": "FINISHED", "has_opened_gift": false, "is_finished": true },
-    "user-4": { "_User__id": "user-4", "name": "Player 4", "is_host": false, "phase": "FINISHED", "has_opened_gift": false, "is_finished": true },
-    "user-5": { "_User__id": "user-5", "name": "Player 5", "is_host": false, "phase": "FINISHED", "has_opened_gift": false, "is_finished": true },
-    "user-6": { "_User__id": "user-6", "name": "Player 6", "is_host": false, "phase": "FINISHED", "has_opened_gift": false, "is_finished": true },
-    "user-7": { "_User__id": "user-7", "name": "Player 7", "is_host": false, "phase": "FINISHED", "has_opened_gift": false, "is_finished": true },
-    "user-8": { "_User__id": "user-8", "name": "Player 8", "is_host": false, "phase": "FINISHED", "has_opened_gift": false, "is_finished": true },
-    "user-9": { "_User__id": "user-9", "name": "Player 9", "is_host": false, "phase": "FINISHED", "has_opened_gift": false, "is_finished": true }
+    "user-host": {
+      "_User__id": "user-host",
+      "name": "Host User",
+      "is_host": true,
+      "phase": "FINISHED",
+      "has_opened_gift": false,
+      "is_finished": true
+    },
+    "user-1": {
+      "_User__id": "user-1",
+      "name": "Player 1",
+      "is_host": false,
+      "phase": "FINISHED",
+      "has_opened_gift": true,
+      "is_finished": true
+    },
+    "user-2": {
+      "_User__id": "user-2",
+      "name": "Player 2",
+      "is_host": false,
+      "phase": "FINISHED",
+      "has_opened_gift": true,
+      "is_finished": true
+    },
+    "user-3": {
+      "_User__id": "user-3",
+      "name": "Player 3",
+      "is_host": false,
+      "phase": "FINISHED",
+      "has_opened_gift": true,
+      "is_finished": true
+    },
+    "user-4": {
+      "_User__id": "user-4",
+      "name": "Player 4",
+      "is_host": false,
+      "phase": "FINISHED",
+      "has_opened_gift": true,
+      "is_finished": true
+    },
+    "user-5": {
+      "_User__id": "user-5",
+      "name": "Player 5",
+      "is_host": false,
+      "phase": "FINISHED",
+      "has_opened_gift": true,
+      "is_finished": true
+    },
+    "user-6": {
+      "_User__id": "user-6",
+      "name": "Player 6",
+      "is_host": false,
+      "phase": "FINISHED",
+      "has_opened_gift": true,
+      "is_finished": true
+    },
+    "user-7": {
+      "_User__id": "user-7",
+      "name": "Player 7",
+      "is_host": false,
+      "phase": "FINISHED",
+      "has_opened_gift": true,
+      "is_finished": true
+    },
+    "user-8": {
+      "_User__id": "user-8",
+      "name": "Player 8",
+      "is_host": false,
+      "phase": "FINISHED",
+      "has_opened_gift": true,
+      "is_finished": true
+    },
+    "user-9": {
+      "_User__id": "user-9",
+      "name": "Player 9",
+      "is_host": false,
+      "phase": "FINISHED",
+      "has_opened_gift": true,
+      "is_finished": true
+    }
   },
   "gifts": {
-    "gift-1": { "_Gift__id": "gift-1", "description": "Gift 1", "owner": "user-2", "in_play": true, "last_accessed": 1, "assigned": true },
-    "gift-2": { "_Gift__id": "gift-2", "description": "Gift 2", "owner": "user-5", "in_play": true, "last_accessed": 2, "assigned": true },
-    "gift-3": { "_Gift__id": "gift-3", "description": "Gift 3", "owner": "user-7", "in_play": true, "last_accessed": 3, "assigned": true },
-    "gift-4": { "_Gift__id": "gift-4", "description": "Gift 4", "owner": "user-9", "in_play": true, "last_accessed": 4, "assigned": true },
-    "gift-5": { "_Gift__id": "gift-5", "description": "Gift 5", "owner": "user-1", "in_play": true, "last_accessed": 5, "assigned": true },
-    "gift-6": { "_Gift__id": "gift-6", "description": "Gift 6", "owner": "user-2", "in_play": true, "last_accessed": 6, "assigned": true },
-    "gift-7": { "_Gift__id": "gift-7", "description": "Gift 7", "owner": "user-3", "in_play": true, "last_accessed": 7, "assigned": true },
-    "gift-8": { "_Gift__id": "gift-8", "description": "Gift 8", "owner": "user-4", "in_play": true, "last_accessed": 8, "assigned": true },
-    "gift-9": { "_Gift__id": "gift-9", "description": "Gift 9", "owner": "user-5", "in_play": true, "last_accessed": 9, "assigned": true }
+    "gift-1": {
+      "_Gift__id": "gift-1",
+      "description": "Gift 1",
+      "owner": "user-1",
+      "in_play": false,
+      "last_accessed": 1,
+      "assigned": true
+    },
+    "gift-2": {
+      "_Gift__id": "gift-2",
+      "description": "Gift 2",
+      "owner": "user-5",
+      "in_play": false,
+      "last_accessed": 2,
+      "assigned": true
+    },
+    "gift-3": {
+      "_Gift__id": "gift-3",
+      "description": "Gift 3",
+      "owner": "user-7",
+      "in_play": false,
+      "last_accessed": 3,
+      "assigned": true
+    },
+    "gift-4": {
+      "_Gift__id": "gift-4",
+      "description": "Gift 4",
+      "owner": "user-9",
+      "in_play": false,
+      "last_accessed": 4,
+      "assigned": true
+    },
+    "gift-5": {
+      "_Gift__id": "gift-5",
+      "description": "Gift 5",
+      "owner": "user-1",
+      "in_play": false,
+      "last_accessed": 5,
+      "assigned": true
+    },
+    "gift-6": {
+      "_Gift__id": "gift-6",
+      "description": "Gift 6",
+      "owner": "user-2",
+      "in_play": false,
+      "last_accessed": 6,
+      "assigned": true
+    },
+    "gift-7": {
+      "_Gift__id": "gift-7",
+      "description": "Gift 7",
+      "owner": "user-3",
+      "in_play": false,
+      "last_accessed": 7,
+      "assigned": true
+    },
+    "gift-8": {
+      "_Gift__id": "gift-8",
+      "description": "Gift 8",
+      "owner": "user-4",
+      "in_play": false,
+      "last_accessed": 8,
+      "assigned": true
+    },
+    "gift-9": {
+      "_Gift__id": "gift-9",
+      "description": "Gift 9",
+      "owner": "user-5",
+      "in_play": false,
+      "last_accessed": 9,
+      "assigned": true
+    }
   }
 }
