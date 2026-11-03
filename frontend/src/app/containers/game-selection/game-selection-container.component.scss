@@ -10,10 +10,16 @@
 
 .input-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     white-space: nowrap;
     align-items: center;
     gap: 5px;
+
+    div {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+    }
 }
 
 #host-button {

@@ -3,7 +3,9 @@
     <div>of</div>
     <div class="input-container">
         <label for="gameSelection">Geef code in om mee te doen:</label>
-        <input type="text" class="form-control" id="gameSelection" [formControl]="gameSelectionControl" />
-        <button type="button" class="btn btn-secondary" (click)="onJoinGame()">JOIN</button>
+        <div>
+            <input type=" text" class="form-control" id="gameSelection" [formControl]="gameSelectionControl" />
+            <button type="button" class="btn btn-secondary" (click)="onJoinGame()">JOIN</button>
+        </div>
     </div>
-</div>  
+</div>

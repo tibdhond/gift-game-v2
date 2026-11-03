@@ -4,7 +4,9 @@
             in om te
             beginnen
         </h3>
-        <qrcode [qrdata]="host" [width]="225" [errorCorrectionLevel]="'M'" colorLight="#364E43" elementType="svg">
+    </ng-container>
+    <ng-container *ngIf="qrUrl$ | async as url">
+        <qrcode [qrdata]="url" [width]="225" [errorCorrectionLevel]="'M'" colorLight="#364E43" elementType="svg">
         </qrcode>
     </ng-container>
     <div style="margin-top: 1rem;">

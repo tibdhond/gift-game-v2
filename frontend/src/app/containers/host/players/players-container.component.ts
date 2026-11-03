@@ -13,6 +13,7 @@ import { BaseGameContainer } from '../../base-game-container.component';
 export class PlayersContainerComponent extends BaseGameContainer implements OnInit, OnDestroy {
     public players$!: Observable<Player[]>;
     public playerDeleted$: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
+    public qrUrl$!: Observable<string>;
     constructor(protected override route: ActivatedRoute, private hostService: HostService, private router: Router) {
         super(route);
     }
@@ -25,6 +26,10 @@ export class PlayersContainerComponent extends BaseGameContainer implements OnIn
             switchMap(() => this.gameId$),
             switchMap(gameId => this.hostService.getPlayers(gameId)),
             map(playerResult => playerResult.players)
+        );
+
+        this.qrUrl$ = combineLatest([this.host$, this.gameId$]).pipe(
+            map(([host, gameId]) => `${host}?gameId=${gameId}`)
         );
     }
 

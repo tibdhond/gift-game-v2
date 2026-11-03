@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { take, takeUntil } from 'rxjs';
 import { GameService } from 'src/app/services/game.service';
 import { BaseContainer } from '../base-container.component';
@@ -10,12 +10,22 @@ import { FormControl } from '@angular/forms';
     templateUrl: './game-selection-container.component.html',
     styleUrls: ['./game-selection-container.component.scss']
 })
-export class GameSelectionComponent extends BaseContainer {
+export class GameSelectionComponent extends BaseContainer implements OnInit {
     public gameSelectionControl: FormControl = new FormControl();
 
     constructor(protected override route: ActivatedRoute, private gameService: GameService, private router: Router) {
         super(route);
-     }
+    }
+
+    override ngOnInit(): void {
+        this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(
+            params => {
+                if (params["gameId"] && !this.gameSelectionControl.value?.trim()) {
+                    this.gameSelectionControl.setValue(params["gameId"])
+                }
+            }
+        );
+    }
 
     public onNewGame(): void {
         this.gameService.startNewGame().pipe(
