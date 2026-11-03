@@ -8,10 +8,12 @@ def login(game_id: str, name: str) -> str:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
 
-    user: User = User(name)
-    game.add_user(user)
+    user: User | None = game.get_user(name)
 
-    cache.store_game(game)
+    if not user:
+        user: User = User(name)
+        game.add_user(user)
+        cache.store_game(game)
     return user.get_id()
 
 def vote(game_id: str, voter_id: str, target_id: str) -> None:

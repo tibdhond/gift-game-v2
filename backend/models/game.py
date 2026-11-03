@@ -42,6 +42,9 @@ class Game():
         self.self_vote: bool = False
         self.phase: GamePhase = GamePhase.STARTING
 
+    def get_user(self, name: str) -> User | None:
+        return next((player for player in self.players.values() if player.name == name), None)
+
     def add_user(self, user: User) -> None:
         self.players[user.get_id()] = user
 
