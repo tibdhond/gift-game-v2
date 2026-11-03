@@ -18,6 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { QRCodeModule } from 'angularx-qrcode';
 import { RoundResultContainerComponent } from './containers/host/round-result/round-result-container.component';
 import { ToPercentPipe } from './pipes/to-percent.pipe';
+import { BackgroundOverlayComponent } from './components/background-overlay/background-overlay.component';
 import { FinalResultContainerComponent } from './containers/host/final-results/final-results-container.component';
 import { PersonalResultsContainerComponent } from './containers/client/personal-results/personal-results-container.component';
 
@@ -34,7 +35,8 @@ import { PersonalResultsContainerComponent } from './containers/client/personal-
     RoundResultContainerComponent,
     FinalResultContainerComponent,
     PersonalResultsContainerComponent,
-    ToPercentPipe
+    ToPercentPipe,
+    BackgroundOverlayComponent
   ],
   imports: [
     CommonModule,

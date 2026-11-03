@@ -1,0 +1,25 @@
+<div class="background-overlay" [ngClass]="{
+  'bg-floating': type === 'FLOATING',
+  'bg-texture': type === 'TEXTURE',
+  'bg-parallax': type === 'PARALLAX',
+  'bg-bokeh': type === 'BOKEH'
+}">
+  <div class="floating-particles" *ngIf="type === 'FLOATING'">
+    <div 
+      *ngFor="let p of particles" 
+      class="particle"
+      [style.top.%]="p.top"
+      [style.left.%]="p.left"
+      [style.width.px]="p.size"
+      [style.height.px]="p.size"
+      [style.background]="p.color"
+      [style.animation-duration]="p.duration + 's'"
+      [style.animation-delay]="p.delay + 's'"
+    ></div>
+  </div>
+  <div class="parallax-container" *ngIf="type === 'PARALLAX'">
+    <div class="parallax-layer layer-bg"></div>
+    <div class="parallax-layer layer-mid"></div>
+    <div class="parallax-layer layer-fg"></div>
+  </div>
+</div>
