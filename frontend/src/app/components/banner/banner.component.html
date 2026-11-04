@@ -1,0 +1,19 @@
+<div class="banner-container">
+  <div class="banner-content">
+    <h1 class="game-title">{{ title }}</h1>
+    <div class="user-identity">
+      <span class="username">{{ username }}</span>
+      <div class="avatar-preview" (click)="triggerUpload()">
+        <img [src]="avatarUrl" [alt]="'Avatar'" />
+        <div class="upload-icon">📷</div>
+      </div>
+    </div>
+  </div>
+  <input 
+    #fileInput 
+    type="file" 
+    (change)="onFileSelected($event)" 
+    style="display: none" 
+    accept="image/*, .heic, .heif"
+  />
+</div>

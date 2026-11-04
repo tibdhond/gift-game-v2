@@ -18,6 +18,12 @@ export class ClientService extends GameService {
         return this.get(`${gameId}/players/${userId}/phase`);
     }
 
+    public uploadAvatar(gameId: string, userId: string, file: File): Observable<any> {
+        const formData = new FormData();
+        formData.append('avatar', file);
+        return this.post(`${gameId}/players/${userId}/avatar`, formData);
+    }
+
     public addGift(gameId: string, description: string, userId: string): Observable<void> {
         return this.post(`${gameId}/gifts`, { description, user_id: userId });
     }
