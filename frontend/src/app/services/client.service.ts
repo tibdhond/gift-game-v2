@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GameService } from './game.service';
 import { Observable } from 'rxjs';
-import { LoginResult, PersonalResult, UserPhaseResult } from '../entities/entities';
+import { LoginResult, PersonalResult, UserInfoResult, UserPhaseResult } from '../entities/entities';
 
 @Injectable({ providedIn: 'root' })
 export class ClientService extends GameService {
@@ -14,8 +14,16 @@ export class ClientService extends GameService {
         return this.post(`${gameId}/login`, { name });
     }
 
+    public getUserInfo(gameId: string, userId: string): Observable<UserInfoResult> {
+        return this.get(`${gameId}/players/${userId}`);
+    }
+
     public getUserPhase(gameId: string, userId: string): Observable<UserPhaseResult> {
         return this.get(`${gameId}/players/${userId}/phase`);
+    }
+
+    public getAvatar(gameId: string, userId: string): Observable<Blob> {
+        return this.getBlob(`${gameId}/players/${userId}/avatar`);
     }
 
     public uploadAvatar(gameId: string, userId: string, file: File): Observable<any> {

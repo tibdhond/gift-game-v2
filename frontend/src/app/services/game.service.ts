@@ -23,6 +23,10 @@ export class GameService {
         return this.http.get<T>(`${this.apiUrl}/${url}`, { headers });
     }
 
+    protected getBlob(url: string, headers: HttpHeaders = new HttpHeaders()) {
+        return this.http.get(`${this.apiUrl}/${url}`, { headers, responseType: 'blob' });
+    }
+
     protected delete<T>(url: string, headers: HttpHeaders = new HttpHeaders()): Observable<T> {
         return this.http.delete<T>(`${this.apiUrl}/${url}`, { headers });
     }

@@ -29,6 +29,19 @@ def vote(game_id: str, voter_id: str, target_id: str) -> None:
 
     cache.store_game(game)
 
+def get_user_info(game_id: str, user_id: str) -> dict | None:
+    cache: Cache = Cache.get_instance()
+    game: Game = cache.get_game(game_id)
+
+    if not game or not game.players:
+            return None
+    
+    user: User = game.players[user_id]
+    if not user:
+        return None
+    
+    return ({ "userId": user.get_id(), "name": user.name })
+
 def get_user_phase(game_id: str, user_id: str) -> dict:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
@@ -102,8 +115,6 @@ def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
     if not game:
         raise Exception("Game not found")
     
-    player: User = game.players[user_id]
-    
     # Check file size (limit 4MB)
     file.seek(0, os.SEEK_END)
     size = file.tell()
@@ -129,12 +140,6 @@ def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
             
         # Save to the destination
         img.save(filepath, "JPEG", quality=90)
-        
-        # Update game state
-        player.avatar_path = str(filepath)
-        
-        # Commit to store
-        cache.store_game(game)
         
     except Exception as e:
         # Rollback: delete the file if it was created

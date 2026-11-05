@@ -39,6 +39,12 @@ export interface UserPhaseResult {
     phase: UserPhase
 }
 
+export interface UserInfoResult {
+    userId: string;
+    name: string;
+    avatarPath: string;
+}
+
 export enum UserPhase {
     WAITING = "WAITING",
     VOTING = "VOTING",

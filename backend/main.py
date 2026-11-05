@@ -152,6 +152,10 @@ def vote(game_id: str):
         print(e)
         return make_response(e, 400)
 
+@app.route('/api/<string:game_id>/players/<string:user_id>', methods=["GET"])
+def get_user_info(game_id: str, user_id: str):
+    return client.get_user_info(game_id, user_id)
+
 @app.route('/api/<string:game_id>/players/<string:user_id>/phase', methods=["GET"])
 def get_user_phase(game_id: str, user_id: str):
     return client.get_user_phase(game_id, user_id)
@@ -174,6 +178,15 @@ def add_gift(game_id: str):
 @app.route('/api/<string:game_id>/players/<string:user_id>/result', methods=["GET"])
 def get_user_result(game_id: str, user_id: str):
     return make_response(client.get_result(game_id, user_id), 200)
+
+@app.route('/api/<string:game_id>/players/<string:user_id>/avatar', methods=['GET'])
+def get_avatar(game_id: str, user_id: str):
+    ROOT_PATH = Path(current_app.root_path)
+    if os.path.isfile(f'{ROOT_PATH}/static/avatars/{game_id}/{user_id}.jpg'):
+        print("not a file")
+        return send_from_directory(f'{ROOT_PATH}/static/avatars/{game_id}', f'{user_id}.jpg')
+    else:
+        return make_response("User does not have an avatar", 404)
 
 @app.route('/api/<string:game_id>/players/<string:user_id>/avatar', methods=['POST'])
 def upload_avatar(game_id: str, user_id: str):
