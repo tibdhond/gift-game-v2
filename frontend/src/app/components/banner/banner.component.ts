@@ -21,6 +21,7 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
     private userId!: string | null;
 
     public avatarAvailable: boolean = true;
+    public hasUploadedAvatar: boolean = false;
 
     private refreshTrigger$: BehaviorSubject<void> = new BehaviorSubject<void>(void 0);
 
@@ -52,6 +53,8 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
                 }),
                 shareReplay(1)
             );
+
+            this.hasUploadedAvatar = !!localStorage.getItem('has_uploaded_avatar');
         } else {
             this.username$ = of(undefined);
             this.avatarUrl$ = of(undefined);
@@ -101,6 +104,8 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
             next: (res: any) => {
                 this.message.show('Avatar succesvol geüpload', 'success');
                 this.refreshTrigger$.next();
+                this.hasUploadedAvatar = true;
+                localStorage.setItem('has_uploaded_avatar', 'true');
             },
             error: (err: any) => {
                 const msg = err.error?.msg || 'Er is iets misgegaan bij het uploaden';

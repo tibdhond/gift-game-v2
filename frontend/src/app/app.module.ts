@@ -22,6 +22,7 @@ import { BackgroundOverlayComponent } from './components/background-overlay/back
 import { FinalResultContainerComponent } from './containers/host/final-results/final-results-container.component';
 import { PersonalResultsContainerComponent } from './containers/client/personal-results/personal-results-container.component';
 import { BannerComponent } from './components/banner/banner.component';
+import { MessageDisplayComponent } from './components/message-display/message-display.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { BannerComponent } from './components/banner/banner.component';
     PersonalResultsContainerComponent,
     ToPercentPipe,
     BackgroundOverlayComponent,
-    BannerComponent
+    BannerComponent,
+    MessageDisplayComponent
   ],
   imports: [
     CommonModule,
