@@ -40,7 +40,7 @@ def get_user_info(game_id: str, user_id: str) -> dict | None:
     if not user:
         return None
     
-    return ({ "userId": user.get_id(), "name": user.name })
+    return ({ "userId": user.get_id(), "name": user.name, "avatarPath": user.avatar_path })
 
 def get_user_phase(game_id: str, user_id: str) -> dict:
     cache: Cache = Cache.get_instance()
@@ -115,6 +115,8 @@ def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
     if not game:
         raise Exception("Game not found")
     
+    player: User = game.players[user_id]
+    
     # Check file size (limit 4MB)
     file.seek(0, os.SEEK_END)
     size = file.tell()
@@ -140,6 +142,13 @@ def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
             
         # Save to the destination
         img.save(filepath, "JPEG", quality=90)
+        
+        # Update game state
+        player.avatar_version += 1
+        player.avatar_path = f"api/{game_id}/players/{user_id}/avatar?version={player.avatar_version}"
+        
+        # Commit to store
+        cache.store_game(game)
         
     except Exception as e:
         # Rollback: delete the file if it was created

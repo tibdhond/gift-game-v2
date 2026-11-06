@@ -13,7 +13,8 @@ export interface PlayersResult {
 export interface Player {
     id: string,
     name: string,
-    voted?: boolean
+    voted?: boolean,
+    avatarPath?: string
 }
 
 export interface RoundProgress {

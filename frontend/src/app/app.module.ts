@@ -23,6 +23,7 @@ import { FinalResultContainerComponent } from './containers/host/final-results/f
 import { PersonalResultsContainerComponent } from './containers/client/personal-results/personal-results-container.component';
 import { BannerComponent } from './components/banner/banner.component';
 import { MessageDisplayComponent } from './components/message-display/message-display.component';
+import { PlayerImageComponent } from './components/player-image/player-image.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { MessageDisplayComponent } from './components/message-display/message-di
     ToPercentPipe,
     BackgroundOverlayComponent,
     BannerComponent,
-    MessageDisplayComponent
+    MessageDisplayComponent,
+    PlayerImageComponent
   ],
   imports: [
     CommonModule,

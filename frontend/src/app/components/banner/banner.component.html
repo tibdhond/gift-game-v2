@@ -4,18 +4,11 @@
     <ng-container *ngIf="username$ | async as username">
       <div class="user-identity">
         <span class="username">{{ username }}</span>
-        <div class="avatar-preview" (click)="triggerUpload()" [class.pulse]="!hasUploadedAvatar">
-          <ng-container *ngIf="avatarAvailable; else noAvatar">
-            <img [src]="avatarUrl$ | async" [alt]="'Avatar'" />
-          </ng-container>
-        </div>
+        <app-player-image [avatarPath]="avatarUrl$ | async" [enablePulse]="!hasUploadedAvatar"
+          (onAvatarClicked)="triggerUpload()"></app-player-image>
       </div>
       <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none"
         accept="image/*, .heic, .heif" />
     </ng-container>
   </div>
 </div>
-
-<ng-template #noAvatar>
-  <mat-icon class="player-icon" aria-hidden="false" aria-label="player" fontIcon="person"></mat-icon>
-</ng-template>

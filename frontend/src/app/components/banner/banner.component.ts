@@ -4,6 +4,7 @@ import { MessageService } from '../../services/message.service';
 import { NavigationEnd, Params, Router } from '@angular/router';
 import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { BaseContainer } from 'src/app/containers/base-container.component';
+import { UserInfoResult } from 'src/app/entities/entities';
 
 @Component({
     selector: 'app-banner',
@@ -38,20 +39,24 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
         this.userId = localStorage.getItem("userId");
 
         if (this.userId) {
-            this.username$ = this.gameId$.pipe(
-                switchMap(gameId => this.client.getUserInfo(gameId, this.userId!)),
+            const userInfo$: Observable<UserInfoResult> = combineLatest([this.gameId$, this.refreshTrigger$]).pipe(
+                switchMap(([gameId, _]) => this.client.getUserInfo(gameId, this.userId!)),
+                shareReplay(1)
+            );
+
+            this.username$ = userInfo$.pipe(
                 map(userInfo => userInfo.name)
             );
 
-            this.avatarUrl$ = combineLatest([this.gameId$, this.refreshTrigger$]).pipe(
-                switchMap(([gameId, _]) => this.client.getAvatar(gameId, this.userId!)),
-                map(blob => URL.createObjectURL(blob)),
-                catchError(e => {
-                    console.log('error', e)
-                    this.avatarAvailable = false;
-                    return of(undefined);
+            this.avatarUrl$ = userInfo$.pipe(
+                tap(userInfo => {
+                    if (!userInfo.avatarPath) {
+                        this.avatarAvailable = false;
+                    } else {
+                        this.avatarAvailable = true;
+                    }
                 }),
-                shareReplay(1)
+                map(userInfo => userInfo.avatarPath)
             );
 
             this.hasUploadedAvatar = !!localStorage.getItem('has_uploaded_avatar');
@@ -97,7 +102,6 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
         this.message.show('Uploading...', 'loading');
 
         this.gameId$.pipe(
-            tap(x => console.log('gameId', x)),
             switchMap(gameId => this.client.uploadAvatar(gameId, this.userId!, file)),
             take(1)
         ).subscribe({
@@ -114,5 +118,10 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
         });
 
         event.target.value = '';
+    }
+
+    public onAvatarLoadError(e: ErrorEvent): void {
+        console.error(e);
+        this.avatarAvailable = false;
     }
 }

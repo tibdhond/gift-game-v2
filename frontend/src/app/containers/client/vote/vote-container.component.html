@@ -4,7 +4,7 @@
         <ng-container *ngFor="let player of players">
             <div class="card card-shadow card-marg game-card">
                 <div class="card-body text-center">
-                    <mat-icon aria-hidden="false" aria-label="player" fontIcon="person"></mat-icon>
+                    <app-player-image [avatarPath]="player.avatarPath"></app-player-image>
                     <h5 class="card-title">{{player.name}}</h5>
                     <button class="btn game-button vote" name="person" (click)="onVote(player.id)">{{userId ===
                         player.id ? 'Mijn Cadeau' : 'Stem'}}</button>
