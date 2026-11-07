@@ -12,3 +12,6 @@ class GameFinishedException(Exception):
 
 class GiftCreationException(Exception):
     pass
+
+class InvalidGameException(Exception):
+    pass

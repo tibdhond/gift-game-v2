@@ -1,9 +1,11 @@
+from typing import Any
+
 from cache import Cache
 from models.game import Game
 from models.gift import Gift
 from models.vote import Vote
 from models.round import Round
-from entities.enums import UserPhase, GamePhase
+from entities.enums import UserPhase
 from entities.exceptions import OngoingRoundException, InvalidRoundException
 
 
@@ -14,7 +16,7 @@ def delete_player(game_id: str, user_id: str) -> None:
     del game.players[user_id]
     cache.store_game(game)
 
-def new_round(game_id: str) -> str:
+def new_round(game_id: str) -> None:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
 
@@ -23,32 +25,32 @@ def new_round(game_id: str) -> str:
 
     cache.store_game(game)
 
-def get_round_progress(game_id) -> dict:
+def get_round_progress(game_id: str) -> dict[str, str | Any]:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game | None = cache.get_game(game_id)
 
-    players: dict = [{"name": player.name, "voted": player.phase == UserPhase.WAITING } for player in game.get_players()]
-    gift: Gift = game.gifts.get(game.current_round().gift_id, None)
+    players: list[dict[str, str | bool]] = [{"name": player.name, "voted": player.phase == UserPhase.WAITING } for player in game.get_players()]
+    gift: Gift | None = game.gifts.get(game.current_round().gift_id, None)
 
     return {"players": sorted(players, key=lambda player: player["name"]), "gift": gift.description if gift else None, "invalid": game.is_round_invalid()}
 
-def reset_round(game_id) -> None:
+def reset_round(game_id: str) -> None:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game | None = cache.get_game(game_id)
 
     game.reset_round()
     cache.store_game(game)
 
-def get_round_result(game_id) -> dict:
+def get_round_result(game_id: str) -> dict[str, Any]:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game | None = cache.get_game(game_id)
 
     if not game.is_round_finished():
         raise OngoingRoundException()
     if game.is_round_invalid():
         raise InvalidRoundException()
 
-    player_results: dict = {player.get_id(): {"name": player.name, "votes": 0} for player in game.get_players()}
+    player_results: dict[str, Any] = {player.get_id(): {"name": player.name, "votes": 0} for player in game.get_players()}
 
     for vote_id in game.current_round().votes:
         vote: Vote = game.votes[vote_id]
@@ -57,19 +59,19 @@ def get_round_result(game_id) -> dict:
 
     round: Round = game.current_round()
     gift: Gift = game.gifts[round.gift_id]
-    round_result: dict = { "roundNumber": round.get_round_number(), "gift": gift.description, "playerResults": player_results}
+    round_result: dict[str, Any] = { "roundNumber": round.get_round_number(), "gift": gift.description, "playerResults": player_results}
 
     return round_result
 
-def get_game_phase(game_id: str) -> dict:
+def get_game_phase(game_id: str) -> dict[str, Any]:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game | None = cache.get_game(game_id)
 
     return {"phase": game.phase}
 
-def assign_gift(game_id: str) -> None:
+def assign_gift(game_id: str) -> bool:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game | None = cache.get_game(game_id)
 
     result: bool = game.assign_gift()
 
@@ -77,11 +79,11 @@ def assign_gift(game_id: str) -> None:
 
     return result
 
-def get_result(game_id: str) -> list[dict]:
+def get_result(game_id: str) -> list[dict[str, Any]]:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
 
-    user_map: dict = {player.get_id(): {"name": player.name, "gift_score": 0, "vote_score": 0, "self_vote_score": 0, "target_correct": 0, "target_wrong": 0, "sabotage_score": 0} for player in game.get_players()}
+    user_map: dict[str, Any] = {player.get_id(): {"name": player.name, "gift_score": 0, "vote_score": 0, "self_vote_score": 0, "target_correct": 0, "target_wrong": 0, "sabotage_score": 0} for player in game.get_players()}
    
     for round in game.rounds:
         round_gift: Gift = game.gifts[round.gift_id]

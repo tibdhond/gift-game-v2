@@ -1,10 +1,11 @@
-from flask import Flask, current_app, render_template, make_response, request, send_from_directory
+from typing import Any
+
+from flask import Flask, current_app, make_response, request, send_from_directory
 from werkzeug.datastructures import FileStorage
 from flask_cors import CORS, cross_origin
 
 import os
 from pathlib import Path
-import socket
 
 import controllers.shared_controller as shared
 import controllers.client_controller as client
@@ -25,7 +26,7 @@ ROOT_PATH = Path(app.root_path) / "static" / "frontend"
 # region shared 
 @app.route('/', methods=["GET"])
 @app.route('/<path:path>', methods=["GET"])
-def index(path=""):
+def index(path:str=""):
     requested_file = ROOT_PATH / path
     if path != "" and requested_file.exists():
         return send_from_directory(ROOT_PATH, path)
@@ -47,17 +48,11 @@ def new_game():
 
 @app.route('/api/ip', methods=['GET'])
 def get_ip():
-    local_hostname = socket.gethostname()
-
-    # Step 2: Get a list of IP addresses associated with the hostname.
-    ip_addresses = socket.gethostbyname_ex(local_hostname)[2]
-
-    # Step 3: Filter out loopback addresses (IPs starting with "127.").
-    filtered_ips = [ip for ip in ip_addresses if not ip.startswith("127.")]
-
-    # Step 4: Extract the first IP address (if available) from the filtered list.
-    first_ip = filtered_ips[:1]
-    return make_response(first_ip)
+    print(shared.get_local_ip())
+    ip = shared.get_local_ip()
+    response = make_response([ip])
+    response.headers["Content-Type"] = "text/plain"
+    return response
 
 
 # endregion
@@ -104,7 +99,7 @@ def reset_round(game_id: str):
 @app.route('/api/<string:game_id>/round/result', methods=["GET"])
 def round_result(game_id: str):
     try:
-        result: dict = host.get_round_result(game_id)
+        result: dict[str, Any] = host.get_round_result(game_id)
         return make_response(result, 200)
     except InvalidRoundException as e:
         return make_response({"errCode": "InvalidRound", "msg": "You cannot start a new round while the current round is invalid. Reset the round to continue."}, 403)
@@ -190,7 +185,7 @@ def get_avatar(game_id: str, user_id: str):
 
 @app.route('/api/<string:game_id>/players/<string:user_id>/avatar', methods=['POST'])
 def upload_avatar(game_id: str, user_id: str):
-    file: FileStorage = request.files.get('avatar')
+    file: FileStorage | None = request.files.get('avatar')
 
     if not file:
         return make_response({"errCode": "NoFile", "msg": "No avatar file provided"}, 400)
