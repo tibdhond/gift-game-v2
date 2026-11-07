@@ -94,7 +94,7 @@ export class VoteContainerComponent extends BaseClientContainerComponent impleme
             take(1)
         ).subscribe({
             next: (gameId) => {
-                this.messageService.show(`Stem voor ${targetName} succesvol geregistreerd.`);
+                this.messageService.show(`Stem voor ${targetName} succesvol geregistreerd.`, "success");
                 this.router.navigate(["client", gameId, "waiting"]);
             },
             error: () => {

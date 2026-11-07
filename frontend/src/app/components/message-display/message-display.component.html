@@ -1,4 +1,4 @@
-<div *ngIf="currentMessage" class="message-overlay" [ngClass]="{
+<div *ngIf="currentMessage$ | async as currentMessage" class="message-overlay" [ngClass]="{
   'success': currentMessage.type === 'success',
   'error': currentMessage.type === 'error',
   'loading': currentMessage.type === 'loading'
