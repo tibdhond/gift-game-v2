@@ -36,10 +36,10 @@ export class WaitingContainerComponent extends BaseClientContainerComponent impl
 
     constructor(
         protected override route: ActivatedRoute,
+        protected clientService: ClientService,
         private router: Router,
-        private clientService: ClientService
     ) {
-        super(route);
+        super(route, clientService);
     }
 
     override ngOnInit(): void {

@@ -1,8 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-export interface ConfirmDialogData {
-  title: string;
+export interface VoteConfirmDialogData {
+  currentPlayer: string;
+  voteTarget: string;
   message: string;
   confirmText?: string;
   cancelText?: string;
@@ -10,14 +11,15 @@ export interface ConfirmDialogData {
 
 @Component({
   selector: 'app-confirm-dialog',
-  templateUrl: './confirm.dialog.component.html'
+  templateUrl: './confirm.dialog.component.html',
+  styleUrls: ['./confirm.dialog.component.scss']
 })
-export class ConfirmDialogComponent {
+export class VoteConfirmDialogComponent {
 
   constructor(
-    public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData
-  ) {}
+    public dialogRef: MatDialogRef<VoteConfirmDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: VoteConfirmDialogData
+  ) { }
 
   confirm(): void {
     this.dialogRef.close(true);

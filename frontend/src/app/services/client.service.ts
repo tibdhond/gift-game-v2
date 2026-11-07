@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { GameService } from './game.service';
-import { Observable } from 'rxjs';
+import { map, Observable, of, tap } from 'rxjs';
 import { LoginResult, PersonalResult, UserInfoResult, UserPhaseResult } from '../entities/entities';
 
 @Injectable({ providedIn: 'root' })
 export class ClientService extends GameService {
+    private userInfo$: Observable<UserInfoResult> | undefined;
     constructor(protected override http: HttpClient) {
         super(http);
     }
@@ -15,7 +16,11 @@ export class ClientService extends GameService {
     }
 
     public getUserInfo(gameId: string, userId: string): Observable<UserInfoResult> {
-        return this.get(`${gameId}/players/${userId}`);
+        return this.userInfo$ ?? this.get<UserInfoResult>(`${gameId}/players/${userId}`).pipe(
+            tap(userInfo => {
+                this.userInfo$ = of(userInfo);
+            })
+        );
     }
 
     public getUserPhase(gameId: string, userId: string): Observable<UserPhaseResult> {
@@ -29,7 +34,11 @@ export class ClientService extends GameService {
     public uploadAvatar(gameId: string, userId: string, file: File): Observable<any> {
         const formData = new FormData();
         formData.append('avatar', file);
-        return this.post(`${gameId}/players/${userId}/avatar`, formData);
+        return this.post(`${gameId}/players/${userId}/avatar`, formData).pipe(
+            tap(() => {
+                this.userInfo$ = undefined;
+            })
+        );
     }
 
     public addGift(gameId: string, description: string, userId: string): Observable<void> {

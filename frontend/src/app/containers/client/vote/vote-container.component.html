@@ -3,8 +3,8 @@
     <div class="player-container" *ngIf="players$ | async as players">
         <ng-container *ngFor="let player of players">
             <app-player-tile [avatarPath]="player.avatarPath" [badge]="userId === player.id"
-                [badgeMessage]="'MIJN CADEAU'" [highlight]="userId === player.id" [isProcessing]="isProcessing" [name]="player.name"
-                (onTileClicked)="onVote(player.id)"></app-player-tile>
+                [badgeMessage]="'MIJN CADEAU'" [highlight]="userId === player.id" [isProcessing]="isProcessing"
+                [name]="player.name" (onTileClicked)="onVote(player.id)"></app-player-tile>
         </ng-container>
     </div>
 </div>

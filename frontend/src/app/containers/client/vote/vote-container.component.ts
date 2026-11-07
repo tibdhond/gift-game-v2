@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { Observable, map, switchMap, take } from "rxjs";
+import { Observable, map, switchMap, take, tap } from "rxjs";
 import { GameService } from "src/app/services/game.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BaseGameContainer } from "../../base-game-container.component";
@@ -8,7 +8,7 @@ import { Player } from "src/app/entities/entities";
 import { BaseClientContainerComponent } from "../base-client-container.component";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { MessageService } from "src/app/services/message.service";
-import { ConfirmDialogComponent } from "src/app/components/dialogs/confirm/confirm.dialog.component";
+import { VoteConfirmDialogComponent } from "src/app/components/dialogs/confirm/confirm.dialog.component";
 
 @Component({
     selector: "vote-container",
@@ -21,12 +21,12 @@ export class VoteContainerComponent extends BaseClientContainerComponent impleme
 
     constructor(
         protected override route: ActivatedRoute,
-        private clientService: ClientService,
+        protected clientService: ClientService,
         private router: Router,
         private dialog: MatDialog,
         private messageService: MessageService
     ) {
-        super(route);
+        super(route, clientService);
     }
 
     override ngOnInit(): void {
@@ -53,22 +53,34 @@ export class VoteContainerComponent extends BaseClientContainerComponent impleme
     }
 
     private confirmVote(player: Player): void {
-        const question = this.userId === player.id ? "Is dit jouw cadeau?" : `Stem voor ${player.name}?`;
+        const question = this.userId === player.id ? "Is dit jouw cadeau?" : `Ben je zeker van je keuze?`;
 
-        const dialogRef: MatDialogRef<ConfirmDialogComponent, any> =  this.dialog.open(ConfirmDialogComponent,
-            {
-                data: {
-                    title: 'Bevestig',
-                    message: question,
-                    confirmText: "Ja",
-                    cancelText: "Nee"
+        this.userInfo$.pipe(
+            map(userInfo => userInfo.name),
+            tap(() => {
+                this.isProcessing = true;
+            }),
+            map(userName => this.dialog.open(VoteConfirmDialogComponent,
+                {
+                    panelClass: 'gift-tag-dialog',
+                    hasBackdrop: false, width: 'min(31.25rem, calc(100vw - 2rem), calc((100dvh - 2rem) * 0.967))',
+                    maxWidth: 'none',
+                    data: {
+                        message: question,
+                        confirmText: "Ja",
+                        cancelText: "Nee",
+                        voteTarget: player.name,
+                        currentPlayer: userName
+                    }
                 }
-            }
-       );
-
-        dialogRef.afterClosed().pipe(take(1)).subscribe(result => {
+            )),
+            switchMap(dialogRef => dialogRef.afterClosed()),
+            take(1)
+        ).subscribe(result => {
             if (result) {
                 this.executeVote(player.id, player.name);
+            } else {
+                this.isProcessing = false;
             }
         });
     }

@@ -59,3 +59,21 @@ $accent-color: #c0392b;
 .accent {
     color: $accent-color;
 }
+
+.gift-tag-dialog {
+    .mat-mdc-dialog-container {
+        width: 100%;
+    }
+
+    .mdc-dialog__surface {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 967 / 1000;
+        background-color: transparent !important;
+
+        background-image: url('/api/frontend-asset/images/gift_tag.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        box-shadow: none !important;
+    }
+}
