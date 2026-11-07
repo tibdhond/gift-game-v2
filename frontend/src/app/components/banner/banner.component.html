@@ -4,7 +4,7 @@
     <ng-container *ngIf="username$ | async as username">
       <div class="user-identity">
         <span class="username">{{ username }}</span>
-        <app-player-image [avatarPath]="avatarUrl$ | async" [enablePulse]="!hasUploadedAvatar"
+        <app-player-image [avatarPath]="avatarUrl$ | async" [enablePulse]="!avatarAvailable"
           (onAvatarClicked)="triggerUpload()"></app-player-image>
       </div>
       <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none"

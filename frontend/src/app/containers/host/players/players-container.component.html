@@ -1,6 +1,6 @@
-<div class="container">
+<div class="players-view-container">
     <ng-container *ngIf="host$ | async as host">
-        <h3 style="margin-bottom: 1rem;">Ga naar {{host}} en geef code <span class="accent">{{gameId$ | async}}</span>
+        <h3 style="margin-bottom: 1rem;text-align: center;">Ga naar {{host}} en geef code <span class="accent">{{gameId$ | async}}</span>
             in om te
             beginnen
         </h3>
@@ -14,19 +14,7 @@
             <h4>{{players.length}} geregistreerde speler{{players.length > 1 ? 's' : ''}}</h4>
             <div class="player-container">
                 <ng-container *ngFor="let player of players">
-                    <div class="card card-shadow.card-marg game-card player-card">
-                        <div>
-                            <button class="remove-btn" type="submit" name="person" (click)="onDeletePlayer(player.id)">
-                                <mat-icon class="delete-icon" aria-hidden="false" aria-label="delete"
-                                    fontIcon="delete"></mat-icon>
-                            </button>
-                        </div>
-                        <div class="card-body text-center">
-                            <mat-icon class="player-icon" aria-hidden="false" aria-label="player"
-                                fontIcon="person"></mat-icon>
-                            <h5 class="card-title player-name">{{player.name}}</h5>
-                        </div>
-                    </div>
+                    <app-player-tile [avatarPath]="player.avatarPath" [name]="player.name" [deleteIcon]="true" (onDeleteClicked)="onDeletePlayer(player.id)"></app-player-tile>
                 </ng-container>
             </div>
         </ng-container>

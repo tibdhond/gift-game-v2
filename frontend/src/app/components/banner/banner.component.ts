@@ -2,9 +2,10 @@ import { Component, Input, ViewChild, ElementRef, OnInit, OnDestroy } from '@ang
 import { ClientService } from '../../services/client.service';
 import { MessageService } from '../../services/message.service';
 import { NavigationEnd, Params, Router } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
-import { BaseContainer } from 'src/app/containers/base-container.component';
-import { UserInfoResult } from 'src/app/entities/entities';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs';
+import { BaseContainer } from '../../containers/base-container.component';
+import { UserInfoResult } from '../../entities/entities';
+import { LocalStorageService } from '../../services/localstorage.service';
 
 @Component({
     selector: 'app-banner',
@@ -29,41 +30,40 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
     constructor(
         private client: ClientService,
         private message: MessageService,
-        private router: Router
+        private router: Router,
+        private localStorageService: LocalStorageService
     ) {
         super();
     }
 
     override ngOnInit(): void {
         this.initGameId();
-        this.userId = localStorage.getItem("userId");
+        const userId$: Observable<string | null> = this.localStorageService.getUserId().pipe(
+            takeUntil(this.destroy$));
 
-        if (this.userId) {
-            const userInfo$: Observable<UserInfoResult> = combineLatest([this.gameId$, this.refreshTrigger$]).pipe(
-                switchMap(([gameId, _]) => this.client.getUserInfo(gameId, this.userId!)),
+        const userInfo$: Observable<UserInfoResult | null> = combineLatest([this.gameId$, userId$, this.refreshTrigger$]).pipe(
+                switchMap(([gameId, userId, _]) => userId ? this.client.getUserInfo(gameId, userId) : of(null)),
                 shareReplay(1)
             );
 
-            this.username$ = userInfo$.pipe(
-                map(userInfo => userInfo.name)
-            );
+        this.username$ = userInfo$.pipe(
+            map(userInfo => userInfo ? userInfo.name : undefined)
+        );
 
-            this.avatarUrl$ = userInfo$.pipe(
+        this.avatarUrl$ = userInfo$.pipe(
                 tap(userInfo => {
-                    if (!userInfo.avatarPath) {
+                    if (!userInfo?.avatarPath) {
                         this.avatarAvailable = false;
                     } else {
                         this.avatarAvailable = true;
                     }
                 }),
-                map(userInfo => userInfo.avatarPath)
+                map(userInfo => userInfo ? userInfo.avatarPath : undefined)
             );
 
-            this.hasUploadedAvatar = !!localStorage.getItem('has_uploaded_avatar');
-        } else {
-            this.username$ = of(undefined);
-            this.avatarUrl$ = of(undefined);
-        }
+        userId$.pipe(takeUntil(this.destroy$)).subscribe(userId => {
+            this.userId = userId;
+        })
     }
 
     private initGameId(): void {
@@ -108,8 +108,6 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
             next: (res: any) => {
                 this.message.show('Avatar succesvol geüpload', 'success');
                 this.refreshTrigger$.next();
-                this.hasUploadedAvatar = true;
-                localStorage.setItem('has_uploaded_avatar', 'true');
             },
             error: (err: any) => {
                 const msg = err.error?.msg || 'Er is iets misgegaan bij het uploaden';

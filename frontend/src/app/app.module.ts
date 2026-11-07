@@ -24,6 +24,8 @@ import { PersonalResultsContainerComponent } from './containers/client/personal-
 import { BannerComponent } from './components/banner/banner.component';
 import { MessageDisplayComponent } from './components/message-display/message-display.component';
 import { PlayerImageComponent } from './components/player-image/player-image.component';
+import { DialogModule } from './components/dialogs/dialog.module';
+import { PlayerTileComponent } from './components/player-tile/player-tile.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +44,8 @@ import { PlayerImageComponent } from './components/player-image/player-image.com
     BackgroundOverlayComponent,
     BannerComponent,
     MessageDisplayComponent,
-    PlayerImageComponent
+    PlayerImageComponent,
+    PlayerTileComponent
   ],
   imports: [
     CommonModule,
@@ -52,7 +55,8 @@ import { PlayerImageComponent } from './components/player-image/player-image.com
     BrowserModule,
     AppRoutingModule,
     MatIconModule,
-    QRCodeModule
+    QRCodeModule,
+    DialogModule
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent]

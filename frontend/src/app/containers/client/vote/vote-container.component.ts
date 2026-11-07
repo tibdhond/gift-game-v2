@@ -6,8 +6,9 @@ import { BaseGameContainer } from "../../base-game-container.component";
 import { ClientService } from "src/app/services/client.service";
 import { Player } from "src/app/entities/entities";
 import { BaseClientContainerComponent } from "../base-client-container.component";
-import { MatDialog } from "@angular/material/dialog";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { MessageService } from "src/app/services/message.service";
+import { ConfirmDialogComponent } from "src/app/components/dialogs/confirm/confirm.dialog.component";
 
 @Component({
     selector: "vote-container",
@@ -53,18 +54,20 @@ export class VoteContainerComponent extends BaseClientContainerComponent impleme
 
     private confirmVote(player: Player): void {
         const question = this.userId === player.id ? "Is dit jouw cadeau?" : `Stem voor ${player.name}?`;
-        
-        this.dialog.open([
+
+        const dialogRef: MatDialogRef<ConfirmDialogComponent, any> =  this.dialog.open(ConfirmDialogComponent,
             {
-                title: question,
-                type: "confirm",
-                options: [
-                    { label: "Ja", confirm: true },
-                    { label: "Nee", confirm: false }
-                ]
+                data: {
+                    title: 'Bevestig',
+                    message: question,
+                    confirmText: "Ja",
+                    cancelText: "Nee"
+                }
             }
-        ], (result) => {
-            if (result.confirm) {
+       );
+
+        dialogRef.afterClosed().pipe(take(1)).subscribe(result => {
+            if (result) {
                 this.executeVote(player.id, player.name);
             }
         });
@@ -72,7 +75,7 @@ export class VoteContainerComponent extends BaseClientContainerComponent impleme
 
     private executeVote(targetId: string, targetName: string): void {
         this.isProcessing = true;
-        
+
         this.gameId$.pipe(
             switchMap(gameId => this.clientService.vote(gameId, this.userId!, targetId)),
             switchMap(() => this.gameId$),
