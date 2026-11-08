@@ -73,12 +73,16 @@ $accent-color: #c0392b;
     --snow: #f7f4ee;
 }
 
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 1.25rem;
+}
+
 .action-button {
     --btn: var(--cranberry);
     --btn-dark: #7a1a1f;
 
-    margin-left: auto;
-    margin-right: auto;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -130,4 +134,14 @@ $accent-color: #c0392b;
 .correct {
     --btn: #1b5e20;
     --btn-dark: #10401a;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }

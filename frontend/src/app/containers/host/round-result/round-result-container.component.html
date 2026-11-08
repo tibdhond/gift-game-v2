@@ -10,43 +10,21 @@
         </div>
     </header>
 
-    <!-- Podium: one flat list in display order, built by podium$ -->
-    <div class="podium" *ngIf="podium$ | async as podium">
-        <div class="step" *ngFor="let slot of podium; trackBy: trackSlot" [ngClass]="'place-' + slot.place"
-            [style.--delay]="slot.delay + 's'">
-
-            <div class="avatar">
-                <app-player-image [avatarPath]="slot.player.avatarPath" [bordered]="true"></app-player-image>
-                <span class="hat" *ngIf="slot.place === 1" aria-hidden="true"></span>
-            </div>
-
-            <p class="name" [title]="slot.player.name">{{ slot.player.name }}</p>
-
-            <div class="pedestal">
-                <div class="tag">
-                    <span class="place-label">{{ slot.label }}</span>
-                    <span class="percentage">{{ slot.player.votes / totalVotes | toPercentPipe }}</span>
-                </div>
-            </div>
+    <ng-container *ngIf="slots$ | async as slots">
+        <app-podium #podium [slots]="slots"></app-podium>
+        <div class="button-container" [style.--rest-delay]="podium.endDelay + 's'">
+            <button class="action-button correct" [disabled]="buttonsDisabled$ | async" (click)="onCorrect()">
+                <mat-icon fontIcon="check" aria-hidden="true"></mat-icon>
+                Correct
+            </button>
+            <button class="action-button incorrect" [disabled]="buttonsDisabled$ | async" (click)="onIncorrect()">
+                <mat-icon fontIcon="close" aria-hidden="true"></mat-icon>
+                Incorrect
+            </button>
         </div>
-    </div>
+        <!-- Everyone who is not on the podium -->
+        <app-player-rest-list [entries]="(restEntries$ | async) ?? []" [delay]="podium.endDelay"></app-player-rest-list>
+    </ng-container>
 
-    <div class="button-container" [style.--rest-delay]="(restDelay$ | async) + 's'">
-        <button class="action-button correct" [disabled]="buttonsDisabled$ | async" (click)="onCorrect()">
-            <mat-icon fontIcon="check" aria-hidden="true"></mat-icon>
-            Correct
-        </button>
-        <button class="action-button incorrect" [disabled]="buttonsDisabled$ | async" (click)="onIncorrect()">
-            <mat-icon fontIcon="close" aria-hidden="true"></mat-icon>
-            Incorrect
-        </button>
-    </div>
 
-    <!-- Everyone who is not on the podium -->
-    <div class="rest" [style.--rest-delay]="(restDelay$ | async) + 's'">
-        <div class="rest-item" *ngFor="let result of roundResults$ | async">
-            <app-player-tile [avatarPath]="result.avatarPath" [name]="result.name"
-                [infoText]="result.votes / totalVotes | toPercentPipe"></app-player-tile>
-        </div>
-    </div>
 </div>

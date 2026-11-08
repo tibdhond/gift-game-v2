@@ -26,6 +26,8 @@ import { MessageDisplayComponent } from './components/message-display/message-di
 import { PlayerImageComponent } from './components/player-image/player-image.component';
 import { DialogModule } from './components/dialogs/dialog.module';
 import { PlayerTileComponent } from './components/player-tile/player-tile.component';
+import { PodiumComponent } from './components/podium/podium.component';
+import { PlayerRestListComponent } from './components/player-rest-list/player-rest-list.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,9 @@ import { PlayerTileComponent } from './components/player-tile/player-tile.compon
     BannerComponent,
     MessageDisplayComponent,
     PlayerImageComponent,
-    PlayerTileComponent
+    PlayerTileComponent,
+    PodiumComponent,
+    PlayerRestListComponent
   ],
   imports: [
     CommonModule,

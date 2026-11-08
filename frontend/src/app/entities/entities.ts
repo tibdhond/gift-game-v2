@@ -34,7 +34,7 @@ export interface RoundResult {
 export interface PlayerResult {
     name: string;
     votes: number;
-    userId?: string;
+    userId: string;
     avatarPath?: string;
 }
 
@@ -58,6 +58,8 @@ export enum UserPhase {
 
 export interface GameResult {
     name: string;
+    userId: string;
+    avatarPath?: string;
     gift_score: number;
     vote_score: 0;
     self_vote_score: 0;
@@ -83,4 +85,16 @@ export interface PersonalRoundResult {
     target: string;
     correct: boolean;
     sabotage: boolean;
+}
+
+
+export interface PodiumSlot {
+    key: string;          // unique per player and context, used for trackBy
+    place: 1 | 2 | 3;
+    label: string;
+    name: string;
+    avatarPath?: string;
+    stat: string;         // already formatted, e.g. "42%" or "7"
+    statLabel?: string;   // e.g. "correcte stemmen"
+    delay: number;        // seconds, for the staged reveal
 }

@@ -50,7 +50,7 @@ def get_round_result(game_id: str) -> dict[str, Any]:
     if game.is_round_invalid():
         raise InvalidRoundException()
 
-    player_results: dict[str, Any] = {player.get_id(): {"name": player.name, "votes": 0, "avatarPath": player.avatar_path} for player in game.get_players()}
+    player_results: dict[str, Any] = {player.get_id(): {"name": player.name, "votes": 0, "avatarPath": player.avatar_path, "userId": player.get_id()} for player in game.get_players()}
 
     for vote_id in game.current_round().votes:
         vote: Vote = game.votes[vote_id]
@@ -83,7 +83,7 @@ def get_result(game_id: str) -> list[dict[str, Any]]:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
 
-    user_map: dict[str, Any] = {player.get_id(): {"name": player.name, "gift_score": 0, "vote_score": 0, "self_vote_score": 0, "target_correct": 0, "target_wrong": 0, "sabotage_score": 0} for player in game.get_players()}
+    user_map: dict[str, Any] = {player.get_id(): {"name": player.name, "gift_score": 0, "vote_score": 0, "self_vote_score": 0, "target_correct": 0, "target_wrong": 0, "sabotage_score": 0, "userId": player.get_id(), "avatarPath": player.avatar_path} for player in game.get_players()}
    
     for round in game.rounds:
         round_gift: Gift = game.gifts[round.gift_id]

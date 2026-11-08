@@ -71,6 +71,13 @@
     background: rgba(0, 0, 0, 0.6);
     box-shadow: 0 0 0 0.5rem rgba(0, 0, 0, 0.6);
     border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    .card-title {
+        margin-bottom: 0;
+    }
 }
 
 .delete-icon {

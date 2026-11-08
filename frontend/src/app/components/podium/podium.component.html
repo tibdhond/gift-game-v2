@@ -1,0 +1,19 @@
+<div class="podium">
+    <div class="step" *ngFor="let slot of slots; trackBy: trackSlot" [ngClass]="'place-' + slot.place"
+        [style.--delay]="slot.delay + 's'">
+
+        <div class="avatar">
+            <app-player-image [avatarPath]="slot.avatarPath" [bordered]="true" [clickable]="false"></app-player-image>
+            <span class="hat" *ngIf="slot.place === 1" aria-hidden="true"></span>
+        </div>
+        <p class="name" [title]="slot.name">{{ slot.name }}</p>
+
+        <div class="pedestal">
+            <div class="tag">
+                <span class="place-label">{{ slot.label }}</span>
+                <span class="stat">{{ slot.stat }}</span>
+                <span class="stat-label" *ngIf="slot.statLabel">{{ slot.statLabel }}</span>
+            </div>
+        </div>
+    </div>
+</div>
