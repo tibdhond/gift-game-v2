@@ -26,6 +26,7 @@ export interface RoundProgress {
 export interface RoundResult {
     roundNumber: number;
     gift: string;
+    giftImagePath?: string;
     playerResults: {
         [playerId: string]: PlayerResult
     }
@@ -34,6 +35,7 @@ export interface PlayerResult {
     name: string;
     votes: number;
     userId?: string;
+    avatarPath?: string;
 }
 
 export interface UserPhaseResult {

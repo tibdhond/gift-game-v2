@@ -6,7 +6,8 @@
     cursor: pointer;
 }
 
-.game-card, .tile-card {
+.game-card,
+.tile-card {
     width: 280px;
     height: 320px;
     display: flex;
@@ -18,20 +19,25 @@
     cursor: pointer;
     border-radius: 12px;
     border: 1px solid #e0e0e0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     position: relative;
     background-position: center;
     background-size: cover;
 }
 
-.game-card:active, .tile-card:active {
+.game-card:active,
+.tile-card:active {
     transform: scale(0.98);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .processing {
     opacity: 0.5 !important;
     pointer-events: none !important;
+}
+
+.unclickable {
+    pointer-events: none;
 }
 
 .self-vote-highlight {
@@ -61,7 +67,7 @@
     height: 100%;
 }
 
-.card-title-avatar {
+.avatar-tile-content {
     background: rgba(0, 0, 0, 0.6);
     box-shadow: 0 0 0 0.5rem rgba(0, 0, 0, 0.6);
     border-radius: 4px;

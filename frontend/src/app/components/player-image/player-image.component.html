@@ -1,4 +1,4 @@
-<div class="avatar-preview" (click)="onClick()" [class.pulse]="enablePulse">
+<div class="avatar-preview" (click)="onClick()" [class.pulse]="enablePulse" [class.unclickable]="!clickable">
   <ng-container *ngIf="avatarAvailable; else noAvatar">
     <img [src]="_avatarPath" [alt]="'Avatar'" (error)="onAvatarLoadError($event)" />
   </ng-container>

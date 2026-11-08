@@ -40,15 +40,13 @@ def get_gif():
     file = choice(os.listdir(f'{ROOT_PATH}/static/images'))
     return send_from_directory(f'{ROOT_PATH}/static/images', file)
 
-@app.route('/api/frontend-asset/<path:path>', methods=['GET'])
+@app.route('/api/frontend-assets/<path:path>', methods=['GET'])
 def get_frontend_assets(path: str=""):
     ROOT_PATH: Path = Path(current_app.root_path)
     BASE_DIR: str = f'{ROOT_PATH}/static/frontend/assets'
     
     requested_file = path
-    print(requested_file)
     if (path != "" and os.path.exists(f'{BASE_DIR}/{requested_file}')):
-        print("test")
         return send_from_directory(BASE_DIR, requested_file)
 
     return make_response({"errCode": "File not found"}, 404)
@@ -62,7 +60,6 @@ def new_game():
 
 @app.route('/api/ip', methods=['GET'])
 def get_ip():
-    print(shared.get_local_ip())
     ip = shared.get_local_ip()
     response = make_response([ip])
     response.headers["Content-Type"] = "text/plain"
@@ -192,7 +189,6 @@ def get_user_result(game_id: str, user_id: str):
 def get_avatar(game_id: str, user_id: str):
     ROOT_PATH = Path(current_app.root_path)
     if os.path.isfile(f'{ROOT_PATH}/static/avatars/{game_id}/{user_id}.jpg'):
-        print("not a file")
         return send_from_directory(f'{ROOT_PATH}/static/avatars/{game_id}', f'{user_id}.jpg')
     else:
         return make_response("User does not have an avatar", 404)

@@ -118,7 +118,6 @@ def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
     game: Game = cache.get_game(game_id)
     
     player: User = game.players[user_id]
-    print("test1.5")
     # Check file size (limit 4MB)
     file.seek(0, os.SEEK_END)
     size = file.tell()
@@ -136,9 +135,7 @@ def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
     
     try:
         # Open the image from the file stream
-        print("test1.6")
         img = Image.open(file.stream)
-        print("test2")
         
         # Convert to RGB (handles HEIC/HEIF/PNG transparency)
         if img.mode in ("RGBA", "P") or img.mode != "RGB":

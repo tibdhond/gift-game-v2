@@ -1,9 +1,9 @@
 <h2>Finale uitslag</h2>
 <div class="button-container">
-    <button class="game-button correct-button" (click)="onSetSortField('vote_score')">Detective</button>
-    <button class="game-button" (click)="onSetSortField('target_wrong')">Dief</button>
-    <button class="game-button" (click)="onSetSortField('gift_score')">Strategist</button>
-    <button class="game-button" (click)="onSetSortField('sabotage_score')">Saboteur</button>
+    <button class="action-button correct" (click)="onSetSortField('vote_score')">Detective</button>
+    <button class="action-button" (click)="onSetSortField('target_wrong')">Dief</button>
+    <button class="action-button" (click)="onSetSortField('gift_score')">Strategist</button>
+    <button class="action-button" (click)="onSetSortField('sabotage_score')">Saboteur</button>
 </div>
 
 <ng-container *ngIf="sortField$ | async as sortField">

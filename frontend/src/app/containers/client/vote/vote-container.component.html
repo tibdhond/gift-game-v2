@@ -4,7 +4,7 @@
         <ng-container *ngFor="let player of players">
             <app-player-tile [avatarPath]="player.avatarPath" [badge]="userId === player.id"
                 [badgeMessage]="'MIJN CADEAU'" [highlight]="userId === player.id" [isProcessing]="isProcessing"
-                [name]="player.name" (onTileClicked)="onVote(player.id)"></app-player-tile>
+                [name]="player.name" [clickable]="true" (onTileClicked)="onVote(player.id)"></app-player-tile>
         </ng-container>
     </div>
 </div>

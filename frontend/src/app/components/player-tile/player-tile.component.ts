@@ -13,6 +13,8 @@ export class PlayerTileComponent {
     @Input() badgeMessage: string = "";
     @Input() name: string = "";
     @Input() deleteIcon: boolean = false;
+    @Input() infoText?: string;
+    @Input() clickable: boolean = false
 
     @Output() onTileClicked: EventEmitter<void> = new EventEmitter();
     @Output() onDeleteClicked: EventEmitter<void> = new EventEmitter();

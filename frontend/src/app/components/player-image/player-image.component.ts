@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
 
 @Component({
     selector: 'app-player-image',
@@ -15,6 +15,16 @@ export class PlayerImageComponent {
     }
 
     @Input() enablePulse: boolean = false;
+    @Input() clickable: boolean = false;
+
+    @Input() size?: number;
+
+    @Input() @HostBinding('class.bordered') bordered = false;
+
+    @HostBinding('style.--player-image-size')
+    get sizeVar(): string | null {
+        return this.size ? `${this.size}px` : null; // null = no inline style, so CSS decides
+    }
 
     @Output() onAvatarClicked: EventEmitter<void> = new EventEmitter();
 

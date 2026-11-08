@@ -50,7 +50,7 @@ def get_round_result(game_id: str) -> dict[str, Any]:
     if game.is_round_invalid():
         raise InvalidRoundException()
 
-    player_results: dict[str, Any] = {player.get_id(): {"name": player.name, "votes": 0} for player in game.get_players()}
+    player_results: dict[str, Any] = {player.get_id(): {"name": player.name, "votes": 0, "avatarPath": player.avatar_path} for player in game.get_players()}
 
     for vote_id in game.current_round().votes:
         vote: Vote = game.votes[vote_id]
