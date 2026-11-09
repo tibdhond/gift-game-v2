@@ -80,6 +80,7 @@ $accent-color: #c0392b;
 }
 
 .action-button {
+    outline: none;
     --btn: var(--cranberry);
     --btn-dark: #7a1a1f;
 

@@ -4,7 +4,7 @@
     <div class="category-tabs" role="group" aria-label="Prijs">
         <button *ngFor="let c of categories" class="tab" [class.selected]="c.field === category.field"
             [attr.aria-pressed]="c.field === category.field" (click)="onSetSortField(c.field)">
-            <mat-icon [fontIcon]="c.icon" aria-hidden="true"></mat-icon>
+            <mat-icon [fontSet]="c.fontSet ?? ''" aria-hidden="true">{{c.icon}}</mat-icon>
             {{ c.title }}
         </button>
     </div>

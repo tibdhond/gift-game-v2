@@ -14,17 +14,18 @@ interface Category {
     field: ScoreField;
     title: string;
     icon: string;
+    fontSet?: string;
     description: string;
     statLabel: string;
 }
 
 const CATEGORIES: Category[] = [
     {
-        field: 'vote_score', title: 'Detective', icon: 'search', statLabel: 'correcte stemmen',
+        field: 'vote_score', title: 'Detective', icon: 'fingerprint', statLabel: 'correcte stemmen',
         description: 'Deze persoon is een echte detective en kon het meeste cadeaus aan de juiste persoon toekennen.'
     },
     {
-        field: 'target_wrong', title: 'Dief', icon: 'front_hand', statLabel: 'foute stemmen',
+        field: 'target_wrong', title: 'Dief', icon: 'domino_mask', fontSet: 'material-symbols-outlined', statLabel: 'foute stemmen',
         description: 'Als de cadeaus zouden meegaan met de persoon die de stemmen krijgt zou deze persoon de meeste cadeaus hebben. Deze persoon kreeg de meeste foutieve stemmen.'
     },
     {
