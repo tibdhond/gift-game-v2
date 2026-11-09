@@ -4,11 +4,12 @@ import json
 from flask import current_app
 from pathlib import Path
 
+from entities.exceptions import InvalidGameException
 from models.game import Game
 
 
 class Cache():
-    __instance: Cache = None
+    __instance: Cache | None = None
 
     @classmethod
     def get_instance(cls) -> Cache:
@@ -21,17 +22,17 @@ class Cache():
             Cache.__instance = self
             self.games: dict[str, Game] = {}
 
-    def get_game(self, id: str) -> Game | None:
+    def get_game(self, id: str) -> Game:
         ROOT_PATH = Path(current_app.root_path)
         if not id in self.games:
             if os.path.exists(f"{ROOT_PATH}/store/{id}.json"):
                 with open(f"{ROOT_PATH}/store/{id}.json", "r") as f:
                     self.games[id] = Game.from_json(json.load(f))
             else:
-                return None
+                raise InvalidGameException()
         return self.games[id]
         
-    def store_game(self, game: Game) -> None:
+    def store_game(self, game: Game | None) -> None:
         ROOT_PATH = Path(current_app.root_path)
         if game is None:
             raise Exception("Attempted to store empty Game state")

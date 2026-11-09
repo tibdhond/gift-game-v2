@@ -24,8 +24,8 @@ export class PersonalResultsContainerComponent extends BaseClientContainerCompon
 
     private router: Router = inject(Router);
 
-    constructor(protected override route: ActivatedRoute, private clientService: ClientService) {
-        super(route);
+    constructor(protected override route: ActivatedRoute, protected clientService: ClientService) {
+        super(route, clientService);
     }
 
     override ngOnInit(): void {

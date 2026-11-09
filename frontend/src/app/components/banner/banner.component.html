@@ -1,0 +1,14 @@
+<div class="banner-container">
+  <div class="banner-content">
+    <h1 class="game-title">{{ title }}</h1>
+    <ng-container *ngIf="username$ | async as username">
+      <div class="user-identity">
+        <span class="username">{{ username }}</span>
+        <app-player-image [avatarPath]="avatarUrl$ | async" [enablePulse]="!avatarAvailable"
+          (onAvatarClicked)="triggerUpload()" [clickable]="true"></app-player-image>
+      </div>
+      <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none"
+        accept="image/*, .heic, .heif" />
+    </ng-container>
+  </div>
+</div>

@@ -1,49 +1,30 @@
-<ng-container *ngIf="totalVotes$ | async as totalVotes">
-    <h2>Resultaten voor ronde {{roundNumber$ | async}}: <span class="accent">{{gift$ | async}}</span></h2>
-    <div class="podium">
-        <div *ngIf="thirdPlace$ | async as thirdPlace" class="rank third-place">
-            <h2>3de Plaats</h2>
-            <p>{{thirdPlace.name}}</p>
-            <p>{{thirdPlace.votes/totalVotes | toPercentPipe}}</p>
+<div class="stage" *ngIf="totalVotes$ | async as totalVotes">
+
+    <header class="round-header">
+        <div class="gift-image" *ngIf="giftImagePath$ | async as imagePath">
+            <img [src]="imagePath" [alt]="gift$ | async">
         </div>
-        <ng-container *ngIf="secondPlaces$ | async as secondPlaces">
-            <ng-container *ngIf="firstPlaces$ | async as firstPlaces">
-                <div class="rank second-place"
-                    *ngFor="let secondPlace of secondPlaces.slice(0, secondPlaces.length / 2)">
-                    <h2>2de Plaats</h2>
-                    <p>{{secondPlace.name}}</p>
-                    <p>{{secondPlace.votes/totalVotes | toPercentPipe}}</p>
-                </div>
+        <div class="round-heading">
+            <h2 class="round-title">Resultaten voor ronde {{((roundNumber$ | async) ?? 0)+1}}</h2>
+            <p class="gift-banner">{{gift$ | async}}</p>
+        </div>
+    </header>
 
-                <div class="rank first-place" *ngFor="let firstPlace of firstPlaces">
-                    <h2>1ste Plaats</h2>
-                    <p>{{firstPlace.name}}</p>
-                    <p>{{firstPlace.votes/totalVotes | toPercentPipe}}</p>
-                </div>
-                <div class="rank second-place" *ngFor="let secondPlace of secondPlaces.slice(secondPlaces.length / 2)">
-                    <h2>2de Plaats</h2>
-                    <p>{{secondPlace.name}}</p>
-                    <p>{{secondPlace.votes/totalVotes | toPercentPipe}}</p>
-                </div>
-            </ng-container>
-        </ng-container>
-    </div>
+    <ng-container *ngIf="slots$ | async as slots">
+        <app-podium #podium [slots]="slots"></app-podium>
+        <div class="button-container" [style.--rest-delay]="podium.endDelay + 's'">
+            <button class="action-button correct" [disabled]="buttonsDisabled$ | async" (click)="onCorrect()">
+                <mat-icon fontIcon="check" aria-hidden="true"></mat-icon>
+                Correct
+            </button>
+            <button class="action-button incorrect" [disabled]="buttonsDisabled$ | async" (click)="onIncorrect()">
+                <mat-icon fontIcon="close" aria-hidden="true"></mat-icon>
+                Incorrect
+            </button>
+        </div>
+        <!-- Everyone who is not on the podium -->
+        <app-player-rest-list [entries]="(restEntries$ | async) ?? []" [delay]="podium.endDelay"></app-player-rest-list>
+    </ng-container>
 
-    <div class="button-container">
-        <button class="game-button correct-button" [disabled]="buttonsDisabled$ | async"
-            (click)="onCorrect()">Correct</button>
-        <button class="game-button" (click)="onIncorrect()" [disabled]="buttonsDisabled$ | async">Incorrect</button>
-    </div>
 
-    <div class="player-container">
-        <ng-container *ngFor="let result of roundResults$ | async">
-            <div class="card card-shadow.card-marg game-card player-card">
-                <div class="card-body text-center">
-                    <mat-icon class="player-icon" aria-hidden="false" aria-label="player" fontIcon="person"></mat-icon>
-                    <h5 class="card-title player-name">{{result.name}}</h5>
-                    <p>{{result.votes/totalVotes | toPercentPipe}}</p>
-                </div>
-            </div>
-        </ng-container>
-    </div>
-</ng-container>
+</div>

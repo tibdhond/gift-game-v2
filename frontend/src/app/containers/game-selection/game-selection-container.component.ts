@@ -13,8 +13,8 @@ import { FormControl } from '@angular/forms';
 export class GameSelectionComponent extends BaseContainer implements OnInit {
     public gameSelectionControl: FormControl = new FormControl();
 
-    constructor(protected override route: ActivatedRoute, private gameService: GameService, private router: Router) {
-        super(route);
+    constructor(private route: ActivatedRoute, private gameService: GameService, private router: Router) {
+        super();
     }
 
     override ngOnInit(): void {

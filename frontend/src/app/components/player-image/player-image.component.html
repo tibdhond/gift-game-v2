@@ -1,0 +1,9 @@
+<div class="avatar-preview" (click)="onClick()" [class.pulse]="enablePulse" [class.unclickable]="!clickable">
+  <ng-container *ngIf="avatarAvailable; else noAvatar">
+    <img [src]="_avatarPath" [alt]="'Avatar'" (error)="onAvatarLoadError($event)" />
+  </ng-container>
+</div>
+
+<ng-template #noAvatar>
+  <mat-icon class="player-icon" aria-hidden="false" aria-label="player" fontIcon="person"></mat-icon>
+</ng-template>

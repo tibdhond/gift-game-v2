@@ -4,6 +4,7 @@ import string
 import json
 from random import choices, random, choice
 import math
+from typing import Any
 
 from models.round import Round
 from models.vote import Vote
@@ -16,23 +17,23 @@ from entities.exceptions import *
 
 class Game():
     @classmethod
-    def from_json(cls, json: dict) -> Game:
+    def from_json(cls, json: dict[str, Any]) -> Game:
         game: Game = Game()
-        game.id: string = json["id"]
-        game.host_id: str = json["host_id"]
-        game.random: bool = json.get("random", False)
-        game.self_vote: bool = json.get("self_vote", False)
-        game.phase: GamePhase = json.get("phase", GamePhase.STARTING)
-        game.rounds: list[Round] = [Round.from_json(round) for round in json["rounds"]]
-        game.votes: list[Vote] = { id: Vote.from_json(vote) for (id, vote) in json["votes"].items() }
-        game.players: list[User] = { id: User.from_json(user) for (id, user) in json["players"].items() }
-        game.gifts: list[Gift] = { id: Gift.from_json(gift) for (id, gift) in json["gifts"].items() }
+        game.id = json["id"]
+        game.host_id = json["host_id"]
+        game.random = json.get("random", False)
+        game.self_vote = json.get("self_vote", False)
+        game.phase = json.get("phase", GamePhase.STARTING)
+        game.rounds = [Round.from_json(round) for round in json["rounds"]]
+        game.votes = { id: Vote.from_json(vote) for (id, vote) in json["votes"].items() }
+        game.players = { id: User.from_json(user) for (id, user) in json["players"].items() }
+        game.gifts = { id: Gift.from_json(gift) for (id, gift) in json["gifts"].items() }
 
         return game
 
     def __init__(self):
         host_user: User = User('host', True)
-        self.id: string = ''.join(choices(string.ascii_uppercase + string.digits, k=4))
+        self.id: str = ''.join(choices(string.ascii_uppercase + string.digits, k=4))
         self.host_id: str = host_user.get_id()
         self.rounds: list[Round] = []
         self.votes: dict[str, Vote] = {}
@@ -73,7 +74,7 @@ class Game():
 
             if self.random:
                 length: int = len(gifts)
-                z: int = (2 / (length - 1)) / length
+                z: float = (2 / (length - 1)) / length
                 index: int = length - 1 - (math.floor(1 / 2 + math.sqrt(8 * random() + z) / (2 * math.sqrt(z))))
                 gift: Gift = gifts[index]
             else: # Get oldest gift
@@ -165,7 +166,7 @@ class Game():
     def current_round(self) -> Round:
         return self.rounds[-1]
     
-    def get_owner(self) -> list[str] | None:
+    def get_owner(self) -> list[str]:
         current_round: Round = self.current_round()
         
         owners: list[str] = []
@@ -207,5 +208,5 @@ class Game():
     
 
     # Util
-    def set_player_phase(self, player_id: string, phase: UserPhase):
+    def set_player_phase(self, player_id: str, phase: UserPhase):
         self.players[player_id].phase = phase

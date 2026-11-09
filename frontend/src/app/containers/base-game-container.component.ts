@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BaseContainer } from './base-container.component';
 import { Observable, map } from 'rxjs';
@@ -9,9 +9,9 @@ import { Observable, map } from 'rxjs';
 })
 export abstract class BaseGameContainer extends BaseContainer implements OnInit {
     protected gameId$!: Observable<string>;
-    
-    constructor(protected override route: ActivatedRoute) {
-        super(route);
+
+    constructor(protected route: ActivatedRoute) {
+        super();
     }
 
     override ngOnInit(): void {
