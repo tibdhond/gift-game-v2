@@ -1,27 +1,47 @@
-<h2>Personlijke resultaten</h2>
-<h4>Je stemde <span class="accent">{{voteScore$ | async}}</span> keer op het juiste persoon</h4>
-<h4 *ngIf="giftScore$ | async as gift_score">Je cadeau bleef <span class="accent">{{gift_score}}</span>
-    ronde{{gift_score > 1 ? 's' : ''}} in het spel</h4>
-<h4>Er werd <span class="accent">{{targetCorrect$ | async}}</span> keer correct op jou gestemd</h4>
-<h4>Er werd <span class="accent">{{targetWrong$ | async}}</span> keer foutief op jou gestemd</h4>
+<div class="results" *ngIf="{
+        vote: voteScore$ | async,
+        gift: giftScore$ | async,
+        correct: targetCorrect$ | async,
+        wrong: targetWrong$ | async
+    } as s">
 
-<table class="round-table">
-    <thead>
-        <tr>
-            <th>Ronde</th>
-            <th>Cadeau</th>
-            <th>stem</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let round of personalRounds$ | async; index as i"
-            [ngClass]="!round.valid ? 'invalid-row' : round.correct ? 'correct-row' : 'incorrect-row'">
-            <td>{{i}}</td>
-            <td>{{round.gift}}</td>
-            <td>{{round.target}}</td>
-            <td><mat-icon *ngIf="round.sabotage" aria-hidden="false" aria-label="gavel" fontIcon="gavel"></mat-icon>
-            </td>
-        </tr>
-    </tbody>
-</table>
+    <h2 class="page-title">Persoonlijke resultaten</h2>
+
+    <div class="stats">
+        <div class="stat hero" style="--i: 0">
+            <span class="stat-value">{{ s.vote }}</span>
+            <span class="stat-label">keer op de juiste persoon gestemd</span>
+        </div>
+        <div class="stat gift" style="--i: 1">
+            <span class="stat-value">{{ s.gift }}</span>
+            <span class="stat-label">{{ s.gift === 1 ? 'ronde' : 'rondes' }} bleef jouw cadeau in het spel</span>
+        </div>
+        <div class="stat correct" style="--i: 2">
+            <span class="stat-value">{{ s.correct }}</span>
+            <span class="stat-label">keer juist op jou gestemd</span>
+        </div>
+        <div class="stat wrong" style="--i: 3">
+            <span class="stat-value">{{ s.wrong }}</span>
+            <span class="stat-label">keer fout op jou gestemd</span>
+        </div>
+    </div>
+
+    <h3 class="rounds-title">Jouw rondes</h3>
+    <ol class="rounds">
+        <li class="round" *ngFor="let round of personalRounds$ | async; index as i"
+            [ngClass]="!round.valid ? 'invalid' : round.correct ? 'correct' : 'incorrect'">
+            <span class="round-number">{{ i + 1 }}</span>
+            <div class="round-info">
+                <span class="round-gift">{{ round.gift }}</span>
+                <span class="round-target">
+                    <span class="round-target-label">Jouw stem:</span>
+                    <span class="round-target-name">{{ round.target }}</span>
+                </span>
+            </div>
+            <mat-icon *ngIf="round.sabotage" class="sabotage" fontIcon="gavel"
+                aria-label="Jij zorgde dat deze ronde opnieuw moest"></mat-icon>
+            <mat-icon class="status" [fontIcon]="!round.valid ? 'remove' : round.correct ? 'check' : 'close'"
+                [attr.aria-label]="!round.valid ? 'Ongeldige ronde' : round.correct ? 'Juist' : 'Fout'"></mat-icon>
+        </li>
+    </ol>
+</div>

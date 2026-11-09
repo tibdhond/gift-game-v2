@@ -1,21 +1,197 @@
-.round-table {
-    margin-top: 2rem;
+:host {
+    display: block;
+}
 
-    & th,
-    td {
-        padding: 10px;
+.results {
+    max-width: 32rem;
+    margin: 0 auto;
+    padding: 1rem 1rem 2rem;
+    color: var(--snow, #f7f4ee);
+}
+
+/* ---------- Stat tiles (gift tags) ---------- */
+
+.stats {
+    margin-top: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+}
+
+.stat {
+    --accent: #aeb8c1;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.4rem 0.5rem 0.8rem;
+    border-radius: 14px;
+    border-bottom: 4px solid var(--accent);
+    background: rgba(16, 38, 31, 0.78);
+    text-align: center;
+
+    // Hole for the string, as on a gift tag
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0.5rem;
+        left: 50%;
+        width: 10px;
+        height: 10px;
+        margin-left: -5px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.45);
+        box-sizing: border-box;
     }
 
-    & tr {
+    // Staggered reveal, the only motion on this screen
+    animation: pop-in 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+    animation-delay: calc(var(--i, 0) * 0.12s + 0.1s);
+}
 
-        border: 1px solid white;
+.hero {
+    grid-column: 1 / -1;
+    padding-top: 1.8rem;
+    --accent: #d9a441;
+
+    .stat-value {
+        font-size: 4rem;
     }
 }
 
-.incorrect-row {
-    background-color: #c0392b;
+.correct {
+    --accent: #4caf6a;
 }
 
-.invalid-row {
-    opacity: 0.5;
+.wrong {
+    --accent: #d6504f;
+}
+
+.stat-value {
+    font-family: var(--font-display);
+    font-size: 2.4rem;
+    line-height: 1;
+    color: var(--accent);
+}
+
+.stat-label {
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+/* ---------- Rounds ---------- */
+
+.rounds-title {
+    margin: 2rem 0 0.75rem;
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+}
+
+.rounds {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.round {
+    --status: #8a959f;
+
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 12px;
+    border-left: 5px solid var(--status);
+    background: rgba(16, 38, 31, 0.78);
+
+    &.correct {
+        --status: #4caf6a;
+    }
+
+    &.incorrect {
+        --status: #d6504f;
+    }
+
+    &.invalid {
+        opacity: 0.55;
+    }
+}
+
+.round-number {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    font-weight: 800;
+}
+
+.round-info {
+    flex: 1;
+    min-width: 0; // lets long gift names wrap instead of pushing the icons out
+    display: flex;
+    flex-direction: column;
+}
+
+.round-gift {
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.round-target {
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+.round-target-name {
+    overflow-wrap: anywhere; // a very long name wraps instead of pushing the icons out
+}
+
+@media (max-width: 480px) {
+
+    .round-target-label,
+    .round-target-name {
+        display: block;
+    }
+
+    .round-target-name {
+        font-weight: 800; // optional: with its own line, the name can stand out
+        opacity: 1;
+    }
+}
+
+.status {
+    flex: none;
+    color: var(--status);
+}
+
+.sabotage {
+    flex: none;
+    opacity: 0.85;
+}
+
+@keyframes pop-in {
+    from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stat {
+        animation: none;
+    }
 }
