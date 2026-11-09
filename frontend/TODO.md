@@ -5,5 +5,3 @@
 # Gift image upload
 # Host waiting screen voter tracking
 # Wait screen rework (television)
-# Verify visiting login screen disabled when logged in
-# Verify visiting vote screen disabled when not in voting phase

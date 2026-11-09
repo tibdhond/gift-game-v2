@@ -11,6 +11,7 @@ import { RoundResultContainerComponent } from './containers/host/round-result/ro
 import { FinalResultContainerComponent } from './containers/host/final-results/final-results-container.component';
 import { PersonalResultsContainerComponent } from './containers/client/personal-results/personal-results-container.component';
 import { ClientLoginGuard } from './guards/login.guard';
+import { GamePhaseGuard } from './guards/game-phase.guard';
 
 const routes: Routes = [
   {
@@ -39,27 +40,28 @@ const routes: Routes = [
     children: [
       {
         path: 'login',
-        component: LoginContainerComponent
+        component: LoginContainerComponent,
+        canActivate: [GamePhaseGuard]
       },
       {
         path: 'waiting',
         component: WaitingContainerComponent,
-        canActivate: [ClientLoginGuard]
+        canActivate: [ClientLoginGuard, GamePhaseGuard]
       },
       {
         path: 'gift-opening',
         component: GiftOpenContainerComponent,
-        canActivate: [ClientLoginGuard]
+        canActivate: [ClientLoginGuard, GamePhaseGuard]
       },
       {
         path: 'vote',
         component: VoteContainerComponent,
-        canActivate: [ClientLoginGuard]
+        canActivate: [ClientLoginGuard, GamePhaseGuard]
       },
       {
         path: 'personal-results',
         component: PersonalResultsContainerComponent,
-        canActivate: [ClientLoginGuard]
+        canActivate: [ClientLoginGuard, GamePhaseGuard]
       }
     ]
   },
