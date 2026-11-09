@@ -3,74 +3,93 @@ import { Component, Input, OnInit, HostListener } from '@angular/core';
 export type BackgroundType = 'FLOATING' | 'TEXTURE' | 'PARALLAX' | 'BOKEH';
 
 interface Particle {
-  id: number;
-  top: number;
-  left: number;
-  size: number;
-  color: string;
-  duration: number;
-  delay: number;
+    id: number;
+    top: number;
+    left: number;
+    size: number;
+    color: string;
+    duration: number;
+    delay: number;
 }
 
 @Component({
-  selector: 'app-background-overlay',
-  templateUrl: './background-overlay.component.html',
-  styleUrls: ['./background-overlay.component.scss']
+    selector: 'app-background-overlay',
+    templateUrl: './background-overlay.component.html',
+    styleUrls: ['./background-overlay.component.scss']
 })
 export class BackgroundOverlayComponent implements OnInit {
-  @Input() type: BackgroundType = 'BOKEH';
+    @Input() type: BackgroundType = 'BOKEH';
 
-  particles: Particle[] = [];
+    particles: Particle[] = [];
 
-  constructor() {}
+    constructor() { }
 
-  ngOnInit(): void {
-    this.updateParticles();
-  }
-
-  @HostListener('window:resize')
-  onResize(): void {
-    this.updateParticles();
-  }
-
-  private updateParticles(): void {
-    const isDesktop = window.innerWidth >= 1024;
-    const count = isDesktop ? 35 : 12;
-    
-    const newParticles: Particle[] = [];
-    const cols = Math.ceil(Math.sqrt(count));
-    
-    for (let i = 0; i < count; i++) {
-      const row = Math.floor(i / cols);
-      const col = i % cols;
-      
-      // Map to a 90% area to provide a consistent margin
-      // If cols is 1 (count < 2), we default to 0 to avoid division by zero
-      const xBase = cols > 1 ? (col / (cols - 1)) * 80 + 10 : 50;
-      const yBase = cols > 1 ? (row / (cols - 1)) * 80 + 10 : 50;
-      
-      // Jitter allows for a natural, non-grid look while maintaining even spread
-      const jitter = (100 / cols) * 0.6;
-      
-      newParticles.push({
-        id: i,
-        top: yBase + (Math.random() * jitter * 2 - jitter),
-        left: xBase + (Math.random() * jitter * 2 - jitter),
-        size: Math.floor(Math.random() * 20) + 5,
-        color: this.getRandomColor(),
-        duration: Math.floor(Math.random() * 15) + 15,
-        delay: Math.floor(Math.random() * 20) - 10
-      });
+    ngOnInit(): void {
+        this.updateParticles();
     }
-    this.particles = newParticles;
-  }
 
-  private getRandomColor(): string {
-    const colors = ['#d4af37', '#c0392b', '#f1c40f', '#2ecc71', '#9b59b6', '#3498db', '#e67e22', '#ecf0f1', '#f39c12', '#bdc3c7'];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
+    private lastWidth = window.innerWidth;
 
-  setMode(mode: BackgroundType) {
-    this.type = mode;
-  }
+    @HostListener('window:resize')
+    onResize(): void {
+        if (window.innerWidth === this.lastWidth) {
+            return; // only the height changed, e.g. the mobile toolbar collapsing
+        }
+        this.lastWidth = window.innerWidth;
+        this.updateParticles();
+    }
+
+    private updateParticles(): void {
+        const count = window.innerWidth >= 1024 ? 35 : 20;
+        const aspect = window.innerWidth / window.innerHeight; // positions are in %, so scale x to compare real distances
+        const candidatesPerPoint = 12;   // higher = more even, lower = more random
+        const margin = 3;                // keep particle origins inside 3%..97%
+
+        const points: { x: number; y: number }[] = [];
+
+        for (let i = 0; i < count; i++) {
+            let best = { x: 50, y: 50 };
+            let bestDistance = -1;
+
+            const tries = i === 0 ? 1 : candidatesPerPoint;
+            for (let c = 0; c < tries; c++) {
+                const candidate = {
+                    x: margin + Math.random() * (100 - 2 * margin),
+                    y: margin + Math.random() * (100 - 2 * margin),
+                };
+
+                // squared distance to the nearest existing particle
+                const nearest = points.reduce((min, p) => {
+                    const dx = (candidate.x - p.x) * aspect;
+                    const dy = candidate.y - p.y;
+                    return Math.min(min, dx * dx + dy * dy);
+                }, Infinity);
+
+                if (nearest > bestDistance) {
+                    bestDistance = nearest;
+                    best = candidate;
+                }
+            }
+            points.push(best);
+        }
+
+        this.particles = points.map((point, i) => ({
+            id: i,
+            top: point.y,
+            left: point.x,
+            size: Math.floor(Math.random() * 20) + 5,
+            color: this.getRandomColor(),
+            duration: Math.floor(Math.random() * 15) + 15,
+            delay: Math.floor(Math.random() * 20) - 10,
+        }));
+    }
+
+    private getRandomColor(): string {
+        const colors = ['#d4af37', '#c0392b', '#f1c40f', '#2ecc71', '#9b59b6', '#3498db', '#e67e22', '#ecf0f1', '#f39c12', '#bdc3c7'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    setMode(mode: BackgroundType) {
+        this.type = mode;
+    }
 }
