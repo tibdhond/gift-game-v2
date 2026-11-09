@@ -1,12 +1,14 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, Observable, Subject, combineLatest, distinctUntilChanged, filter, interval, map, of, share, shareReplay, startWith, switchMap, take, takeUntil, takeWhile, tap } from 'rxjs';
-import { Player, PlayerResult, RoundProgress, RoundResult } from 'src/app/entities/entities';
+import { BehaviorSubject, Observable, combineLatest, map, of, shareReplay, startWith, switchMap, take, } from 'rxjs';
+import { PlayerResult, PodiumSlot, RoundResult } from 'src/app/entities/entities';
 import { HostService } from 'src/app/services/host.service';
 import { BaseGameContainer } from '../../base-game-container.component';
-import { orderBy, result } from 'lodash-es';
-
-declare function confetti(arg: any): void;
+import { orderBy } from 'lodash-es';
+import confetti from 'canvas-confetti';
+import { ToPercentPipe } from 'src/app/pipes/to-percent.pipe';
+import { buildPodiumSlots, rankPodium } from 'src/app/helpers/podium';
+import { RestEntry } from 'src/app/components/player-rest-list/player-rest-list.component';
 
 @Component({
     selector: 'round-result',
@@ -14,18 +16,20 @@ declare function confetti(arg: any): void;
     styleUrls: ['./round-result-container.component.scss'],
 })
 export class RoundResultContainerComponent extends BaseGameContainer implements OnInit, OnDestroy {
-    public roundResults$!: Observable<PlayerResult[]>;
+
+    public restEntries$!: Observable<RestEntry[]>;
     public roundNumber$!: Observable<number>;
     public gift$!: Observable<string>;
-    public firstPlaces$!: Observable<PlayerResult[]>;
-    public secondPlaces$!: Observable<PlayerResult[]>;
-    public thirdPlace$!: Observable<PlayerResult | undefined>;
     public totalVotes$!: Observable<number>;
     public buttonsDisabled$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    public giftImagePath$!: Observable<string | undefined>;
+    public slots$!: Observable<PodiumSlot[]>;
 
     private router: Router = inject(Router);
 
-    constructor(protected override route: ActivatedRoute, private hostService: HostService) {
+    private toPercent = new ToPercentPipe(); // works if your pipe has no constructor dependencies
+
+    constructor(protected override route: ActivatedRoute, private hostService: HostService, private ngZone: NgZone) {
         super(route);
     }
 
@@ -37,30 +41,39 @@ export class RoundResultContainerComponent extends BaseGameContainer implements 
             shareReplay(1)
         );
 
+        this.giftImagePath$ = roundResult_$.pipe(
+            map(result => result.giftImagePath),
+            shareReplay(1)
+        );
+
         const playerResults_$: Observable<PlayerResult[]> = roundResult_$.pipe(
             map(results => results.playerResults),
-            map(result => Object.entries(result).map(([userId, playerResult]) => ({ userId, ...playerResult }))),
             map(results => orderBy(results, ['votes'], ['desc'])),
             shareReplay(1)
         )
 
-        this.firstPlaces$ = playerResults_$.pipe(
-            map(results => results.filter(result => result.votes === results[0].votes)),
+        const ranked$ = playerResults_$.pipe(
+            map(results => rankPodium(results, result => result.votes)),
             shareReplay(1)
         );
 
-        this.secondPlaces$ = combineLatest([this.firstPlaces$, playerResults_$]).pipe(
-            map(([firstPlaces, results]) => firstPlaces.length > 1 ? [] : results.filter(result => results[1].votes > 0 && result.votes === results[1].votes).slice(0, 2)),
+        this.slots$ = combineLatest([ranked$, this.totalVotes$]).pipe(
+            map(([layout, total]) => buildPodiumSlots(layout, result => ({
+                key: result.userId,
+                name: result.name,
+                avatarPath: result.avatarPath,
+                stat: this.toPercent.transform(result.votes / total),
+            }))),
             shareReplay(1)
         );
 
-        this.thirdPlace$ = combineLatest([this.firstPlaces$, this.secondPlaces$, playerResults_$]).pipe(
-            map(([firstPlaces, secondPlaces, results]) => firstPlaces.length > 1 || secondPlaces.length > 1 || results.length <= 2 || results[2].votes === 0 ? undefined : results[2]),
-            shareReplay(1)
-        );
-
-        this.roundResults$ = combineLatest([this.firstPlaces$, this.secondPlaces$, this.thirdPlace$, playerResults_$]).pipe(
-            map(([firstPlaces, secondPlaces, thirdPlace, results]) => results.slice(firstPlaces.length + secondPlaces.length + (thirdPlace ? 1 : 0))),
+        this.restEntries$ = combineLatest([ranked$, this.totalVotes$]).pipe(
+            map(([layout, total]) => layout.rest.map(result => ({
+                key: result.userId,
+                name: result.name,
+                avatarPath: result.avatarPath,
+                stat: this.toPercent.transform(result.votes / total),
+            }))),
             shareReplay(1)
         );
 
@@ -108,47 +121,14 @@ export class RoundResultContainerComponent extends BaseGameContainer implements 
         });
     }
 
-    private fire(particleRatio: number, opts: any) {
-        const count = 200,
-            defaults = {
-                origin: { y: 0.6 },
-                direction: "top"
-            };
-
-        confetti(
-            Object.assign({}, defaults, opts, {
-                particleCount: Math.floor(count * particleRatio),
-                direction: "top"
-            })
-        );
-    }
-
     private confetti(): void {
-        this.fire(0.25, {
-            spread: 26,
-            startVelocity: 55,
-        });
-
-        this.fire(0.2, {
-            spread: 60,
-        });
-
-        this.fire(0.35, {
-            spread: 100,
-            decay: 0.91,
-            scalar: 0.8,
-        });
-
-        this.fire(0.1, {
-            spread: 120,
-            startVelocity: 25,
-            decay: 0.92,
-            scalar: 1.2,
-        });
-
-        this.fire(0.1, {
-            spread: 120,
-            startVelocity: 45,
+        const base = {
+            particleCount: 80, spread: 70, startVelocity: 60, ticks: 200,
+            colors: ['#a4262c', '#1b4332', '#d9a441', '#f7f4ee'], // Christmas palette
+        };
+        this.ngZone.runOutsideAngular(() => {
+            confetti({ ...base, angle: 60, origin: { x: 0, y: 0.85 } });
+            confetti({ ...base, angle: 120, origin: { x: 1, y: 0.85 } });
         });
     }
 

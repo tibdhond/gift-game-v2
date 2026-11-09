@@ -1,0 +1,34 @@
+<div class="gift-tag__content">
+
+  <div class="gift-tag__recipients">
+    <div class="recipient">
+      <span class="recipient__label">Van:</span>
+      <span class="recipient__name">{{ data.currentPlayer }}</span>
+    </div>
+
+    <div class="recipient">
+      <span class="recipient__label">Aan:</span>
+      <span class="recipient__name">{{ data.voteTarget }}</span>
+    </div>
+  </div>
+
+  <div class="gift-tag__divider">
+    <span>✦</span>
+  </div>
+
+  <p class="gift-tag__question">
+    {{ data.message }}
+  </p>
+
+  <div class="gift-tag__actions">
+    <button mat-flat-button class="gift-tag__confirm" (click)="confirm()">
+      {{ data.confirmText }}
+    </button>
+
+    <button mat-stroked-button class="gift-tag__cancel" (click)="cancel()">
+      {{ data.cancelText }}
+    </button>
+
+  </div>
+
+</div>

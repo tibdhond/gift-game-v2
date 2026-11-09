@@ -1,0 +1,19 @@
+<div class="card card-shadow card-marg" [class.tile-card]="avatarPath" [class.game-card]="!avatarPath"
+    [class.self-vote-highlight]="highlight" [class.processing]="isProcessing" [class.unclickable]="!clickable"
+    [style.background-image]="'url(' + avatarPath + ')'" (click)="onClick()">
+    <div class="card-body text-center">
+        <ng-container *ngIf="!avatarPath">
+            <app-player-image [avatarPath]="avatarPath"></app-player-image>
+        </ng-container>
+        <div [class.avatar-tile-content]="!!avatarPath">
+            <h5 class="card-title">{{name}}</h5>
+            <p class="card-text">{{infoText}}</p>
+        </div>
+        <span *ngIf="badge" class="badge-gold">{{badgeMessage}}</span>
+        <ng-container *ngIf="deleteIcon">
+            <button class="remove-btn" type="submit" name="person" (click)="onDeleteClick()">
+                <mat-icon class="delete-icon" aria-hidden="false" aria-label="delete" fontIcon="delete"></mat-icon>
+            </button>
+        </ng-container>
+    </div>
+</div>

@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100lvh;
   z-index: -1;
   overflow: hidden;
 }
@@ -19,19 +19,24 @@
 
 .bg-texture {
   background-color: #224133;
-  background-image: 
+  background-image:
     /* A subtle organic grain/linen texture */
-    radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0),
-    radial-gradient(circle at 4px 4px, rgba(255,255,255,0.05) 2px, transparent 0),
+    radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.05) 1px, transparent 0),
+    radial-gradient(circle at 4px 4px, rgba(255, 255, 255, 0.05) 2px, transparent 0),
     /* A periodic grid pattern for structure */
-    linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.03) 75%, transparent 75%, transparent);
+    linear-gradient(45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.03) 50%, rgba(255, 255, 255, 0.03) 75%, transparent 75%, transparent);
   background-size: 20px 20px, 40px 40px, 60px 60px;
   animation: drift 40s linear infinite;
 }
 
 @keyframes drift {
-  from { background-position: 0 0; }
-  to { background-position: 100px 100px; }
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 100px 100px;
+  }
 }
 
 /* --- Floating --- */
@@ -57,13 +62,14 @@
   0% {
     transform: translate(0, 0) rotate(0deg);
   }
+
   50% {
     transform: translate(30px, 50px) rotate(90deg);
   }
+
   100% {
     transform: translate(-20px, 100px) rotate(180deg);
   }
 }
 
 /* --- Parallax --- */
-

@@ -48,4 +48,5 @@ Thumbs.db
 /frontend/.vscode
 /frontend/dist
 /backend/static/frontend/*
+/backend/static/avatars/*
 

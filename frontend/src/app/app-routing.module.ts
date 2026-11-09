@@ -10,6 +10,7 @@ import { VoteContainerComponent } from './containers/client/vote/vote-container.
 import { RoundResultContainerComponent } from './containers/host/round-result/round-result-container.component';
 import { FinalResultContainerComponent } from './containers/host/final-results/final-results-container.component';
 import { PersonalResultsContainerComponent } from './containers/client/personal-results/personal-results-container.component';
+import { ClientLoginGuard } from './guards/login.guard';
 
 const routes: Routes = [
   {
@@ -42,19 +43,23 @@ const routes: Routes = [
       },
       {
         path: 'waiting',
-        component: WaitingContainerComponent
+        component: WaitingContainerComponent,
+        canActivate: [ClientLoginGuard]
       },
       {
         path: 'gift-opening',
-        component: GiftOpenContainerComponent
+        component: GiftOpenContainerComponent,
+        canActivate: [ClientLoginGuard]
       },
       {
         path: 'vote',
-        component: VoteContainerComponent
+        component: VoteContainerComponent,
+        canActivate: [ClientLoginGuard]
       },
       {
         path: 'personal-results',
-        component: PersonalResultsContainerComponent
+        component: PersonalResultsContainerComponent,
+        canActivate: [ClientLoginGuard]
       }
     ]
   },

@@ -7,3 +7,20 @@ A reverse secret santa game. Everyone buys their own gift. The gift are deposite
 Gift game V2 is a more stable version of the game than the original version. It also was designed with persistent game state presevation in mind from the start instead of it being added as an afterthought.
 
 Written with a Python/Flask backend and a Typescript/Angular frontend.
+
+
+## Installation
+
+### In the frontend folder
+Run 
+```npm install``` and 
+```npm run build```
+
+### In the backend folder
+Run ```pip install -r requirements.txt```
+
+
+## Running the app
+
+### In the backend folder
+Run ```python main.py``` 

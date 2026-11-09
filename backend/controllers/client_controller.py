@@ -1,4 +1,5 @@
 import os
+from typing import Any
 from PIL import Image
 from pathlib import Path
 from flask import current_app
@@ -8,6 +9,9 @@ from models.game import Game
 from models.user import User
 from models.gift import Gift
 from models.vote import Vote
+from pillow_heif import register_heif_opener
+
+register_heif_opener()
 
 def login(game_id: str, name: str) -> str:
     cache: Cache = Cache.get_instance()
@@ -16,7 +20,7 @@ def login(game_id: str, name: str) -> str:
     user: User | None = game.get_user(name)
 
     if not user:
-        user: User = User(name)
+        user = User(name)
         game.add_user(user)
         cache.store_game(game)
     return user.get_id()
@@ -29,11 +33,24 @@ def vote(game_id: str, voter_id: str, target_id: str) -> None:
 
     cache.store_game(game)
 
-def get_user_phase(game_id: str, user_id: str) -> dict:
+def get_user_info(game_id: str, user_id: str) -> dict[str, Any]:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
 
-    if not game or not game.players:
+    if not game.players:
+            return {}
+    
+    user: User | None = game.players[user_id] if user_id in game.players else None
+    if not user:
+        return {}
+    
+    return ({ "userId": user.get_id(), "name": user.name, "avatarPath": user.avatar_path })
+
+def get_user_phase(game_id: str, user_id: str) -> dict[str, Any]:
+    cache: Cache = Cache.get_instance()
+    game: Game = cache.get_game(game_id)
+
+    if not game.players:
         return { "phase": "UNREGISTERED" }
 
     return { "phase": game.players[user_id].phase if user_id in game.players else "UNREGISTERED" }
@@ -46,13 +63,13 @@ def add_gift(game_id: str, user_id: str, description: str) -> None:
 
     cache.store_game(game)
 
-def get_result(game_id: str, user_id: str) -> dict:
+def get_result(game_id: str, user_id: str) -> dict[str, Any]:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
 
     user_gift: Gift = [gift for gift in game.gifts.values() if gift.owner == user_id][0]
 
-    result: dict = { "self_vote_score": 0, "vote_score": 0, "gift_score": 0, "sabotage_score": 0, "target_correct": 0, "target_wrong": 0, "rounds": []}
+    result: dict[str, Any] = { "self_vote_score": 0, "vote_score": 0, "gift_score": 0, "sabotage_score": 0, "target_correct": 0, "target_wrong": 0, "rounds": []}
 
     for round in game.rounds:
         round_gift: Gift = game.gifts[round.gift_id]
@@ -99,11 +116,8 @@ def get_result(game_id: str, user_id: str) -> dict:
 def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
-    if not game:
-        raise Exception("Game not found")
     
     player: User = game.players[user_id]
-    
     # Check file size (limit 4MB)
     file.seek(0, os.SEEK_END)
     size = file.tell()
@@ -131,7 +145,8 @@ def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
         img.save(filepath, "JPEG", quality=90)
         
         # Update game state
-        player.avatar_path = str(filepath)
+        player.avatar_version += 1
+        player.avatar_path = f"api/{game_id}/players/{user_id}/avatar?version={player.avatar_version}"
         
         # Commit to store
         cache.store_game(game)

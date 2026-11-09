@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { catchError, EMPTY, switchMap, take, takeUntil, withLatestFrom } from 'rxjs';
-import { GameService } from 'src/app/services/game.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BaseContainer } from '../../base-container.component';
 import { BaseGameContainer } from '../../base-game-container.component';
 import { FormControl, Validators } from '@angular/forms';
-import { ClientService } from 'src/app/services/client.service';
+import { ClientService } from '../../../services/client.service';
+import { LocalStorageService } from '../../../services/localstorage.service';
 
 @Component({
     selector: 'login-container',
@@ -17,7 +16,8 @@ export class LoginContainerComponent extends BaseGameContainer {
     constructor(
         protected override route: ActivatedRoute,
         private clientService: ClientService,
-        private router: Router
+        private router: Router,
+        private localStorageService: LocalStorageService
     ) {
         super(route);
     }
@@ -34,7 +34,7 @@ export class LoginContainerComponent extends BaseGameContainer {
                 }),
                 takeUntil(this.destroy$)
             ).subscribe(([result, gameId]) => {
-                localStorage.setItem('userId', result.user_id);
+                this.localStorageService.setUserId(result.user_id);
                 this.router.navigate(['client', gameId, 'waiting']);
             })
         }

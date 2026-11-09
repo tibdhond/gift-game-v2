@@ -1,0 +1,5 @@
+<div class="rest" [style.--rest-delay]="delay + 's'">
+    <div class="rest-item" *ngFor="let entry of entries; trackBy: trackEntry">
+        <app-player-tile [avatarPath]="entry.avatarPath" [name]="entry.name" [infoText]="entry.stat"></app-player-tile>
+    </div>
+</div>

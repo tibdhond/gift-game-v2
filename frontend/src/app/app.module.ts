@@ -21,6 +21,13 @@ import { ToPercentPipe } from './pipes/to-percent.pipe';
 import { BackgroundOverlayComponent } from './components/background-overlay/background-overlay.component';
 import { FinalResultContainerComponent } from './containers/host/final-results/final-results-container.component';
 import { PersonalResultsContainerComponent } from './containers/client/personal-results/personal-results-container.component';
+import { BannerComponent } from './components/banner/banner.component';
+import { MessageDisplayComponent } from './components/message-display/message-display.component';
+import { PlayerImageComponent } from './components/player-image/player-image.component';
+import { DialogModule } from './components/dialogs/dialog.module';
+import { PlayerTileComponent } from './components/player-tile/player-tile.component';
+import { PodiumComponent } from './components/podium/podium.component';
+import { PlayerRestListComponent } from './components/player-rest-list/player-rest-list.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +43,13 @@ import { PersonalResultsContainerComponent } from './containers/client/personal-
     FinalResultContainerComponent,
     PersonalResultsContainerComponent,
     ToPercentPipe,
-    BackgroundOverlayComponent
+    BackgroundOverlayComponent,
+    BannerComponent,
+    MessageDisplayComponent,
+    PlayerImageComponent,
+    PlayerTileComponent,
+    PodiumComponent,
+    PlayerRestListComponent
   ],
   imports: [
     CommonModule,
@@ -46,7 +59,8 @@ import { PersonalResultsContainerComponent } from './containers/client/personal-
     BrowserModule,
     AppRoutingModule,
     MatIconModule,
-    QRCodeModule
+    QRCodeModule,
+    DialogModule
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent]

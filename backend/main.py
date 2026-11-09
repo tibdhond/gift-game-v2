@@ -1,10 +1,11 @@
-from flask import Flask, current_app, render_template, make_response, request, send_from_directory
+from typing import Any
+
+from flask import Flask, current_app, make_response, request, send_from_directory
 from werkzeug.datastructures import FileStorage
 from flask_cors import CORS, cross_origin
 
 import os
 from pathlib import Path
-import socket
 
 import controllers.shared_controller as shared
 import controllers.client_controller as client
@@ -25,7 +26,7 @@ ROOT_PATH = Path(app.root_path) / "static" / "frontend"
 # region shared 
 @app.route('/', methods=["GET"])
 @app.route('/<path:path>', methods=["GET"])
-def index(path=""):
+def index(path:str=""):
     requested_file = ROOT_PATH / path
     if path != "" and requested_file.exists():
         return send_from_directory(ROOT_PATH, path)
@@ -39,6 +40,18 @@ def get_gif():
     file = choice(os.listdir(f'{ROOT_PATH}/static/images'))
     return send_from_directory(f'{ROOT_PATH}/static/images', file)
 
+@app.route('/api/frontend-assets/<path:path>', methods=['GET'])
+def get_frontend_assets(path: str=""):
+    ROOT_PATH: Path = Path(current_app.root_path)
+    BASE_DIR: str = f'{ROOT_PATH}/static/frontend/assets'
+    
+    requested_file = path
+    if (path != "" and os.path.exists(f'{BASE_DIR}/{requested_file}')):
+        return send_from_directory(BASE_DIR, requested_file)
+
+    return make_response({"errCode": "File not found"}, 404)
+
+
 
 @app.route('/api/new-game', methods=['POST'])
 def new_game():
@@ -47,17 +60,10 @@ def new_game():
 
 @app.route('/api/ip', methods=['GET'])
 def get_ip():
-    local_hostname = socket.gethostname()
-
-    # Step 2: Get a list of IP addresses associated with the hostname.
-    ip_addresses = socket.gethostbyname_ex(local_hostname)[2]
-
-    # Step 3: Filter out loopback addresses (IPs starting with "127.").
-    filtered_ips = [ip for ip in ip_addresses if not ip.startswith("127.")]
-
-    # Step 4: Extract the first IP address (if available) from the filtered list.
-    first_ip = filtered_ips[:1]
-    return make_response(first_ip)
+    ip = shared.get_local_ip()
+    response = make_response([ip])
+    response.headers["Content-Type"] = "text/plain"
+    return response
 
 
 # endregion
@@ -104,7 +110,7 @@ def reset_round(game_id: str):
 @app.route('/api/<string:game_id>/round/result', methods=["GET"])
 def round_result(game_id: str):
     try:
-        result: dict = host.get_round_result(game_id)
+        result: dict[str, Any] = host.get_round_result(game_id)
         return make_response(result, 200)
     except InvalidRoundException as e:
         return make_response({"errCode": "InvalidRound", "msg": "You cannot start a new round while the current round is invalid. Reset the round to continue."}, 403)
@@ -152,6 +158,10 @@ def vote(game_id: str):
         print(e)
         return make_response(e, 400)
 
+@app.route('/api/<string:game_id>/players/<string:user_id>', methods=["GET"])
+def get_user_info(game_id: str, user_id: str):
+    return client.get_user_info(game_id, user_id)
+
 @app.route('/api/<string:game_id>/players/<string:user_id>/phase', methods=["GET"])
 def get_user_phase(game_id: str, user_id: str):
     return client.get_user_phase(game_id, user_id)
@@ -175,9 +185,17 @@ def add_gift(game_id: str):
 def get_user_result(game_id: str, user_id: str):
     return make_response(client.get_result(game_id, user_id), 200)
 
+@app.route('/api/<string:game_id>/players/<string:user_id>/avatar', methods=['GET'])
+def get_avatar(game_id: str, user_id: str):
+    ROOT_PATH = Path(current_app.root_path)
+    if os.path.isfile(f'{ROOT_PATH}/static/avatars/{game_id}/{user_id}.jpg'):
+        return send_from_directory(f'{ROOT_PATH}/static/avatars/{game_id}', f'{user_id}.jpg')
+    else:
+        return make_response("User does not have an avatar", 404)
+
 @app.route('/api/<string:game_id>/players/<string:user_id>/avatar', methods=['POST'])
 def upload_avatar(game_id: str, user_id: str):
-    file: FileStorage = request.files.get('avatar')
+    file: FileStorage | None = request.files.get('avatar')
 
     if not file:
         return make_response({"errCode": "NoFile", "msg": "No avatar file provided"}, 400)
