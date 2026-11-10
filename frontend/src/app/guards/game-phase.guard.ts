@@ -73,7 +73,10 @@ export const GamePhaseGuard: CanActivateFn = (route, state) => {
                     }
                     return redirectTo(['client', gameId, 'waiting'].join('/'));
                 default:
-                    return redirectTo(['/'].join('/'));
+                    if (pageUrl === 'login') {
+                        return true;
+                    }
+                    return redirectTo(['client', gameId, 'login'].join('/'));
             }
         })
     );

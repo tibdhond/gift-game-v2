@@ -19,31 +19,12 @@
 }
 
 .stat {
-    --accent: #aeb8c1;
-
-    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 1.4rem 0.5rem 0.8rem;
-    border-radius: 14px;
-    border-bottom: 4px solid var(--accent);
     background: rgba(16, 38, 31, 0.78);
     text-align: center;
-
-    // Hole for the string, as on a gift tag
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0.5rem;
-        left: 50%;
-        width: 10px;
-        height: 10px;
-        margin-left: -5px;
-        border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, 0.45);
-        box-sizing: border-box;
-    }
 
     // Staggered reveal, the only motion on this screen
     animation: pop-in 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
@@ -53,19 +34,10 @@
 .hero {
     grid-column: 1 / -1;
     padding-top: 1.8rem;
-    --accent: #d9a441;
 
     .stat-value {
         font-size: 4rem;
     }
-}
-
-.correct {
-    --accent: #4caf6a;
-}
-
-.wrong {
-    --accent: #d6504f;
 }
 
 .stat-value {

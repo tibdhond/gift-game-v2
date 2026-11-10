@@ -1,11 +1,22 @@
 <div class="selection-container">
-    <button type="button" class="btn btn-primary" id="host-button" (click)="onNewGame()">HOST</button>
-    <div>of</div>
-    <div class="input-container">
+    <button type="button" class="action-button host" id="host-button" (click)="onNewGame()">
+        <mat-icon fontIcon="redeem" aria-hidden="true"></mat-icon>
+        Nieuw spel
+    </button>
+
+    <p class="divider">of</p>
+
+    <app-tag-card class="join-card">
         <label for="gameSelection">Geef code in om mee te doen:</label>
-        <div>
-            <input type=" text" class="form-control" id="gameSelection" [formControl]="gameSelectionControl" />
-            <button type="button" class="btn btn-secondary" (click)="onJoinGame()">JOIN</button>
+        <div class="join-row">
+            <input type="text" id="gameSelection" class="code-input" autocomplete="off" [class.invalid]="gameInvalid"
+                [attr.aria-invalid]="gameInvalid" [formControl]="gameSelectionControl" (keyup.enter)="onJoinGame()" />
+            <button type="button" class="action-button round" aria-label="Meedoen" (click)="onJoinGame()">
+                <mat-icon fontIcon="send" aria-hidden="true"></mat-icon>
+            </button>
         </div>
-    </div>
+        <p *ngIf="gameInvalid" class="error" role="alert">
+            {{ gameSelectionControl.value }} is geen geldige code
+        </p>
+    </app-tag-card>
 </div>

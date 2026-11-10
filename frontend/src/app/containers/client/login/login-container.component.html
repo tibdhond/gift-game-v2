@@ -1,19 +1,14 @@
-<div class="container card-container">
-    <div class="row">
-        <div class="card game-card login-card">
-            <div class="card-body">
-                <h2 style="text-align:center">Login</h2>
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <div class="field">
-                            <label>Naam</label>
-                            <input class="form-control" id="title" type="text" name="Name" required="true"
-                                [formControl]="loginControl" />
-                        </div>
-                    </div>
-                </div><button class="btn action-button" type="submit" style="float:right"
-                    (click)="onLogin()">Submit</button>
-            </div>
+<div class="centered-page">
+    <app-tag-card class="login-card">
+        <h2 class="page-title card-title">Login</h2>
+
+        <label class="field-label" for="loginName">Naam</label>
+        <div class="input-row">
+            <input type="text" id="loginName" class="game-input" required autocomplete="nickname" enterkeyhint="go"
+                [formControl]="loginControl" (keyup.enter)="onLogin()" />
+            <button type="button" class="action-button round" aria-label="Inloggen" (click)="onLogin()">
+                <mat-icon fontIcon="send" aria-hidden="true"></mat-icon>
+            </button>
         </div>
-    </div>
+    </app-tag-card>
 </div>

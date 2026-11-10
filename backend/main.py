@@ -51,12 +51,16 @@ def get_frontend_assets(path: str=""):
 
     return make_response({"errCode": "File not found"}, 404)
 
-
-
 @app.route('/api/new-game', methods=['POST'])
 def new_game():
     game_id = shared.new_game()
     return make_response({ "game_id": game_id }, 201)
+
+@app.route('/api/<string:game_id>', methods=['HEAD'])
+def game_exists(game_id: str):
+    if shared.game_exists(game_id):
+        return make_response('', 200)
+    return make_response({"errCode": "EInvalidGame", "msg": f"A game with id {game_id} does not exist."}, 404)
 
 @app.route('/api/ip', methods=['GET'])
 def get_ip():

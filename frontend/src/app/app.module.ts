@@ -28,6 +28,7 @@ import { DialogModule } from './components/dialogs/dialog.module';
 import { PlayerTileComponent } from './components/player-tile/player-tile.component';
 import { PodiumComponent } from './components/podium/podium.component';
 import { PlayerRestListComponent } from './components/player-rest-list/player-rest-list.component';
+import { TagCardComponent } from './components/tag-card/tag-card.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { PlayerRestListComponent } from './components/player-rest-list/player-re
     PlayerImageComponent,
     PlayerTileComponent,
     PodiumComponent,
-    PlayerRestListComponent
+    PlayerRestListComponent,
+    TagCardComponent
   ],
   imports: [
     CommonModule,

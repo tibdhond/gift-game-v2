@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { take, takeUntil } from 'rxjs';
+import { filter, take, takeUntil } from 'rxjs';
 import { GameService } from 'src/app/services/game.service';
 import { BaseContainer } from '../base-container.component';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,6 +13,8 @@ import { FormControl } from '@angular/forms';
 export class GameSelectionComponent extends BaseContainer implements OnInit {
     public gameSelectionControl: FormControl = new FormControl();
 
+    public gameInvalid: boolean = false;
+
     constructor(private route: ActivatedRoute, private gameService: GameService, private router: Router) {
         super();
     }
@@ -25,6 +27,13 @@ export class GameSelectionComponent extends BaseContainer implements OnInit {
                 }
             }
         );
+
+        this.gameSelectionControl.valueChanges.pipe(
+            filter(() => this.gameInvalid),
+            takeUntil(this.destroy$)
+        ).subscribe(() => {
+            this.gameInvalid = false;
+        })
     }
 
     public onNewGame(): void {
@@ -37,6 +46,14 @@ export class GameSelectionComponent extends BaseContainer implements OnInit {
     }
 
     public onJoinGame(): void {
-        this.router.navigate([`client/${this.gameSelectionControl.value}/login`])
+        this.gameService.isValidGame(this.gameSelectionControl.value).pipe(
+            take(1)
+        ).subscribe(isValid => {
+            if (isValid) {
+                return this.router.navigate([`client/${this.gameSelectionControl.value}/login`])
+            }
+            this.gameInvalid = true;
+            return;
+        })
     }
 }

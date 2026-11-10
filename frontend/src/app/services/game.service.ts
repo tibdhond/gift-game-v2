@@ -1,6 +1,6 @@
 import { Component, inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { GameCreationResult, PlayersResult } from '../entities/entities';
 import { UtilService } from './util.service';
 
@@ -31,6 +31,10 @@ export class GameService {
         return this.http.delete<T>(`${this.apiUrl}/${url}`, { headers });
     }
 
+    protected head<T>(url: string, headers: HttpHeaders = new HttpHeaders()): Observable<T> {
+        return this.http.head<T>(`${this.apiUrl}/${url}`, { headers })
+    }
+
     public startNewGame(): Observable<GameCreationResult> {
         return this.post(`new-game`, {});
     }
@@ -41,5 +45,12 @@ export class GameService {
             url += '?filtered=true';
         }
         return this.get(url);
+    }
+
+    public isValidGame(gameId: string): Observable<boolean> {
+        return this.head(gameId).pipe(
+            map(() => true), // return 200 if the game exists or 404 if it doesn't, which throws an error
+            catchError(() => of(false))
+        );
     }
 }

@@ -2,7 +2,7 @@ import { Component, Input, ViewChild, ElementRef, OnInit, OnDestroy } from '@ang
 import { ClientService } from '../../services/client.service';
 import { MessageService } from '../../services/message.service';
 import { NavigationEnd, Params, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs';
 import { BaseContainer } from '../../containers/base-container.component';
 import { UserInfoResult } from '../../entities/entities';
 import { LocalStorageService } from '../../services/localstorage.service';
@@ -42,24 +42,29 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
             takeUntil(this.destroy$));
 
         const userInfo$: Observable<UserInfoResult | null> = combineLatest([this.gameId$, userId$, this.refreshTrigger$]).pipe(
-                switchMap(([gameId, userId, _]) => userId ? this.client.getUserInfo(gameId, userId) : of(null)),
-                shareReplay(1)
-            );
+            switchMap(([gameId, userId, _]) => userId && gameId ? this.client.getUserInfo(gameId, userId).pipe(
+                catchError((e) => {
+                    console.error('Failed fetching user info', e);
+                    return of(null);
+                })
+            ) : of(null)),
+            shareReplay(1)
+        );
 
         this.username$ = userInfo$.pipe(
             map(userInfo => userInfo ? userInfo.name : undefined)
         );
 
         this.avatarUrl$ = userInfo$.pipe(
-                tap(userInfo => {
-                    if (!userInfo?.avatarPath) {
-                        this.avatarAvailable = false;
-                    } else {
-                        this.avatarAvailable = true;
-                    }
-                }),
-                map(userInfo => userInfo ? userInfo.avatarPath : undefined)
-            );
+            tap(userInfo => {
+                if (!userInfo?.avatarPath) {
+                    this.avatarAvailable = false;
+                } else {
+                    this.avatarAvailable = true;
+                }
+            }),
+            map(userInfo => userInfo ? userInfo.avatarPath : undefined)
+        );
 
         userId$.pipe(takeUntil(this.destroy$)).subscribe(userId => {
             this.userId = userId;

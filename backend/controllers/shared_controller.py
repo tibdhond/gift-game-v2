@@ -1,5 +1,6 @@
 import socket
 
+from entities.exceptions import InvalidGameException
 from models.game import Game
 from cache import Cache
 from models.user import User
@@ -11,6 +12,15 @@ def new_game() -> str:
     cache.store_game(game)
 
     return game.id
+
+def game_exists(game_id: str) -> bool:
+    cache: Cache = Cache.get_instance()
+
+    try:
+        cache.get_game(game_id)
+        return True
+    except InvalidGameException:
+        return False
 
 def get_players(game_id: str, filtered: bool = False) -> list[User]:
     cache: Cache = Cache.get_instance()
@@ -24,6 +34,7 @@ def get_local_ip():
 
     try:
         s.connect(("8.8.8.8", 80))
+        print(s.getsockname())
         return s.getsockname()[0]
     except OSError:
         return None

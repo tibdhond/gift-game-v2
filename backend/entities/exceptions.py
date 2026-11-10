@@ -1,17 +1,17 @@
-class InvalidRoundException(Exception):
+class InvalidRoundException(BaseException):
     pass
 
-class OngoingRoundException(Exception):
+class OngoingRoundException(BaseException):
     pass
 
-class UserHasVotedException(Exception):
+class UserHasVotedException(BaseException):
     pass
 
-class GameFinishedException(Exception):
+class GameFinishedException(BaseException):
     pass
 
-class GiftCreationException(Exception):
+class GiftCreationException(BaseException):
     pass
 
-class InvalidGameException(Exception):
+class InvalidGameException(BaseException):
     pass

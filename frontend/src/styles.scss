@@ -10,6 +10,7 @@ $font-color: #fdf6e3;
 body {
     color: $font-color !important;
     font-family: var(--font-body);
+    background-color: $primary-color;
 }
 
 
@@ -80,7 +81,10 @@ $accent-color: #c0392b;
 }
 
 .action-button {
-    outline: none;
+    &:focus {
+        outline: none;
+    }
+
     --btn: var(--cranberry);
     --btn-dark: #7a1a1f;
 
@@ -96,13 +100,15 @@ $accent-color: #c0392b;
     cursor: pointer;
 
     // Light gloss on top, solid colour underneath
-    background:
-        linear-gradient(rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.12)),
-        var(--btn);
+    background: linear-gradient(rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.12)),
+    var(--btn);
 
     // Solid "edge" below the button gives it thickness
-    box-shadow: 0 5px 0 var(--btn-dark), 0 10px 18px rgba(0, 0, 0, 0.35);
-    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.2s ease;
+    box-shadow: 0 5px 0 var(--btn-dark),
+    0 10px 18px rgba(0, 0, 0, 0.35);
+    transition: transform 0.12s ease,
+    box-shadow 0.12s ease,
+    filter 0.2s ease;
 
     &:hover:not(:disabled) {
         transform: translateY(-2px);
@@ -129,6 +135,25 @@ $accent-color: #c0392b;
         font-size: 1.6rem;
         width: 1.6rem;
         height: 1.6rem;
+    }
+
+    &.round {
+        --round-size: 3.4rem; // override per use; a parent can set it too
+
+        flex: none; // never squeezed or stretched inside a flex row
+        box-sizing: border-box;
+        width: var(--round-size);
+        height: var(--round-size);
+        min-width: 0;
+        padding: 0;
+        justify-content: center;
+        border-radius: 50%;
+
+        mat-icon {
+            width: calc(var(--round-size) * 0.55);
+            height: calc(var(--round-size) * 0.55);
+            font-size: calc(var(--round-size) * 0.55);
+        }
     }
 }
 

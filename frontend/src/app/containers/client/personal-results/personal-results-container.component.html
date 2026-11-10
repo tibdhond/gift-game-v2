@@ -8,22 +8,22 @@
     <h2 class="page-title">Persoonlijke resultaten</h2>
 
     <div class="stats">
-        <div class="stat hero" style="--i: 0">
+        <app-tag-card class="stat hero" accent="#d9a441" style="--i: 0">
             <span class="stat-value">{{ s.vote }}</span>
             <span class="stat-label">keer op de juiste persoon gestemd</span>
-        </div>
-        <div class="stat gift" style="--i: 1">
+        </app-tag-card>
+        <app-tag-card class="stat gift" accent="#aeb8c1" style="--i: 1">
             <span class="stat-value">{{ s.gift }}</span>
             <span class="stat-label">{{ s.gift === 1 ? 'ronde' : 'rondes' }} bleef jouw cadeau in het spel</span>
-        </div>
-        <div class="stat correct" style="--i: 2">
+        </app-tag-card>
+        <app-tag-card class="stat correct" accent="#4caf6a" style="--i: 2">
             <span class="stat-value">{{ s.correct }}</span>
             <span class="stat-label">keer juist op jou gestemd</span>
-        </div>
-        <div class="stat wrong" style="--i: 3">
+        </app-tag-card>
+        <app-tag-card class="stat wrong" accent="#d6504f" style="--i: 3">
             <span class="stat-value">{{ s.wrong }}</span>
             <span class="stat-label">keer fout op jou gestemd</span>
-        </div>
+        </app-tag-card>
     </div>
 
     <h3 class="rounds-title">Jouw rondes</h3>
