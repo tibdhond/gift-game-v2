@@ -172,3 +172,11 @@ $accent-color: #c0392b;
         opacity: 1;
     }
 }
+
+.page-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    letter-spacing: 0.02em;
+    text-align: center;
+}

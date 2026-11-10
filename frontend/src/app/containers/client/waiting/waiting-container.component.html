@@ -1,16 +1,18 @@
-<div class="container">
-    <h1>Bijna klaar voor de volgende ronde</h1>
-    <div class="image-container">
-        <img [src]="gifUrl$ | async" />
-    </div>
+<div class="waiting-room">
+    <h2 class="page-title">Bijna klaar voor de volgende ronde</h2>
 
-    <!-- <span *ngIf="showIcon1" @flyAcross style="bottom: 40px; " (@flyAcross.done)="onAnimationEvent($event)">
-        <span class="floating-icon delay-1">🎁</span>
-    </span>
-    <span style="bottom: 60px; right: 30px;">
-        <span class="floating-icon delay-2">✨</span>
-    </span>
-    <span style="bottom: 20px; right: 50%;">
-        <span class="floating-icon delay-3">🎄</span>
-    </span> -->
+    <div class="stack">
+        <div class="photo">
+            <img [src]="gifUrl$ | async" alt="" [class.invisible]="gifLoading" (load)="onGifLoad()">
+            <img [class.invisible]="!gifLoading" src="/api/frontend-assets/images/tv-static.gif" alt=""
+                aria-hidden="true">
+        </div>
+        <img class="frame" src="/api/frontend-assets/images/television.png" alt="" aria-hidden="true">
+        <button type="button" class="piece" [class.wiggle]="!interacted" [class.cooling]="cooling" [class.stuck]="stuck"
+            aria-label="Draai" [attr.aria-disabled]="cooling" (click)="onNewGif()"
+            (animationend)="onAnimationEnd($event)">
+            <img src="api/frontend-assets/images/tv-button.png" alt="" aria-hidden="true"
+                [style.--rot]="rotation + 'deg'">
+        </button>
+    </div>
 </div>

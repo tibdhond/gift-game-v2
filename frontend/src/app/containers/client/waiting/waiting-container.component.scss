@@ -1,53 +1,168 @@
+:host {
+    display: block;
+}
+
 .container {
+    box-sizing: border-box;
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 1rem 1rem 1.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    gap: 1rem;
+    color: var(--snow, #f7f4ee);
+    animation: fade-in 0.6s ease-out both; // fade-in lives in styles.scss
 }
 
-.image-container {
-    background: white;
-    border-radius: 20px;
-    padding: 12px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-    max-width: 90%;
-    margin: 24px auto;
-
-    & img {
-        width: 100%;
-        border-radius: 14px;
-        max-height: 70vh;
-    }
+.page-title {
+    font-size: clamp(1.8rem, 6vw, 2.6rem); // the sentence is long, so it needs to shrink on phones
+    text-wrap: balance;
 }
 
-.floating-icon {
+.stack {
+    --img-w: 543; // frame size in px (unitless)
+    --img-h: 565;
+    --cx: 453; // centre of the circle, measured on the original frame image
+    --cy: 285;
+    --d: 78; // diameter of the circle in px
+    --max-w: 80vw;
+    --max-h: 80vh;
+
+    margin: 0 auto;
+
+    position: relative;
+    width: min(var(--max-w), calc(var(--max-h) * var(--img-w) / var(--img-h)));
+    max-height: 80dvh;
+    aspect-ratio: var(--img-w) / var(--img-h);
+    isolation: isolate;
+}
+
+// Layer 1: the photo, sized to the hole (tune the four percentages)
+.photo {
     position: absolute;
-    font-size: 18px;
-    animation: floatSlow 6s ease-in-out infinite, ;
-}
+    inset: 42% 30% 12% 10%;
+    overflow: hidden;
 
-.floating-icon.delay-1 {
-    animation-delay: 0s;
-}
-
-.floating-icon.delay-2 {
-    animation-delay: 2s;
-}
-
-.floating-icon.delay-3 {
-    animation-delay: 4s;
-}
-
-@keyframes floatSlow {
-    0% {
-        transform: translateY(0);
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
     }
 
-    50% {
-        transform: translateY(-8px);
+    .invisible {
+        display: none;
+    }
+}
+
+// Layer 2: the frame, covering everything
+.frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; // clicks and hovers fall through to the photo underneath
+}
+
+.piece {
+    position: absolute;
+    left: calc((var(--cx) - var(--d) / 2) / var(--img-w) * 100%);
+    top: calc((var(--cy) - var(--d) / 2) / var(--img-h) * 100%);
+    width: calc(var(--d) / var(--img-w) * 100%);
+    aspect-ratio: 1; // height follows the width, so the piece stays a circle
+    padding: 0;
+    border: 0;
+    border-radius: 50%; // the click target is round as well, instead of a square with dead corners
+    background: transparent;
+    cursor: pointer;
+
+    &:focus {
+        outline: none;
     }
 
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        transform: rotate(var(--rot, 0deg)); // pivots around the centre by default
+        transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+    }
+}
+
+.piece.cooling {
+    cursor: not-allowed;
+}
+
+.piece.stuck {
+    animation: stuck 0.4s ease-in-out;
+}
+
+@keyframes stuck {
+
+    0%,
     100% {
-        transform: translateY(0);
+        transform: rotate(0) scale(1);
+    }
+
+    15% {
+        transform: rotate(-3deg) translateX(-1px) scale(0.97);
+    }
+
+    35% {
+        transform: rotate(2.5deg) translateX(1px) scale(0.97);
+    }
+
+    55% {
+        transform: rotate(-1.5deg) scale(0.98);
+    }
+
+    75% {
+        transform: rotate(1deg) scale(0.99);
+    }
+}
+
+.piece.wiggle {
+    animation: wiggle 3s ease-in-out 1.5s infinite; // 1.5s delay before the first shake
+}
+
+@keyframes wiggle {
+
+    0%,
+    22%,
+    100% {
+        transform: rotate(0);
+    }
+
+    4% {
+        transform: rotate(-7deg);
+    }
+
+    8% {
+        transform: rotate(6deg);
+    }
+
+    12% {
+        transform: rotate(-4deg);
+    }
+
+    16% {
+        transform: rotate(3deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .piece.wiggle,
+    .piece.stuck,
+    .waiting-room {
+        animation: none;
+    }
+}
+
+@supports (height: 1dvh) {
+    .stack {
+        --max-w: 80dvw;
+        --max-h: 80dvh;
     }
 }

@@ -29,6 +29,7 @@ import { PodiumComponent } from './components/podium/podium.component';
 import { PlayerRestListComponent } from './components/player-rest-list/player-rest-list.component';
 import { TagCardComponent } from './components/tag-card/tag-card.component';
 import { StyledQrComponent } from './components/qr-code/qr-code.component';
+import { LogoutContainerComponent } from './containers/client/logout/logout.container';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { StyledQrComponent } from './components/qr-code/qr-code.component';
     PodiumComponent,
     PlayerRestListComponent,
     TagCardComponent,
-    StyledQrComponent
+    StyledQrComponent,
+    LogoutContainerComponent
   ],
   imports: [
     CommonModule,

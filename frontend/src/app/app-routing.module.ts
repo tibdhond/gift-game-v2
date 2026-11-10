@@ -12,6 +12,7 @@ import { FinalResultContainerComponent } from './containers/host/final-results/f
 import { PersonalResultsContainerComponent } from './containers/client/personal-results/personal-results-container.component';
 import { ClientLoginGuard } from './guards/login.guard';
 import { GamePhaseGuard } from './guards/game-phase.guard';
+import { LogoutContainerComponent } from './containers/client/logout/logout.container';
 
 const routes: Routes = [
   {
@@ -38,6 +39,10 @@ const routes: Routes = [
   {
     path: 'client/:game_id',
     children: [
+      {
+        path: 'logout',
+        component: LogoutContainerComponent
+      },
       {
         path: 'login',
         component: LoginContainerComponent,

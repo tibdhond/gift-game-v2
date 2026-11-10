@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { interval, map, Observable, switchMap, takeUntil, withLatestFrom } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { BehaviorSubject, combineLatest, interval, map, Observable, switchMap, takeUntil, withLatestFrom } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ClientService } from 'src/app/services/client.service';
 import { UserPhase } from 'src/app/entities/entities';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { AnimationEvent } from "@angular/animations";
 import { BaseClientContainerComponent } from '../base-client-container.component';
 
 
@@ -28,11 +27,18 @@ import { BaseClientContainerComponent } from '../base-client-container.component
         ])
     ]
 })
-export class WaitingContainerComponent extends BaseClientContainerComponent implements OnInit {
+export class WaitingContainerComponent extends BaseClientContainerComponent implements OnInit, OnDestroy {
+    private static readonly COOLDOWN_MS = 2000;
+
     public gifUrl$!: Observable<string>;
-    public showIcon1: boolean = true;
-    public showIcon2: boolean = true;
-    public showIcon3: boolean = true;
+    public gifVersion$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+
+    public interacted: boolean = false;
+    public rotation: number = 0;
+    public cooling: boolean = false;
+    public stuck: boolean = false;
+    private cooldownTimer?: ReturnType<typeof setTimeout>;
+    public gifLoading: boolean = true;
 
     constructor(
         protected override route: ActivatedRoute,
@@ -68,19 +74,39 @@ export class WaitingContainerComponent extends BaseClientContainerComponent impl
             this.router.navigate(['/']);
         }
 
-        this.gifUrl$ = this.host$.pipe(
-            map(host => `${host}/api/gif`)
+        this.gifUrl$ = combineLatest([this.host$, this.gifVersion$]).pipe(
+            map(([host, version]) => `${host}/api/gif?v=${version}`)
         )
     }
 
-    private loopIconAnimation() {
-        setInterval(() => {
-            this.showIcon1 = false;
-            setTimeout(() => this.showIcon1 = true, 50);
-        }, 50000);
+    public override ngOnDestroy(): void {
+        this.gifVersion$.complete();
+        clearTimeout(this.cooldownTimer);
+        super.ngOnDestroy();
     }
 
-    public onAnimationEvent(event: AnimationEvent): void {
-        console.log(event);
+    public onNewGif(): void {
+        if (this.cooling) {
+            this.stuck = true;   // plays the "stuck" animation, nothing else happens
+            return;
+        }
+
+        this.interacted = true;
+        this.rotation += 15;
+        this.gifVersion$.next(this.gifVersion$.value + 1);
+        this.cooling = true;
+        this.cooldownTimer = setTimeout(() => this.cooling = false, WaitingContainerComponent.COOLDOWN_MS);
+        this.gifLoading = true;
+    }
+
+    onAnimationEnd(event: AnimationEvent): void {
+        // Angular prefixes keyframe names per component, so match the end of the name
+        if (event.animationName.endsWith('stuck')) {
+            this.stuck = false;
+        }
+    }
+
+    onGifLoad(): void {
+        this.gifLoading = false;
     }
 }

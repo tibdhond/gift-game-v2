@@ -18,4 +18,8 @@ export class LocalStorageService {
         localStorage.setItem('userId', userId);
         this.userIdRefreshed$.next(true);
     }
+
+    public logout(): void {
+        localStorage.clear();
+    }
 }
