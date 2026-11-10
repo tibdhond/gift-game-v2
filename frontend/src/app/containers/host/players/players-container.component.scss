@@ -47,6 +47,19 @@
     }
 }
 
+.players-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem 2rem;
+    margin-bottom: 1rem;
+
+    .section-title {
+        margin: 0; // the bar handles the spacing now
+    }
+}
+
 .start-button {
     margin-top: 1.5rem;
 }
@@ -55,4 +68,185 @@
     max-width: 68%;
     margin-left: auto;
     margin-right: auto;
+}
+
+:host {
+    display: block;
+}
+
+.lobby {
+    max-width: 90rem;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    color: var(--snow, #f7f4ee);
+}
+
+/* ---------- Join instructions ---------- */
+
+.join-panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem 4rem;
+}
+
+.join-info {
+    flex: 1 1 18rem;
+    max-width: 44rem; // was 28rem
+    // ...rest unchanged
+}
+
+.lead {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    opacity: 0.85;
+}
+
+.host-url {
+    width: fit-content;
+    max-width: 100%;
+    align-self: center;
+    margin: 0 0 0.6rem;
+    padding: 0.35rem 1rem;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background: rgba(16, 38, 31, 0.78);
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-size: clamp(2rem, 2.4vw, 2.75rem); // scales with the screen so one line keeps fitting
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #e0b04a;
+    white-space: nowrap;
+}
+
+/* The code, one tile per character like scrabble letters.
+   Body font on purpose: a script font makes 0/O and 1/l hard to tell apart. */
+.code-plate {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.code-char {
+    display: grid;
+    place-items: center;
+    min-width: 3rem;
+    height: 4rem;
+    padding: 0 0.3rem;
+    border-radius: 10px;
+    background: var(--snow, #f7f4ee);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+    color: #10261f;
+    font-size: 2.4rem;
+    font-weight: 800;
+}
+
+.qr-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+
+/* ---------- Players ---------- */
+
+.players {
+    text-align: center;
+}
+
+.section-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 1rem;
+    font-family: var(--font-display);
+    font-size: 2rem;
+}
+
+.count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.2rem;
+    height: 2.2rem;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+    border-radius: 999px;
+    background: var(--cranberry, #a4262c);
+    font-family: var(--font-body);
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.player-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.joined {
+    animation: pop-in 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+}
+
+/* Empty state: three pulsing dots */
+.waiting {
+    margin: 0;
+    font-size: 1.4rem;
+    opacity: 0.9;
+
+    .dot {
+        display: inline-block;
+        width: 0.45rem;
+        height: 0.45rem;
+        margin-left: 0.3rem;
+        border-radius: 50%;
+        background: currentColor;
+        animation: pulse 1.2s ease-in-out infinite;
+
+        &:nth-of-type(2) {
+            animation-delay: 0.2s;
+        }
+
+        &:nth-of-type(3) {
+            animation-delay: 0.4s;
+        }
+    }
+}
+
+@keyframes pop-in {
+    from {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.25;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .joined,
+    .waiting .dot {
+        animation: none;
+    }
 }

@@ -1,31 +1,48 @@
-<div class="players-view-container">
-    <ng-container *ngIf="host$ | async as host">
-        <h3 style="margin-bottom: 1rem;text-align: center;">Ga naar {{host}} en geef code <span class="accent">{{gameId$
-                | async}}</span>
-            in om te
-            beginnen
-        </h3>
-    </ng-container>
-    <ng-container *ngIf="qrUrl$ | async as url">
-        <qrcode [qrdata]="url" [width]="225" [errorCorrectionLevel]="'M'" colorLight="#364E43" elementType="svg">
-        </qrcode>
-    </ng-container>
-    <div style="margin-top: 1rem;">
-        <ng-container *ngIf="players$ | async as players; else emptyPlayers">
-            <h4>{{players.length}} geregistreerde speler{{players.length > 1 ? 's' : ''}}</h4>
-            <div class="player-container">
-                <ng-container *ngFor="let player of players">
-                    <app-player-tile [avatarPath]="player.avatarPath" [name]="player.name" [deleteIcon]="true"
-                        (onDeleteClicked)="onDeletePlayer(player.id)"></app-player-tile>
-                </ng-container>
+<div class="lobby">
+    <section class="join-panel">
+        <div class="join-info">
+            <h2 class="page-title">Doe mee!</h2>
+
+            <ng-container *ngIf="host$ | async as host">
+                <p class="lead">Ga naar</p>
+                <p class="host-url">{{ host }}</p>
+            </ng-container>
+
+            <p class="lead">en geef deze code in</p>
+            <div class="code-plate" *ngIf="codeChars$ | async as chars">
+                <span class="code-char" *ngFor="let char of chars">{{ char }}</span>
             </div>
-        </ng-container>
+        </div>
+
+        <div class="qr-wrap" *ngIf="qrUrl$ | async as url">
+            <app-styled-qr [data]="url" [size]="260"></app-styled-qr>
+            <p class="lead">of scan de QR-code</p>
+        </div>
+    </section>
+
+    <section class="players" *ngIf="{ list: players$ | async } as p">
+        <div class="players-bar">
+            <h3 class="section-title" *ngIf="p.list?.length">
+                Spelers <span class="count">{{ (p.list)?.length }}</span>
+            </h3>
+            <button type="button" class="action-button" (click)="onRoundStart()">
+                <mat-icon fontIcon="play_arrow" aria-hidden="true"></mat-icon>
+                Spel starten
+            </button>
+        </div>
+
+        <div class="player-container" *ngIf="p.list?.length; else emptyPlayers">
+            <app-player-tile class="joined" *ngFor="let player of p.list; trackBy: trackPlayer"
+                [avatarPath]="player.avatarPath" [name]="player.name" [deleteIcon]="true"
+                (onDeleteClicked)="onDeletePlayer(player.id)"></app-player-tile>
+        </div>
+
         <ng-template #emptyPlayers>
-            <p>Er zijn nog geen spelers</p>
+            <p class="waiting">
+                Wachten op spelers
+                <span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span><span
+                    class="dot" aria-hidden="true"></span>
+            </p>
         </ng-template>
-    </div>
-    <div class="button-container">
-        <button class="action-button start-button" type="submit" (click)="onRoundStart()">Spel
-            starten</button>
-    </div>
+    </section>
 </div>

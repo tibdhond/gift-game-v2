@@ -14,6 +14,10 @@ export class PlayersContainerComponent extends BaseGameContainer implements OnIn
     public players$!: Observable<Player[]>;
     public playerDeleted$: BehaviorSubject<void> = new BehaviorSubject<void>(undefined);
     public qrUrl$!: Observable<string>;
+
+    public codeChars$!: Observable<string[]>;
+    public trackPlayer = (_: number, player: Player) => player.id;
+
     constructor(protected override route: ActivatedRoute, private hostService: HostService, private router: Router) {
         super(route);
     }
@@ -31,6 +35,8 @@ export class PlayersContainerComponent extends BaseGameContainer implements OnIn
         this.qrUrl$ = combineLatest([this.host$, this.gameId$]).pipe(
             map(([host, gameId]) => `${host}?gameId=${gameId}`)
         );
+
+        this.codeChars$ = this.gameId$.pipe(map(id => [...String(id)]));
     }
 
     override ngOnDestroy(): void {

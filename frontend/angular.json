@@ -39,6 +39,10 @@
             ],
             "scripts": [
               "src/assets/bootstrap.min.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "canvas-confetti",
+              "qr-code-styling"
             ]
           },
           "configurations": {

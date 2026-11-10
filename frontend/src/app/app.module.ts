@@ -15,7 +15,6 @@ import { RoundProgressContainerComponent } from './containers/host/round-progres
 import { GiftOpenContainerComponent } from './containers/client/gift-open/gift-open-container.component';
 import { VoteContainerComponent } from './containers/client/vote/vote-container.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { QRCodeModule } from 'angularx-qrcode';
 import { RoundResultContainerComponent } from './containers/host/round-result/round-result-container.component';
 import { ToPercentPipe } from './pipes/to-percent.pipe';
 import { BackgroundOverlayComponent } from './components/background-overlay/background-overlay.component';
@@ -29,6 +28,7 @@ import { PlayerTileComponent } from './components/player-tile/player-tile.compon
 import { PodiumComponent } from './components/podium/podium.component';
 import { PlayerRestListComponent } from './components/player-rest-list/player-rest-list.component';
 import { TagCardComponent } from './components/tag-card/tag-card.component';
+import { StyledQrComponent } from './components/qr-code/qr-code.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +51,8 @@ import { TagCardComponent } from './components/tag-card/tag-card.component';
     PlayerTileComponent,
     PodiumComponent,
     PlayerRestListComponent,
-    TagCardComponent
+    TagCardComponent,
+    StyledQrComponent
   ],
   imports: [
     CommonModule,
@@ -61,7 +62,6 @@ import { TagCardComponent } from './components/tag-card/tag-card.component';
     BrowserModule,
     AppRoutingModule,
     MatIconModule,
-    QRCodeModule,
     DialogModule
   ],
   providers: [HttpClient],
