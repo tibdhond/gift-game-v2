@@ -30,6 +30,7 @@ import { PlayerRestListComponent } from './components/player-rest-list/player-re
 import { TagCardComponent } from './components/tag-card/tag-card.component';
 import { StyledQrComponent } from './components/qr-code/qr-code.component';
 import { LogoutContainerComponent } from './containers/client/logout/logout.container';
+import { GetTokenContainerComponent } from './containers/host/get-token/get-token.container';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { LogoutContainerComponent } from './containers/client/logout/logout.cont
     PlayerRestListComponent,
     TagCardComponent,
     StyledQrComponent,
-    LogoutContainerComponent
+    LogoutContainerComponent,
+    GetTokenContainerComponent
   ],
   imports: [
     CommonModule,

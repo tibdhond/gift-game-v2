@@ -2,8 +2,10 @@ import os
 from typing import Any
 from PIL import Image
 from pathlib import Path
-from flask import current_app
+from flask import current_app, g
 from werkzeug.datastructures import FileStorage
+from controllers.auth_controller import new_token
+from entities.exceptions import UserExistsException
 from cache import Cache
 from models.game import Game
 from models.user import User
@@ -13,29 +15,35 @@ from pillow_heif import register_heif_opener
 
 register_heif_opener()
 
-def login(game_id: str, name: str) -> str:
+def login(game_id: str, name: str) -> User:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
 
     user: User | None = game.get_user(name)
-
+    
     if not user:
         user = User(name)
+        user.token = new_token()
         game.add_user(user)
         cache.store_game(game)
-    return user.get_id()
+    elif not (user.token == '' or user.token == None):
+        raise UserExistsException
+    else:
+        user.token = new_token()
+        game.token_map[user.token] = user.get_id()
+        cache.store_game(game)
+    return user
 
-def vote(game_id: str, voter_id: str, target_id: str) -> None:
+def vote(voter_id: str, target_id: str) -> None:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game = g.game
 
     game.add_vote(voter_id, target_id)
 
     cache.store_game(game)
 
-def get_user_info(game_id: str, user_id: str) -> dict[str, Any]:
-    cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+def get_user_info(user_id: str) -> dict[str, Any]:
+    game: Game = g.game
 
     if not game.players:
             return {}
@@ -46,28 +54,24 @@ def get_user_info(game_id: str, user_id: str) -> dict[str, Any]:
     
     return ({ "userId": user.get_id(), "name": user.name, "avatarPath": user.avatar_path })
 
-def get_user_phase(game_id: str, user_id: str) -> dict[str, Any]:
-    cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+def get_user_phase(user_id: str) -> dict[str, Any]:
+    game: Game = g.game
 
     if not game.players:
         return { "phase": "UNREGISTERED" }
 
     return { "phase": game.players[user_id].phase if user_id in game.players else "UNREGISTERED" }
 
-def add_gift(game_id: str, user_id: str, description: str) -> None:
+def add_gift(user_id: str, description: str) -> None:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game = g.game
 
     game.add_gift(description, user_id)
 
     cache.store_game(game)
 
-def get_result(game_id: str, user_id: str) -> dict[str, Any]:
-    cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
-
-    user_gift: Gift = [gift for gift in game.gifts.values() if gift.owner == user_id][0]
+def get_result(user_id: str) -> dict[str, Any]:
+    game: Game = g.game
 
     result: dict[str, Any] = { "self_vote_score": 0, "vote_score": 0, "gift_score": 0, "sabotage_score": 0, "target_correct": 0, "target_wrong": 0, "rounds": []}
 
@@ -113,9 +117,9 @@ def get_result(game_id: str, user_id: str) -> dict[str, Any]:
                             result["target_wrong"] += 1 # De andere gebruiker stemde foutief op deze gebruiker
     return result
 
-def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
+def upload_avatar(user_id: str, file: FileStorage) -> None:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game = g.game
     
     player: User = game.players[user_id]
     # Check file size (limit 4MB)
@@ -128,7 +132,7 @@ def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
     # Determine storage path
     # current_app.root_path is 'backend'
     base_dir = Path(current_app.root_path) / "static" / "avatars"
-    game_dir = base_dir / game_id
+    game_dir = base_dir / game.id
     game_dir.mkdir(parents=True, exist_ok=True)
     
     filepath = game_dir / f"{user_id}.jpg"
@@ -146,7 +150,7 @@ def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
         
         # Update game state
         player.avatar_version += 1
-        player.avatar_path = f"api/{game_id}/players/{user_id}/avatar?version={player.avatar_version}"
+        player.avatar_path = f"api/{game.id}/players/{user_id}/avatar?version={player.avatar_version}"
         
         # Commit to store
         cache.store_game(game)

@@ -13,11 +13,16 @@ import { PersonalResultsContainerComponent } from './containers/client/personal-
 import { ClientLoginGuard } from './guards/login.guard';
 import { GamePhaseGuard } from './guards/game-phase.guard';
 import { LogoutContainerComponent } from './containers/client/logout/logout.container';
+import { GetTokenContainerComponent } from './containers/host/get-token/get-token.container';
 
 const routes: Routes = [
   {
     path: 'host/:game_id',
     children: [
+      {
+        path: 'token',
+        component: GetTokenContainerComponent
+      },
       {
         path: 'players',
         component: PlayersContainerComponent

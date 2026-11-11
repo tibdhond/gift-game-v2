@@ -74,8 +74,8 @@ export class WaitingContainerComponent extends BaseClientContainerComponent impl
             this.router.navigate(['/']);
         }
 
-        this.gifUrl$ = combineLatest([this.host$, this.gifVersion$]).pipe(
-            map(([host, version]) => `${host}/api/gif?v=${version}`)
+        this.gifUrl$ = this.gifVersion$.pipe(
+            map(version => `/api/gif?v=${version}`)
         )
     }
 

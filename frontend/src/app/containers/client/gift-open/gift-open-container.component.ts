@@ -22,19 +22,15 @@ export class GiftOpenContainerComponent extends BaseGameContainer {
     }
 
     public onGiftAdd(): void {
-        const userId: string | null = localStorage.getItem('userId');
-
-        if (userId) {
-            if (this.giftController.valid) {
-                this.gameId$.pipe(
-                    switchMap(gameId => this.clientService.addGift(gameId, this.giftController.value, userId)),
-                    switchMap(() => this.gameId$),
-                    take(1),
-                    takeUntil(this.destroy$)
-                ).subscribe(gameId => {
-                    this.router.navigate(['client', gameId, 'vote']);
-                });
-            }
+        if (this.giftController.valid) {
+            this.gameId$.pipe(
+                switchMap(gameId => this.clientService.addGift(gameId, this.giftController.value)),
+                switchMap(() => this.gameId$),
+                take(1),
+                takeUntil(this.destroy$)
+            ).subscribe(gameId => {
+                this.router.navigate(['client', gameId, 'vote']);
+            });
         }
     }
 }

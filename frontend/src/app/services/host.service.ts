@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { GameResult, RoundProgress, RoundResult } from '../entities/entities';
+import { GameCreationResult, GameResult, RoundProgress, RoundResult } from '../entities/entities';
 import { GameService } from './game.service';
 
 @Injectable({ providedIn: 'root' })
@@ -38,5 +38,9 @@ export class HostService extends GameService {
 
     public gameResults(gameId: string): Observable<GameResult[]> {
         return this.get(`${gameId}/result`)
+    }
+
+    public getHostToken(gameId: string): Observable<GameCreationResult> {
+        return this.get(`${gameId}/token`);
     }
 }

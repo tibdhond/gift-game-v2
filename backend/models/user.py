@@ -13,6 +13,7 @@ class User():
         user.has_opened_gift = json.get("has_opened_gift", False)
         user.is_finished = json.get("is_finished", False)
         user.avatar_path = json.get("avatar_path")
+        user.token = json.get("user_token")
         return user
 
     def __init__(self, name: str, is_host=False) -> None:
@@ -24,6 +25,7 @@ class User():
         self.is_finished: bool = False
         self.avatar_path: str | None = None
         self.avatar_version: int = 0
+        self.token: str = ''
 
     def get_id(self) -> str:
         return self.__id

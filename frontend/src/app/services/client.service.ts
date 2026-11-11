@@ -41,12 +41,12 @@ export class ClientService extends GameService {
         );
     }
 
-    public addGift(gameId: string, description: string, userId: string): Observable<void> {
-        return this.post(`${gameId}/gifts`, { description, user_id: userId });
+    public addGift(gameId: string, description: string): Observable<void> {
+        return this.post(`${gameId}/gifts`, { description });
     }
 
-    public vote(gameId: string, userId: string, targetId: string): Observable<void> {
-        return this.post(`${gameId}/vote`, { voter_id: userId, target_id: targetId });
+    public vote(gameId: string, targetId: string): Observable<void> {
+        return this.post(`${gameId}/vote`, { target_id: targetId });
     }
 
     public getPersonalResult(game_id: string, userId: string): Observable<PersonalResult> {

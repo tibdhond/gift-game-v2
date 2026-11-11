@@ -89,7 +89,7 @@ export class VoteContainerComponent extends BaseClientContainerComponent impleme
         this.isProcessing = true;
 
         this.gameId$.pipe(
-            switchMap(gameId => this.clientService.vote(gameId, this.userId!, targetId)),
+            switchMap(gameId => this.clientService.vote(gameId, targetId)),
             switchMap(() => this.gameId$),
             take(1)
         ).subscribe({

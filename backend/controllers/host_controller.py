@@ -7,43 +7,42 @@ from models.vote import Vote
 from models.round import Round
 from entities.enums import UserPhase
 from entities.exceptions import OngoingRoundException, InvalidRoundException
+from flask import g
 
 
-def delete_player(game_id: str, user_id: str) -> None:
+def delete_player(user_id: str) -> None:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game = g.game
 
     del game.players[user_id]
     cache.store_game(game)
 
-def new_round(game_id: str) -> None:
+def new_round() -> None:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game = g.game
 
     game.new_round()
     cache.store_game(game)
 
     cache.store_game(game)
 
-def get_round_progress(game_id: str) -> dict[str, str | Any]:
-    cache: Cache = Cache.get_instance()
-    game: Game | None = cache.get_game(game_id)
+def get_round_progress() -> dict[str, str | Any]:
+    game: Game = g.game
 
     players: list[dict[str, str | bool]] = [{"name": player.name, "voted": player.phase == UserPhase.WAITING } for player in game.get_players()]
     gift: Gift | None = game.gifts.get(game.current_round().gift_id, None)
 
     return {"players": sorted(players, key=lambda player: player["name"]), "gift": gift.description if gift else None, "invalid": game.is_round_invalid()}
 
-def reset_round(game_id: str) -> None:
+def reset_round() -> None:
     cache: Cache = Cache.get_instance()
-    game: Game | None = cache.get_game(game_id)
+    game: Game = g.game
 
     game.reset_round()
     cache.store_game(game)
 
-def get_round_result(game_id: str) -> dict[str, Any]:
-    cache: Cache = Cache.get_instance()
-    game: Game | None = cache.get_game(game_id)
+def get_round_result() -> dict[str, Any]:
+    game: Game = g.game
 
     if not game.is_round_finished():
         raise OngoingRoundException()
@@ -63,15 +62,14 @@ def get_round_result(game_id: str) -> dict[str, Any]:
 
     return round_result
 
-def get_game_phase(game_id: str) -> dict[str, Any]:
-    cache: Cache = Cache.get_instance()
-    game: Game | None = cache.get_game(game_id)
+def get_game_phase() -> dict[str, Any]:
+    game: Game = g.game
 
     return {"phase": game.phase}
 
-def assign_gift(game_id: str) -> bool:
+def assign_gift() -> bool:
     cache: Cache = Cache.get_instance()
-    game: Game | None = cache.get_game(game_id)
+    game: Game = g.game
 
     result: bool = game.assign_gift()
 
@@ -79,9 +77,8 @@ def assign_gift(game_id: str) -> bool:
 
     return result
 
-def get_result(game_id: str) -> list[dict[str, Any]]:
-    cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+def get_result() -> list[dict[str, Any]]:
+    game: Game = g.game
 
     user_map: dict[str, Any] = {player.get_id(): {"name": player.name, "gift_score": 0, "vote_score": 0, "self_vote_score": 0, "target_correct": 0, "target_wrong": 0, "sabotage_score": 0, "userId": player.get_id(), "avatarPath": player.avatar_path} for player in game.get_players()}
    

@@ -1,10 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, interval, map, Observable, switchMap, take, takeUntil, withLatestFrom } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ClientService } from 'src/app/services/client.service';
-import { UserPhase } from 'src/app/entities/entities';
-import { animate, style, transition, trigger } from '@angular/animations';
-import { BaseClientContainerComponent } from '../base-client-container.component';
 import { LocalStorageService } from 'src/app/services/localstorage.service';
 import { BaseGameContainer } from '../../base-game-container.component';
 

@@ -1,9 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subject, combineLatest, interval, map, shareReplay, startWith, switchMap, take, takeUntil, tap } from 'rxjs';
 import { Player } from 'src/app/entities/entities';
 import { HostService } from 'src/app/services/host.service';
 import { BaseGameContainer } from '../../base-game-container.component';
+import { UtilService } from 'src/app/services/util.service';
 
 @Component({
     selector: 'players',
@@ -18,12 +19,22 @@ export class PlayersContainerComponent extends BaseGameContainer implements OnIn
     public codeChars$!: Observable<string[]>;
     public trackPlayer = (_: number, player: Player) => player.id;
 
+    public host$!: Observable<string>;
+
+    private readonly utilService: UtilService = inject(UtilService);
+
     constructor(protected override route: ActivatedRoute, private hostService: HostService, private router: Router) {
         super(route);
     }
 
     override ngOnInit(): void {
         super.ngOnInit();
+
+        this.host$ = this.utilService.getIp().pipe(
+            map(ip => `http://${ip}:5000`),
+            take(1),
+            shareReplay(1)
+        );
 
         this.players$ = combineLatest([this.playerDeleted$, interval(3000)]).pipe(
             startWith(0),
