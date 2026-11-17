@@ -37,8 +37,8 @@ export class ClientService extends GameService {
     // #endregion
 
     // #region Users
-    public getUserInfo(gameId: string): Observable<UserInfoResult> {
-        return this.userInfo$ ?? this.get<UserInfoResult>(`${gameId}/players/me`).pipe(
+    public getUserInfo(gameId: string, skipAuthRedirect: boolean = false): Observable<UserInfoResult> {
+        return this.userInfo$ ?? this.get<UserInfoResult>(`${gameId}/players/me`, new HttpHeaders(), new HttpContext().set(SKIP_AUTH_REDIRECT, skipAuthRedirect)).pipe(
             tap(userInfo => {
                 this.userInfo$ = of(userInfo);
             })

@@ -3,7 +3,13 @@
         [class.busy]="busy.has(n.key)">
 
         <h3 class="n-title" *ngIf="n.title">{{ n.title }}</h3>
-        <p class="n-message">{{ n.message }}</p>
+        <p class="n-message">
+            <ng-container *ngFor="let part of n.message">
+                <ng-container *ngIf="isText(part); else highlight">{{ part }}</ng-container>
+                <ng-template #highlight><strong>{{ $any(part).strong }}</strong></ng-template>
+            </ng-container>
+        </p>
+        <p class="n-note" *ngIf="n.note">{{ n.note }}</p>
 
         <button *ngIf="n.detail as detail" type="button" class="n-detail"
             [class.concealed]="detail.concealed && !revealed.has(n.key)" (click)="toggleReveal(n)">

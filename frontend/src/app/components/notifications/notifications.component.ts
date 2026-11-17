@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { finalize, Observable } from "rxjs";
 import { Claim } from "src/app/entities/entities";
-import { NotificationService, AppNotification, NotificationAction } from "src/app/services/notification.service";
+import { NotificationService, AppNotification, NotificationAction, MessagePart } from "src/app/services/notification.service";
 
 @Component({
     selector: 'app-notifications',
@@ -35,5 +35,9 @@ export class NotificationsComponent {
             complete: () => this.service.dismiss(n.key),   // success: remove it right away, don't wait for the next poll
             error: () => { /* stays visible, so the host can try again */ },
         });
+    }
+
+    isText(part: MessagePart): part is string {
+        return typeof part === 'string';
     }
 }

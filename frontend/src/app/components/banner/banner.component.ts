@@ -6,6 +6,7 @@ import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of
 import { BaseContainer } from '../../containers/base-container.component';
 import { UserInfoResult } from '../../entities/entities';
 import { LocalStorageService } from '../../services/localstorage.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-banner',
@@ -38,8 +39,8 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
         this.initGameId();
 
         const userInfo$: Observable<UserInfoResult | null> = combineLatest([this.gameId$, this.refreshTrigger$]).pipe(
-            switchMap(([gameId, _]) => gameId ? this.client.getUserInfo(gameId).pipe(
-                catchError((e) => {
+            switchMap(([gameId, _]) => gameId ? this.client.getUserInfo(gameId, true).pipe(
+                catchError((e: HttpErrorResponse) => {
                     console.error('Failed fetching user info', e);
                     return of(null);
                 })

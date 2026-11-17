@@ -36,9 +36,22 @@
 }
 
 .n-message {
+    margin: 0 0 0.4rem;
+    font-size: 1.1rem;
+    line-height: 1.35;
+
+    strong {
+        color: #e0b04a; // same gold as the name on the login page
+        font-weight: 800;
+        overflow-wrap: anywhere; // a very long name shouldn't widen the card
+    }
+}
+
+.n-note {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     line-height: 1.4;
+    opacity: 0.8;
 }
 
 // The verification code; blurred until the host clicks it

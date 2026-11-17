@@ -32,8 +32,9 @@ export class HostClaimNotifier {
             key: `claim-${claim.id}`,
             source: 'claims',
             title: 'Opnieuw verbinden',
-            message: `${claim.playerName} wil opnieuw meedoen. Vraag naar de code en controleer of het echt `
-                + `${claim.playerName} is. Goedkeuren beëindigt de huidige sessie van deze speler.`,
+            message: [{ strong: claim.playerName }, ' wil opnieuw meedoen.'],
+            note: `Vraag naar de code en controleer of het echt ${claim.playerName} is. `
+                + 'Goedkeuren beëindigt de huidige sessie van deze speler.',
             detail: { label: 'Code', value: claim.key, concealed: true },
             accent: '#d9a441',
             actions: [

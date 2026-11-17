@@ -7,13 +7,16 @@ export interface NotificationAction<T = unknown> {
     handler: () => Observable<T>;   // the component runs it and tracks the busy state
 }
 
+export type MessagePart = string | { strong: string };
+
 export interface AppNotification<T = unknown> {
-    key: string;       // stable identity, e.g. `claim-<id>`
-    source: string;    // who owns it, e.g. 'claims'; sync() only touches its own source
+    key: string;
+    source: string;
     title?: string;
-    message: string;
+    message: MessagePart[];
+    note?: string;       // secondary text, shown smaller and dimmer
     detail?: { label: string; value: string; concealed?: boolean };
-    accent?: string;   // colour of the tag card's bottom border
+    accent?: string;
     actions?: NotificationAction<T>[];
 }
 
@@ -52,7 +55,8 @@ export class NotificationService {
 
         const changed = next.length !== current.length
             || next.some((n, i) => n.key !== current[i].key
-                || n.message !== current[i].message
+                || JSON.stringify(n.message) !== JSON.stringify(current[i].message)
+                || n.note !== current[i].note
                 || n.detail?.value !== current[i].detail?.value);
 
         if (changed) {
