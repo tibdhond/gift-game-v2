@@ -25,7 +25,9 @@
                             "zone.js"
                         ],
                         "sourceMap": {
-                            "scripts": true
+                            "scripts": true,
+                            "hidden": true,
+                            "vendor": true
                         },
                         "tsConfig": "tsconfig.app.json",
                         "inlineStyleLanguage": "scss",

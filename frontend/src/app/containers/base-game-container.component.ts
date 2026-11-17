@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BaseContainer } from './base-container.component';
-import { Observable, map } from 'rxjs';
+import { Observable, filter, map, tap } from 'rxjs';
 
 @Component({
     selector: '',
@@ -17,7 +17,8 @@ export abstract class BaseGameContainer extends BaseContainer implements OnInit 
     override ngOnInit(): void {
         super.ngOnInit();
         this.gameId$ = this.route.params.pipe(
-            map(params => params['game_id'])
-        )
+            map(params => params['gameId']),
+            filter(gameId => !!gameId)
+        );
     }
 }

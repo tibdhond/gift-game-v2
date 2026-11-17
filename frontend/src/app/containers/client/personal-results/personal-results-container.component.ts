@@ -22,8 +22,6 @@ export class PersonalResultsContainerComponent extends BaseClientContainerCompon
 
     public personalRounds$!: Observable<PersonalRoundResult[]>;
 
-    private router: Router = inject(Router);
-
     constructor(protected override route: ActivatedRoute, protected clientService: ClientService) {
         super(route, clientService);
     }
@@ -31,45 +29,40 @@ export class PersonalResultsContainerComponent extends BaseClientContainerCompon
     override ngOnInit(): void {
         super.ngOnInit();
 
-        if (this.userId) {
+        const personalResults$: Observable<PersonalResult> = this.gameId$.pipe(
+            switchMap(gameId => this.clientService.getPersonalResult(gameId)),
+            shareReplay(1)
+        );
 
-            const personalResults$: Observable<PersonalResult> = this.gameId$.pipe(
-                switchMap(gameId => this.clientService.getPersonalResult(gameId, this.userId!)),
-                shareReplay(1)
-            );
+        this.giftScore$ = personalResults$.pipe(
+            map(personalResults => personalResults.gift_score),
+            shareReplay(1)
+        );
 
-            this.giftScore$ = personalResults$.pipe(
-                map(personalResults => personalResults.gift_score),
-                shareReplay(1)
-            );
+        this.sabotageScore$ = personalResults$.pipe(
+            map(personalResults => personalResults.sabotage_score),
+            shareReplay(1)
+        );
 
-            this.sabotageScore$ = personalResults$.pipe(
-                map(personalResults => personalResults.sabotage_score),
-                shareReplay(1)
-            );
+        this.voteScore$ = personalResults$.pipe(
+            map(personalResults => personalResults.vote_score),
+            shareReplay(1)
+        );
 
-            this.voteScore$ = personalResults$.pipe(
-                map(personalResults => personalResults.vote_score),
-                shareReplay(1)
-            );
+        this.targetCorrect$ = personalResults$.pipe(
+            map(personalResults => personalResults.target_correct),
+            shareReplay(1)
+        );
 
-            this.targetCorrect$ = personalResults$.pipe(
-                map(personalResults => personalResults.target_correct),
-                shareReplay(1)
-            );
+        this.targetWrong$ = personalResults$.pipe(
+            map(personalResults => personalResults.target_wrong),
+            shareReplay(1)
+        );
 
-            this.targetWrong$ = personalResults$.pipe(
-                map(personalResults => personalResults.target_wrong),
-                shareReplay(1)
-            );
-
-            this.personalRounds$ = personalResults$.pipe(
-                map(personalResults => personalResults.rounds),
-                shareReplay(1)
-            );
-        } else {
-            this.router.navigate(['/']);
-        }
+        this.personalRounds$ = personalResults$.pipe(
+            map(personalResults => personalResults.rounds),
+            shareReplay(1)
+        );
     }
 
     override ngOnDestroy(): void {

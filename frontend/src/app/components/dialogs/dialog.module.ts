@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { VoteConfirmDialogComponent } from "./confirm/confirm.dialog.component";
+import { VoteConfirmDialogComponent } from "./vote-confirm/vote-confirm.dialog.component";
 import { CommonModule } from "@angular/common";
 import { MatDialogModule } from "@angular/material/dialog";
 

@@ -6,6 +6,7 @@ from random import choices, random, choice
 import math
 from typing import Any
 
+from models.claim import Claim, ClaimState
 from models.round import Round
 from models.vote import Vote
 from models.gift import Gift
@@ -29,6 +30,8 @@ class Game():
         game.votes = { id: Vote.from_json(vote) for (id, vote) in json["votes"].items() }
         game.players = { id: User.from_json(user) for (id, user) in json["players"].items() }
         game.gifts = { id: Gift.from_json(gift) for (id, gift) in json["gifts"].items() }
+        game.claims = { id: Claim.from_json(claim) for (id, claim) in json.get("claims", {}).items() }
+        game.claim_map = json.get("claim_map", {})
         game.token_map = json.get("token_map", {})
 
         return game
@@ -45,7 +48,9 @@ class Game():
             "players": {id: player.to_json() for (id, player) in self.players.items()},
             "gifts": {id: gifts.to_json() for (id, gifts) in self.gifts.items()},
             "host_token": self.host_token,
-            "token_map": self.token_map
+            "token_map": self.token_map,
+            "claims": {id: claim.to_json() for (id, claim) in self.claims.items()},
+            "claim_map": self.claim_map
         })
 
     def __init__(self):
@@ -61,6 +66,8 @@ class Game():
         self.phase: GamePhase = GamePhase.STARTING
         self.host_token: str = ''
         self.token_map: dict = {}
+        self.claims: dict[str, Claim] = {}
+        self.claim_map: dict[str, str] = {}
 
     def get_user(self, name: str) -> User | None:
         return next((player for player in self.players.values() if player.name == name), None)
@@ -212,7 +219,17 @@ class Game():
     def get_unassigned_gifts(self) -> list[Gift]:
         return [gift for gift in self.gifts.values() if not gift.assigned]
     
-    
+    def add_claim(self, player_name: str, player_id: str) -> Claim:
+        claim: Claim = Claim(player_name=player_name, player_id=player_id)s
+        self.claims[claim.get_id()] = claim
+        self.claim_map[player_name] = claim.get_id()
+        return claim
+
+    def get_claim(self, claim_id: str) -> Claim | None:
+        return self.claims.get(claim_id)
+
+    def get_claims(self) -> list[Claim]:
+        return self.claims.values()
 
     # Util
     def set_player_phase(self, player_id: str, phase: UserPhase):

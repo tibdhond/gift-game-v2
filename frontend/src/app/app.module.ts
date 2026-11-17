@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GameSelectionComponent } from './containers/game-selection/game-selection-container.component';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginContainerComponent } from './containers/client/login/login-container.component';
 import { WaitingContainerComponent } from './containers/client/waiting/waiting-container.component';
@@ -31,6 +31,9 @@ import { TagCardComponent } from './components/tag-card/tag-card.component';
 import { StyledQrComponent } from './components/qr-code/qr-code.component';
 import { LogoutContainerComponent } from './containers/client/logout/logout.container';
 import { GetTokenContainerComponent } from './containers/host/get-token/get-token.container';
+import { UnauthorizedInterceptor } from './injectors/token.interceptor';
+import { NotificationsComponent } from './components/notifications/notifications.component';
+import { HostShellComponent } from './containers/host/host-shell.container';
 
 @NgModule({
   declarations: [
@@ -56,7 +59,9 @@ import { GetTokenContainerComponent } from './containers/host/get-token/get-toke
     TagCardComponent,
     StyledQrComponent,
     LogoutContainerComponent,
-    GetTokenContainerComponent
+    GetTokenContainerComponent,
+    NotificationsComponent,
+    HostShellComponent
   ],
   imports: [
     CommonModule,
@@ -66,9 +71,12 @@ import { GetTokenContainerComponent } from './containers/host/get-token/get-toke
     BrowserModule,
     AppRoutingModule,
     MatIconModule,
-    DialogModule
+    DialogModule,
   ],
-  providers: [HttpClient],
+  providers: [
+    HttpClient,
+    { provide: HTTP_INTERCEPTORS, useClass: UnauthorizedInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

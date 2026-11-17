@@ -1,6 +1,8 @@
 from __future__ import annotations
+from dataclasses import dataclass
 
 from uuid import uuid4
+from models.dto import DTO, UNSET, _Unset
 from entities.enums import UserPhase
 
 class User():
@@ -13,7 +15,7 @@ class User():
         user.has_opened_gift = json.get("has_opened_gift", False)
         user.is_finished = json.get("is_finished", False)
         user.avatar_path = json.get("avatar_path")
-        user.token = json.get("user_token")
+        user.token = json.get("token")
         return user
 
     def __init__(self, name: str, is_host=False) -> None:
@@ -32,3 +34,18 @@ class User():
 
     def to_json(self) -> dict:
         return self.__dict__
+
+@dataclass
+class UserDTO(DTO):
+    id: str | _Unset = UNSET
+    name: str | _Unset = UNSET
+    avatar_path: str | None | _Unset = UNSET
+    phase: UserPhase | _Unset = UNSET
+
+    @classmethod
+    def from_model(cls: UserDTO, user: User, role: str, own: bool = False) -> UserDTO:
+        user: UserDTO = cls(id=user.get_id(), name=user.name, avatar_path=user.avatar_path)
+
+        if role == "host" or own:
+            user.phase = user.phase
+        return user

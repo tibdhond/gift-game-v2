@@ -1,12 +1,15 @@
 from typing import Any
 
+from models.user import User
+from util.auth import new_token
+from models.claim import CLAIM_STATE_TIMEOUTS, Claim, ClaimDTO, ClaimState
 from cache import Cache
 from models.game import Game
 from models.gift import Gift
 from models.vote import Vote
 from models.round import Round
 from entities.enums import UserPhase
-from entities.exceptions import OngoingRoundException, InvalidRoundException
+from entities.exceptions import OngoingRoundException, InvalidRoundException, InvalidClaimException
 from flask import g
 
 
@@ -96,8 +99,6 @@ def get_result() -> list[dict[str, Any]]:
             correct_vote: bool = vote.target_id == round_gift.owner
 
             # User did not claim their own gift or tried to claim someone else's gift
-            if vote.voter_id == "user-1":
-                print(vote.voter_id, vote_id, correct_vote, vote.target_id == vote.voter_id, round_gift.owner == vote.voter_id)
             if (vote.target_id == vote.voter_id or round_gift.owner == vote.voter_id) and not correct_vote:
                 user_map[vote.voter_id]["sabotage_score"] += 1
 
@@ -114,3 +115,29 @@ def get_result() -> list[dict[str, Any]]:
                         user_map[vote.voter_id]["self_vote_score"] += 1
 
     return [result for result in user_map.values()]
+
+def get_claims() -> list[ClaimDTO]:
+    game: Game = g.game
+
+    return [ClaimDTO.from_model(claim) for claim in game.get_claims() if claim.get_state() == ClaimState.PENDING and claim.get_time_delta() < CLAIM_STATE_TIMEOUTS[ClaimState.PENDING]]
+
+def resolve_claim(claim_id: str, claim_state: ClaimState) -> ClaimDTO:
+    cache: Cache = Cache.get_instance()
+    game: Game = g.game
+
+    claim: Claim = game.get_claim(claim_id)
+
+    if claim is None:
+        raise InvalidClaimException
+
+    if claim_state == ClaimState.APPROVED:
+        player: User = game.players[claim.get_player_id()]
+        del game.token_map[player.token]
+        player.token = new_token()
+        game.token_map[player.token] = player.get_id()
+
+    claim.set_state(claim_state)
+
+    cache.store_game(game)
+
+    return ClaimDTO.from_model(claim)

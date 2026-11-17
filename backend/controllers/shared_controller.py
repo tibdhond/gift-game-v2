@@ -1,10 +1,10 @@
 import socket
 
+from util.auth import new_token
 from entities.exceptions import GameHasHostException, InvalidGameException
 from models.game import Game
 from cache import Cache
-from models.user import User
-from .auth_controller import new_token
+from models.user import User, UserDTO
 from flask import g
 
 def new_game() -> Game:
@@ -38,7 +38,7 @@ def game_exists(game_id: str) -> bool:
 def get_players(filtered: bool = False) -> list[User]:
     game: Game = g.game
 
-    return [{"id": player.get_id(), "name": player.name, "avatarPath": player.avatar_path} for player in sorted(game.get_players(), key=lambda user: user.name) if not filtered or not player.is_finished]
+    return [UserDTO.from_model(player, g.role, g.player and g.player.get_id() == player.get_id()) for player in sorted(game.get_players(), key=lambda user: user.name) if not filtered or not player.is_finished]
 
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

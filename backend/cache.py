@@ -37,7 +37,9 @@ class Cache():
         if game is None:
             raise Exception("Attempted to store empty Game state")
         self.games[game.id] = game
+
+        game_as_json: str = game.to_json()
         with open(f"{ROOT_PATH}/store/{game.id}.json", "w+") as f:
-            f.write(game.to_json())
+            f.write(game_as_json)
 
     

@@ -1,0 +1,125 @@
+:host {
+    display: contents; // the stack is fixed anyway, so the host element takes no space
+}
+
+.notification-stack {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 1rem);
+    right: calc(env(safe-area-inset-right, 0px) + 1rem);
+    z-index: 1000;
+    width: min(24rem, calc(100vw - 2rem));
+    max-height: calc(100dvh - 2rem);
+    display: flex;
+    flex-direction: column; // oldest on top, newer ones below it
+    gap: 0.75rem;
+    pointer-events: none; // the empty areas never block clicks on the page below
+}
+
+.notification {
+    --tag-padding: 1.6rem 1rem 0.9rem;
+
+    pointer-events: auto;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    color: var(--snow, #f7f4ee);
+    animation: slide-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+
+    &.busy {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+}
+
+.n-title {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+}
+
+.n-message {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+// The verification code; blurred until the host clicks it
+.n-detail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    margin: 0.75rem 0;
+    padding: 0.45rem 0.8rem;
+    border: 0;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.n-detail-label {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.n-detail-value {
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: 0.25em;
+    transition: filter 0.2s ease;
+}
+
+.n-detail.concealed .n-detail-value {
+    filter: blur(8px);
+    user-select: none;
+}
+
+.n-hint {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.n-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+// These override the colour variables of the global .action-button, so no variant class names are needed
+.n-action {
+    padding: 0.4rem 1.1rem;
+    font-size: 1.15rem;
+
+    &.primary {
+        --btn: #1b5e20;
+        --btn-dark: #10401a;
+    }
+
+    &.neutral {
+        --btn: #5b6770;
+        --btn-dark: #3f4850;
+    }
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(2rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .notification {
+        animation: none;
+    }
+}

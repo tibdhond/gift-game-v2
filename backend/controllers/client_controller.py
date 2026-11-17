@@ -4,14 +4,16 @@ from PIL import Image
 from pathlib import Path
 from flask import current_app, g
 from werkzeug.datastructures import FileStorage
-from controllers.auth_controller import new_token
-from entities.exceptions import UserExistsException
+from util.auth import new_token
+from models.claim import Claim, ClaimDTO, ClaimState, CLAIM_STATE_TIMEOUTS
+from entities.exceptions import ClaimInProgressException, InvalidClaimException, UserExistsException
 from cache import Cache
 from models.game import Game
-from models.user import User
+from models.user import User, UserDTO
 from models.gift import Gift
 from models.vote import Vote
 from pillow_heif import register_heif_opener
+from datetime import datetime
 
 register_heif_opener()
 
@@ -21,18 +23,27 @@ def login(game_id: str, name: str) -> User:
 
     user: User | None = game.get_user(name)
     
-    if not user:
+    if user is None:
         user = User(name)
         user.token = new_token()
         game.add_user(user)
-        cache.store_game(game)
     elif not (user.token == '' or user.token == None):
         raise UserExistsException
     else:
         user.token = new_token()
         game.token_map[user.token] = user.get_id()
-        cache.store_game(game)
+    cache.store_game(game)
     return user
+
+def logout(user_id: str) -> None:
+    cache: Cache = Cache.get_instance()
+    game: Game = g.game
+
+    player = game.players[user_id]
+    player.token = None
+
+    cache.store_game(game)
+    
 
 def vote(voter_id: str, target_id: str) -> None:
     cache: Cache = Cache.get_instance()
@@ -42,17 +53,17 @@ def vote(voter_id: str, target_id: str) -> None:
 
     cache.store_game(game)
 
-def get_user_info(user_id: str) -> dict[str, Any]:
+def get_user_info(user_id: str) -> UserDTO:
     game: Game = g.game
 
     if not game.players:
-            return {}
+        return {}
     
     user: User | None = game.players[user_id] if user_id in game.players else None
     if not user:
         return {}
     
-    return ({ "userId": user.get_id(), "name": user.name, "avatarPath": user.avatar_path })
+    return UserDTO.from_model(user, g.role, True)
 
 def get_user_phase(user_id: str) -> dict[str, Any]:
     game: Game = g.game
@@ -162,3 +173,55 @@ def upload_avatar(user_id: str, file: FileStorage) -> None:
         raise e
 
                 
+def make_claim(game_id: str, player_name: str) -> Claim:
+    cache: Cache = Cache.get_instance()
+    game: Game = cache.get_game(game_id)
+
+    if player_name in game.claim_map:
+        claim_id: str = game.claim_map[player_name]
+        claim: Claim = game.get_claim(claim_id)
+
+        # Allow re-claiming if old claim has timed out (timeout thresholds are different for each state)
+        if claim.get_time_delta() > CLAIM_STATE_TIMEOUTS[claim.get_state()]:
+            claim.refresh_token()
+            claim.set_state(ClaimState.PENDING)
+        else:
+            raise ClaimInProgressException
+
+        
+    else:
+        player: User = next(user for user in game.players.values() if user.name == player_name)
+        claim: Claim = game.add_claim(player_name, player.get_id())
+
+        
+    cache.store_game(game)
+
+    return claim
+
+
+def get_claim(claim_id: str) -> ClaimDTO:
+    game: Game = g.game
+
+    claim: Claim = game.get_claim(claim_id)
+
+    if Claim is None or claim.get_time_delta() > CLAIM_STATE_TIMEOUTS[claim.get_state()]:
+        raise InvalidClaimException
+
+    return ClaimDTO.from_model(claim)
+
+def redeem_claim(claim_id: str) -> User:
+    cache: Cache = Cache.get_instance()
+    game: Game = g.game
+
+    claim: Claim | None = game.get_claim(claim_id)
+
+    if claim is None:
+        raise InvalidClaimException
+
+    user: User = game.players[claim.get_player_id()]
+
+    claim.set_state(ClaimState.REDEEMED)
+    cache.store_game(game)
+
+    return user
+

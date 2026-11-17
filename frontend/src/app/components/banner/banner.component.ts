@@ -20,7 +20,6 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
     public username$!: Observable<string | undefined>;
     public avatarUrl$!: Observable<string | undefined>
     public gameId$!: Observable<string>;
-    private userId!: string | null;
 
     public avatarAvailable: boolean = true;
     public hasUploadedAvatar: boolean = false;
@@ -31,18 +30,15 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
         private client: ClientService,
         private message: MessageService,
         private router: Router,
-        private localStorageService: LocalStorageService
     ) {
         super();
     }
 
     override ngOnInit(): void {
         this.initGameId();
-        const userId$: Observable<string | null> = this.localStorageService.getUserId().pipe(
-            takeUntil(this.destroy$));
 
-        const userInfo$: Observable<UserInfoResult | null> = combineLatest([this.gameId$, userId$, this.refreshTrigger$]).pipe(
-            switchMap(([gameId, userId, _]) => userId && gameId ? this.client.getUserInfo(gameId, userId).pipe(
+        const userInfo$: Observable<UserInfoResult | null> = combineLatest([this.gameId$, this.refreshTrigger$]).pipe(
+            switchMap(([gameId, _]) => gameId ? this.client.getUserInfo(gameId).pipe(
                 catchError((e) => {
                     console.error('Failed fetching user info', e);
                     return of(null);
@@ -65,17 +61,13 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
             }),
             map(userInfo => userInfo ? userInfo.avatarPath : undefined)
         );
-
-        userId$.pipe(takeUntil(this.destroy$)).subscribe(userId => {
-            this.userId = userId;
-        })
     }
 
     private initGameId(): void {
         this.gameId$ = this.router.events.pipe(
             filter(event => event instanceof NavigationEnd),
             map(() => this.getRouteParams()),
-            map(params => params['game_id']),
+            map(params => params['gameId']),
             shareReplay(1)
         );
     }
@@ -102,12 +94,12 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
 
     onFileSelected(event: any) {
         const file = event.target.files[0];
-        if (!file || !this.userId) return;
+        if (!file) return;
 
         this.message.show('Uploading...', 'loading');
 
         this.gameId$.pipe(
-            switchMap(gameId => this.client.uploadAvatar(gameId, this.userId!, file)),
+            switchMap(gameId => this.client.uploadAvatar(gameId, file)),
             take(1)
         ).subscribe({
             next: (res: any) => {

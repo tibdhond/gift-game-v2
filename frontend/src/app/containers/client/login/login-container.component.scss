@@ -62,8 +62,127 @@
     }
 }
 
+.confirm-text {
+    margin: 0 0 0.75rem;
+    font-size: 1.15rem;
+    line-height: 1.4;
+
+    strong {
+        color: #e0b04a;
+        overflow-wrap: anywhere; // a very long name shouldn't push the card wider
+    }
+}
+
+.confirm-hint {
+    margin: 0 0 1.25rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    opacity: 0.85;
+}
+
+.error {
+    margin: 0 0 1rem;
+    color: #ffb4ab;
+    font-weight: 600;
+}
+
+.confirm-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+
+    .action-button {
+        justify-content: center;
+        font-size: 1.4rem;
+        white-space: normal; // the name in the label can wrap on narrow phones
+    }
+}
+
+// The quiet way out: clearly a button, but it doesn't compete with the primary one
+.link-button {
+    padding: 0.4rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    opacity: 0.85;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        opacity: 1;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+}
+
+// The verification code, one tile per letter. Same look as the lobby's join code.
+.claim-code {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0 1.25rem;
+}
+
+.claim-char {
+    display: grid;
+    place-items: center;
+    width: 3.2rem;
+    height: 4.2rem;
+    border-radius: 10px;
+    background: var(--snow, #f7f4ee);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+    color: #10261f;
+    font-size: 2.6rem;
+    font-weight: 800;
+}
+
+.waiting-text {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+    opacity: 0.9;
+
+    .dot {
+        display: inline-block;
+        width: 0.4rem;
+        height: 0.4rem;
+        margin-left: 0.25rem;
+        border-radius: 50%;
+        background: currentColor;
+        animation: pulse 1.2s ease-in-out infinite;
+
+        &:nth-of-type(2) {
+            animation-delay: 0.2s;
+        }
+
+        &:nth-of-type(3) {
+            animation-delay: 0.4s;
+        }
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.25;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
-    .centered-page {
+
+    .centered-page,
+    .waiting-text .dot {
         animation: none;
     }
 }

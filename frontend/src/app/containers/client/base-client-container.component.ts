@@ -25,7 +25,7 @@ export abstract class BaseClientContainerComponent extends BaseGameContainer imp
         super.ngOnInit();
 
         this.userInfo$ = this.gameId$.pipe(
-            switchMap(gameId => this.client.getUserInfo(gameId, this.userId!))
+            switchMap(gameId => this.client.getUserInfo(gameId))
         );
     }
 }

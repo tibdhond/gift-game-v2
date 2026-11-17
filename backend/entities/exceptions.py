@@ -21,3 +21,12 @@ class UserExistsException(BaseException):
 
 class GameHasHostException(BaseException):
     pass
+
+class InvalidClaimException(BaseException):
+    pass
+
+class ClaimInProgressException(BaseException):
+    pass
+
+class BadRequestException(BaseException):
+    pass

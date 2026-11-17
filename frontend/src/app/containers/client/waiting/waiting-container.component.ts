@@ -52,27 +52,23 @@ export class WaitingContainerComponent extends BaseClientContainerComponent impl
         super.ngOnInit();
         // this.loopIconAnimation();
 
-        if (this.userId) {
-            interval(3000).pipe(
-                switchMap(() => this.gameId$),
-                switchMap(gameId => this.clientService.getUserPhase(gameId, this.userId!)),
-                map(phaseResult => phaseResult.phase),
-                withLatestFrom(this.gameId$),
-                takeUntil(this.destroy$)
-            ).subscribe(([phase, gameId]) => {
-                if (phase === UserPhase.GIFT_OPENING) {
-                    this.router.navigate(['client', gameId, 'gift-opening']);
-                } else if (phase === UserPhase.VOTING) {
-                    this.router.navigate(['client', gameId, 'vote']);
-                } else if (phase === UserPhase.UNREGISTERED) {
-                    this.router.navigate(['/']);
-                } else if (phase === UserPhase.FINISHED) {
-                    this.router.navigate(['client', gameId, 'personal-results']);
-                }
-            })
-        } else {
-            this.router.navigate(['/']);
-        }
+        interval(3000).pipe(
+            switchMap(() => this.gameId$),
+            switchMap(gameId => this.clientService.getUserPhase(gameId)),
+            map(phaseResult => phaseResult.phase),
+            withLatestFrom(this.gameId$),
+            takeUntil(this.destroy$)
+        ).subscribe(([phase, gameId]) => {
+            if (phase === UserPhase.GIFT_OPENING) {
+                this.router.navigate(['client', gameId, 'gift-opening']);
+            } else if (phase === UserPhase.VOTING) {
+                this.router.navigate(['client', gameId, 'vote']);
+            } else if (phase === UserPhase.UNREGISTERED) {
+                this.router.navigate(['/']);
+            } else if (phase === UserPhase.FINISHED) {
+                this.router.navigate(['client', gameId, 'personal-results']);
+            }
+        })
 
         this.gifUrl$ = this.gifVersion$.pipe(
             map(version => `/api/gif?v=${version}`)

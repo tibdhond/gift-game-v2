@@ -8,7 +8,7 @@ import { Player } from "src/app/entities/entities";
 import { BaseClientContainerComponent } from "../base-client-container.component";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { MessageService } from "src/app/services/message.service";
-import { VoteConfirmDialogComponent } from "src/app/components/dialogs/confirm/confirm.dialog.component";
+import { VoteConfirmDialogComponent } from "src/app/components/dialogs/vote-confirm/vote-confirm.dialog.component";
 
 @Component({
     selector: "vote-container",
