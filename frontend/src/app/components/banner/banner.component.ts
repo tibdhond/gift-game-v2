@@ -7,9 +7,12 @@ import { BaseContainer } from '../../containers/base-container.component';
 import { UserInfoResult } from '../../entities/entities';
 import { LocalStorageService } from '../../services/localstorage.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { gameIdService } from 'src/app/services/game-id.service';
+
+export const BANNER_SELECTOR: string = "app-banner";
 
 @Component({
-    selector: 'app-banner',
+    selector: BANNER_SELECTOR,
     templateUrl: './banner.component.html',
     styleUrls: ['./banner.component.scss']
 })
@@ -30,13 +33,13 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
     constructor(
         private client: ClientService,
         private message: MessageService,
-        private router: Router,
+        private gameIdService: gameIdService,
     ) {
         super();
     }
 
     override ngOnInit(): void {
-        this.initGameId();
+        this.gameId$ = this.gameIdService.getGameId();
 
         const userInfo$: Observable<UserInfoResult | null> = combineLatest([this.gameId$, this.refreshTrigger$]).pipe(
             switchMap(([gameId, _]) => gameId ? this.client.getUserInfo(gameId, true).pipe(
@@ -64,29 +67,8 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
         );
     }
 
-    private initGameId(): void {
-        this.gameId$ = this.router.events.pipe(
-            filter(event => event instanceof NavigationEnd),
-            map(() => this.getRouteParams()),
-            map(params => params['gameId']),
-            shareReplay(1)
-        );
-    }
-
     public override ngOnDestroy(): void {
         this.refreshTrigger$.complete();
-    }
-
-    private getRouteParams(): Params {
-        let params: Params = {};
-        let route = this.router.routerState.snapshot.root;
-
-        while (route) {
-            params = { ...params, ...route.params };
-            route = route.firstChild!;
-        }
-
-        return params;
     }
 
     triggerUpload() {

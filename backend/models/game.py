@@ -220,7 +220,7 @@ class Game():
         return [gift for gift in self.gifts.values() if not gift.assigned]
     
     def add_claim(self, player_name: str, player_id: str) -> Claim:
-        claim: Claim = Claim(player_name=player_name, player_id=player_id)s
+        claim: Claim = Claim(player_name=player_name, player_id=player_id)
         self.claims[claim.get_id()] = claim
         self.claim_map[player_name] = claim.get_id()
         return claim

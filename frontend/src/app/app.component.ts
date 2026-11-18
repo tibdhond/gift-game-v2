@@ -1,19 +1,28 @@
 import { Component } from '@angular/core';
 import { ClientService } from './services/client.service';
+import { distinctUntilChanged, filter, map, Observable, startWith } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+	selector: 'app-root',
+	templateUrl: './app.component.html',
+	styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'gift_game_v2';
-  userId = '';
-  gameId = '';
+	title = 'gift_game_v2';
+	userId = '';
+	gameId = '';
 
-  constructor(private client: ClientService) {}
+	public isHostArea$!: Observable<boolean>;
 
-  ngOnInit() {
-    // Logic to populate userId and gameId from the state or route
-  }
+	constructor(private router: Router) { }
+
+	ngOnInit() {
+		this.isHostArea$ = this.router.events.pipe(
+			filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+			startWith(null),
+			map(() => this.router.url.startsWith('/host')),
+			distinctUntilChanged()
+		);
+	}
 }

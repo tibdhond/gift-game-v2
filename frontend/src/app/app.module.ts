@@ -34,6 +34,7 @@ import { GetTokenContainerComponent } from './containers/host/get-token/get-toke
 import { UnauthorizedInterceptor } from './injectors/token.interceptor';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { HostShellComponent } from './containers/host/host-shell.container';
+import { QrCordComponent } from './components/qr-cord/qr-cord.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { HostShellComponent } from './containers/host/host-shell.container';
     LogoutContainerComponent,
     GetTokenContainerComponent,
     NotificationsComponent,
-    HostShellComponent
+    HostShellComponent,
+    QrCordComponent
   ],
   imports: [
     CommonModule,
