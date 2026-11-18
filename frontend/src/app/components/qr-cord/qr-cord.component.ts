@@ -6,7 +6,7 @@ import { BANNER_SELECTOR } from '../banner/banner.component';
 
 // ---------- Tunables ----------
 const SEGMENTS = 16;              // points in the cord (the last one is the ring)
-const CORD_LENGTH = 130;           // px from the fixed end to the ring's centre
+const CORD_LENGTH = 100;           // px from the fixed end to the ring's centre
 const RING_RADIUS = 10;
 const HOOK_TO_ANCHOR_X = 100;      // the cord's fixed end sits this far to the right of the hook
 const MOUNT_DISTANCE = 23;        // a ring released within this distance of the hook hangs itself on it
