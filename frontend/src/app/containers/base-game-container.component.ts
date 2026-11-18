@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BaseContainer } from './base-container.component';
-import { Observable, map } from 'rxjs';
+import { Observable, distinctUntilChanged, filter, map, tap } from 'rxjs';
+import { isEqual } from 'lodash-es';
 
 @Component({
     selector: '',
@@ -17,7 +18,9 @@ export abstract class BaseGameContainer extends BaseContainer implements OnInit 
     override ngOnInit(): void {
         super.ngOnInit();
         this.gameId$ = this.route.params.pipe(
-            map(params => params['game_id'])
-        )
+            map(params => params['gameId']),
+            filter(gameId => !!gameId),
+            distinctUntilChanged(isEqual),
+        );
     }
 }

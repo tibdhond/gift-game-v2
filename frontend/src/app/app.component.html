@@ -1,6 +1,7 @@
-<app-banner [title]="'🎄 Gift game V2'"></app-banner>
+<app-banner [title]="'🎄 Gift game V2'"><app-qr-cord *ngIf="isHostArea$ | async"></app-qr-cord></app-banner>
 <div class="app-container">
     <app-background-overlay [type]="'FLOATING'"></app-background-overlay>
+    <app-notifications></app-notifications>
     <router-outlet class="router"></router-outlet>
     <app-message-display></app-message-display>
 </div>

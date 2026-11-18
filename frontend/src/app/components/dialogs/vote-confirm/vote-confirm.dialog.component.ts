@@ -10,9 +10,9 @@ export interface VoteConfirmDialogData {
 }
 
 @Component({
-  selector: 'app-confirm-dialog',
-  templateUrl: './confirm.dialog.component.html',
-  styleUrls: ['./confirm.dialog.component.scss']
+  selector: 'app-vote-confirm-dialog',
+  templateUrl: './vote-confirm.dialog.component.html',
+  styleUrls: ['./vote-confirm.dialog.component.scss']
 })
 export class VoteConfirmDialogComponent {
 

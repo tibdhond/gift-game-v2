@@ -1,49 +1,51 @@
 from typing import Any
 
+from models.user import User
+from util.auth import new_token
+from models.claim import CLAIM_STATE_TIMEOUTS, Claim, ClaimDTO, ClaimState
 from cache import Cache
 from models.game import Game
 from models.gift import Gift
 from models.vote import Vote
 from models.round import Round
 from entities.enums import UserPhase
-from entities.exceptions import OngoingRoundException, InvalidRoundException
+from entities.exceptions import OngoingRoundException, InvalidRoundException, InvalidClaimException
+from flask import g
 
 
-def delete_player(game_id: str, user_id: str) -> None:
+def delete_player(user_id: str) -> None:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game = g.game
 
     del game.players[user_id]
     cache.store_game(game)
 
-def new_round(game_id: str) -> None:
+def new_round() -> None:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game = g.game
 
     game.new_round()
     cache.store_game(game)
 
     cache.store_game(game)
 
-def get_round_progress(game_id: str) -> dict[str, str | Any]:
-    cache: Cache = Cache.get_instance()
-    game: Game | None = cache.get_game(game_id)
+def get_round_progress() -> dict[str, str | Any]:
+    game: Game = g.game
 
     players: list[dict[str, str | bool]] = [{"name": player.name, "voted": player.phase == UserPhase.WAITING } for player in game.get_players()]
     gift: Gift | None = game.gifts.get(game.current_round().gift_id, None)
 
     return {"players": sorted(players, key=lambda player: player["name"]), "gift": gift.description if gift else None, "invalid": game.is_round_invalid()}
 
-def reset_round(game_id: str) -> None:
+def reset_round() -> None:
     cache: Cache = Cache.get_instance()
-    game: Game | None = cache.get_game(game_id)
+    game: Game = g.game
 
     game.reset_round()
     cache.store_game(game)
 
-def get_round_result(game_id: str) -> dict[str, Any]:
-    cache: Cache = Cache.get_instance()
-    game: Game | None = cache.get_game(game_id)
+def get_round_result() -> dict[str, Any]:
+    game: Game = g.game
 
     if not game.is_round_finished():
         raise OngoingRoundException()
@@ -63,15 +65,14 @@ def get_round_result(game_id: str) -> dict[str, Any]:
 
     return round_result
 
-def get_game_phase(game_id: str) -> dict[str, Any]:
-    cache: Cache = Cache.get_instance()
-    game: Game | None = cache.get_game(game_id)
+def get_game_phase() -> dict[str, Any]:
+    game: Game = g.game
 
     return {"phase": game.phase}
 
-def assign_gift(game_id: str) -> bool:
+def assign_gift() -> bool:
     cache: Cache = Cache.get_instance()
-    game: Game | None = cache.get_game(game_id)
+    game: Game = g.game
 
     result: bool = game.assign_gift()
 
@@ -79,9 +80,8 @@ def assign_gift(game_id: str) -> bool:
 
     return result
 
-def get_result(game_id: str) -> list[dict[str, Any]]:
-    cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+def get_result() -> list[dict[str, Any]]:
+    game: Game = g.game
 
     user_map: dict[str, Any] = {player.get_id(): {"name": player.name, "gift_score": 0, "vote_score": 0, "self_vote_score": 0, "target_correct": 0, "target_wrong": 0, "sabotage_score": 0, "userId": player.get_id(), "avatarPath": player.avatar_path} for player in game.get_players()}
    
@@ -99,8 +99,6 @@ def get_result(game_id: str) -> list[dict[str, Any]]:
             correct_vote: bool = vote.target_id == round_gift.owner
 
             # User did not claim their own gift or tried to claim someone else's gift
-            if vote.voter_id == "user-1":
-                print(vote.voter_id, vote_id, correct_vote, vote.target_id == vote.voter_id, round_gift.owner == vote.voter_id)
             if (vote.target_id == vote.voter_id or round_gift.owner == vote.voter_id) and not correct_vote:
                 user_map[vote.voter_id]["sabotage_score"] += 1
 
@@ -117,3 +115,29 @@ def get_result(game_id: str) -> list[dict[str, Any]]:
                         user_map[vote.voter_id]["self_vote_score"] += 1
 
     return [result for result in user_map.values()]
+
+def get_claims() -> list[ClaimDTO]:
+    game: Game = g.game
+
+    return [ClaimDTO.from_model(claim) for claim in game.get_claims() if claim.get_state() == ClaimState.PENDING and claim.get_time_delta() < CLAIM_STATE_TIMEOUTS[ClaimState.PENDING]]
+
+def resolve_claim(claim_id: str, claim_state: ClaimState) -> ClaimDTO:
+    cache: Cache = Cache.get_instance()
+    game: Game = g.game
+
+    claim: Claim = game.get_claim(claim_id)
+
+    if claim is None:
+        raise InvalidClaimException
+
+    if claim_state == ClaimState.APPROVED:
+        player: User = game.players[claim.get_player_id()]
+        del game.token_map[player.token]
+        player.token = new_token()
+        game.token_map[player.token] = player.get_id()
+
+    claim.set_state(claim_state)
+
+    cache.store_game(game)
+
+    return ClaimDTO.from_model(claim)

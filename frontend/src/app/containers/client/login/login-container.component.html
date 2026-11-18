@@ -1,14 +1,87 @@
 <div class="centered-page">
-    <app-tag-card class="login-card">
-        <h2 class="page-title card-title">Login</h2>
+    <app-tag-card class="login-card" [accent]="accent">
+        <ng-container [ngSwitch]="loginStage">
 
-        <label class="field-label" for="loginName">Naam</label>
-        <div class="input-row">
-            <input type="text" id="loginName" class="game-input" required autocomplete="nickname" enterkeyhint="go"
-                [formControl]="loginControl" (keyup.enter)="onLogin()" />
-            <button type="button" class="action-button round" aria-label="Inloggen" (click)="onLogin()">
-                <mat-icon fontIcon="send" aria-hidden="true"></mat-icon>
-            </button>
-        </div>
+            <!-- 1. Name form -->
+            <ng-container *ngSwitchCase="'form'">
+                <h2 class="page-title card-title">Login</h2>
+                <label class="field-label" for="loginName">Naam</label>
+                <div class="input-row">
+                    <input type="text" id="loginName" class="game-input" required autocomplete="nickname"
+                        enterkeyhint="go" [formControl]="loginControl" (keyup.enter)="onLogin()" />
+                    <button type="button" class="action-button round" aria-label="Inloggen" [disabled]="busy"
+                        (click)="onLogin()">
+                        <mat-icon fontIcon="send" aria-hidden="true"></mat-icon>
+                    </button>
+                </div>
+            </ng-container>
+
+            <!-- 2. Name taken: ask whether to claim it -->
+            <div *ngSwitchCase="'confirm'" class="confirm" aria-live="polite">
+                <h2 class="page-title card-title">Deze naam bestaat al</h2>
+                <p class="confirm-text">
+                    Er is al een speler met de naam <strong>{{ takenName }}</strong>.
+                    Ben jij dat en ben je je verbinding kwijt?
+                </p>
+                <p class="confirm-hint">
+                    De host moet je dan eerst goedkeuren. Je krijgt een code die je aan de host laat zien.
+                    Ben je het niet? Kies dan een andere naam.
+                </p>
+                <p *ngIf="claimError" class="error" role="alert">{{ claimError }}</p>
+                <div class="confirm-actions">
+                    <button type="button" class="action-button" [disabled]="busy" (click)="onConfirmClaim()">
+                        Ja, ik ben {{ takenName }}
+                    </button>
+                    <button type="button" class="link-button" [disabled]="busy" (click)="onChooseOtherName()">
+                        Andere naam kiezen
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. Waiting for the host -->
+            <div *ngSwitchCase="'waiting'" class="confirm" aria-live="polite">
+                <h2 class="page-title card-title">Wacht op de host</h2>
+                <p class="confirm-text">Laat deze code aan de host zien:</p>
+
+                <div class="claim-code" aria-label="Je code">
+                    <span class="claim-char" *ngFor="let char of claim?.key?.split('')">{{ char }}</span>
+                </div>
+
+                <ng-container *ngIf="!redeemError; else redeemFailed">
+                    <p class="waiting-text">
+                        Wachten op goedkeuring
+                        <span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span><span
+                            class="dot" aria-hidden="true"></span>
+                    </p>
+                    <button type="button" class="link-button" (click)="onCancelClaim()">Annuleren</button>
+                </ng-container>
+
+                <ng-template #redeemFailed>
+                    <p class="error" role="alert">Goedgekeurd, maar het inloggen is niet gelukt.</p>
+                    <div class="button-container">
+                        <button type="button" class="action-button" (click)="onRetryRedeem()">Opnieuw proberen</button>
+                    </div>
+                </ng-template>
+            </div>
+
+            <!-- 4. Denied -->
+            <div *ngSwitchCase="'denied'" class="confirm" aria-live="polite">
+                <h2 class="page-title card-title">Geweigerd</h2>
+                <p class="confirm-text">De host heeft je verzoek niet goedgekeurd.</p>
+                <div class="button-container">
+                    <button type="button" class="action-button" (click)="onTryAgain()">Andere naam kiezen</button>
+                </div>
+            </div>
+
+            <!-- 5. Expired (claim no longer exists on the server) -->
+            <div *ngSwitchCase="'expired'" class="confirm" aria-live="polite">
+                <h2 class="page-title card-title">Verzoek verlopen</h2>
+                <p class="confirm-text">Het duurde te lang voordat de host reageerde.</p>
+                <div class="button-container">
+                    <button type="button" class="action-button" (click)="onTryAgain()">Opnieuw proberen</button>
+                </div>
+            </div>
+
+        </ng-container>
     </app-tag-card>
 </div>

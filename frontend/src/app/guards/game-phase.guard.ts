@@ -1,9 +1,10 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { ClientService } from '../services/client.service';
-import { map, of, take, tap } from 'rxjs';
+import { catchError, EMPTY, map, of, take, tap } from 'rxjs';
 import { UserPhase } from '../entities/entities';
 import { RedirectService } from '../services/redirect.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export const GamePhaseGuard: CanActivateFn = (route, state) => {
     const router: Router = inject(Router);
@@ -31,23 +32,13 @@ export const GamePhaseGuard: CanActivateFn = (route, state) => {
     const gameId: string = segments[gameIdIndex];
     const pageUrl = segments[segments.length - 1];
 
-    const userId: string | null = localStorage.getItem("userId");
-    if (!userId) {
-        if (pageUrl === "login") {
-            return of(true);
-        } else {
-            return of(false);
-        }
-    }
-
     const redirectTo = (url: string): UrlTree => {
         const tree = router.parseUrl(url);
         redirectService.pendingRedirectUrl = router.serializeUrl(tree);
         return tree;
     };
 
-
-    return clientService.getUserPhase(gameId, userId).pipe(
+    return clientService.getUserPhase(gameId, true).pipe(
         take(1),
         map(userphase => userphase.phase),
         map(userPhase => {
@@ -78,6 +69,12 @@ export const GamePhaseGuard: CanActivateFn = (route, state) => {
                     }
                     return redirectTo(['client', gameId, 'login'].join('/'));
             }
+        }),
+        catchError((error: HttpErrorResponse) => {
+            if (error.status === 401) {
+                return of(redirectTo(['client', gameId, 'login'].join('/')));
+            }
+            return EMPTY;
         })
     );
 };

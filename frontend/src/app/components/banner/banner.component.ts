@@ -6,9 +6,13 @@ import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of
 import { BaseContainer } from '../../containers/base-container.component';
 import { UserInfoResult } from '../../entities/entities';
 import { LocalStorageService } from '../../services/localstorage.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { gameIdService } from 'src/app/services/game-id.service';
+
+export const BANNER_SELECTOR: string = "app-banner";
 
 @Component({
-    selector: 'app-banner',
+    selector: BANNER_SELECTOR,
     templateUrl: './banner.component.html',
     styleUrls: ['./banner.component.scss']
 })
@@ -20,7 +24,6 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
     public username$!: Observable<string | undefined>;
     public avatarUrl$!: Observable<string | undefined>
     public gameId$!: Observable<string>;
-    private userId!: string | null;
 
     public avatarAvailable: boolean = true;
     public hasUploadedAvatar: boolean = false;
@@ -30,20 +33,17 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
     constructor(
         private client: ClientService,
         private message: MessageService,
-        private router: Router,
-        private localStorageService: LocalStorageService
+        private gameIdService: gameIdService,
     ) {
         super();
     }
 
     override ngOnInit(): void {
-        this.initGameId();
-        const userId$: Observable<string | null> = this.localStorageService.getUserId().pipe(
-            takeUntil(this.destroy$));
+        this.gameId$ = this.gameIdService.getGameId();
 
-        const userInfo$: Observable<UserInfoResult | null> = combineLatest([this.gameId$, userId$, this.refreshTrigger$]).pipe(
-            switchMap(([gameId, userId, _]) => userId && gameId ? this.client.getUserInfo(gameId, userId).pipe(
-                catchError((e) => {
+        const userInfo$: Observable<UserInfoResult | null> = combineLatest([this.gameId$, this.refreshTrigger$]).pipe(
+            switchMap(([gameId, _]) => gameId ? this.client.getUserInfo(gameId, true).pipe(
+                catchError((e: HttpErrorResponse) => {
                     console.error('Failed fetching user info', e);
                     return of(null);
                 })
@@ -65,35 +65,10 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
             }),
             map(userInfo => userInfo ? userInfo.avatarPath : undefined)
         );
-
-        userId$.pipe(takeUntil(this.destroy$)).subscribe(userId => {
-            this.userId = userId;
-        })
-    }
-
-    private initGameId(): void {
-        this.gameId$ = this.router.events.pipe(
-            filter(event => event instanceof NavigationEnd),
-            map(() => this.getRouteParams()),
-            map(params => params['game_id']),
-            shareReplay(1)
-        );
     }
 
     public override ngOnDestroy(): void {
         this.refreshTrigger$.complete();
-    }
-
-    private getRouteParams(): Params {
-        let params: Params = {};
-        let route = this.router.routerState.snapshot.root;
-
-        while (route) {
-            params = { ...params, ...route.params };
-            route = route.firstChild!;
-        }
-
-        return params;
     }
 
     triggerUpload() {
@@ -102,12 +77,12 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
 
     onFileSelected(event: any) {
         const file = event.target.files[0];
-        if (!file || !this.userId) return;
+        if (!file) return;
 
         this.message.show('Uploading...', 'loading');
 
         this.gameId$.pipe(
-            switchMap(gameId => this.client.uploadAvatar(gameId, this.userId!, file)),
+            switchMap(gameId => this.client.uploadAvatar(gameId, file)),
             take(1)
         ).subscribe({
             next: (res: any) => {

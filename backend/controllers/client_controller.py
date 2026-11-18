@@ -2,72 +2,87 @@ import os
 from typing import Any
 from PIL import Image
 from pathlib import Path
-from flask import current_app
+from flask import current_app, g
 from werkzeug.datastructures import FileStorage
+from util.auth import new_token
+from models.claim import Claim, ClaimDTO, ClaimState, CLAIM_STATE_TIMEOUTS
+from entities.exceptions import ClaimInProgressException, InvalidClaimException, UserExistsException
 from cache import Cache
 from models.game import Game
-from models.user import User
+from models.user import User, UserDTO
 from models.gift import Gift
 from models.vote import Vote
 from pillow_heif import register_heif_opener
+from datetime import datetime
 
 register_heif_opener()
 
-def login(game_id: str, name: str) -> str:
+def login(game_id: str, name: str) -> User:
     cache: Cache = Cache.get_instance()
     game: Game = cache.get_game(game_id)
 
     user: User | None = game.get_user(name)
-
-    if not user:
+    
+    if user is None:
         user = User(name)
+        user.token = new_token()
         game.add_user(user)
-        cache.store_game(game)
-    return user.get_id()
+    elif not (user.token == '' or user.token == None):
+        raise UserExistsException
+    else:
+        user.token = new_token()
+        game.token_map[user.token] = user.get_id()
+    cache.store_game(game)
+    return user
 
-def vote(game_id: str, voter_id: str, target_id: str) -> None:
+def logout(user_id: str) -> None:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game = g.game
+
+    player = game.players[user_id]
+    player.token = None
+
+    cache.store_game(game)
+    
+
+def vote(voter_id: str, target_id: str) -> None:
+    cache: Cache = Cache.get_instance()
+    game: Game = g.game
 
     game.add_vote(voter_id, target_id)
 
     cache.store_game(game)
 
-def get_user_info(game_id: str, user_id: str) -> dict[str, Any]:
-    cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+def get_user_info(user_id: str) -> UserDTO:
+    game: Game = g.game
 
     if not game.players:
-            return {}
+        return {}
     
     user: User | None = game.players[user_id] if user_id in game.players else None
     if not user:
         return {}
     
-    return ({ "userId": user.get_id(), "name": user.name, "avatarPath": user.avatar_path })
+    return UserDTO.from_model(user, g.role, True)
 
-def get_user_phase(game_id: str, user_id: str) -> dict[str, Any]:
-    cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+def get_user_phase(user_id: str) -> dict[str, Any]:
+    game: Game = g.game
 
     if not game.players:
         return { "phase": "UNREGISTERED" }
 
     return { "phase": game.players[user_id].phase if user_id in game.players else "UNREGISTERED" }
 
-def add_gift(game_id: str, user_id: str, description: str) -> None:
+def add_gift(user_id: str, description: str) -> None:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game = g.game
 
     game.add_gift(description, user_id)
 
     cache.store_game(game)
 
-def get_result(game_id: str, user_id: str) -> dict[str, Any]:
-    cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
-
-    user_gift: Gift = [gift for gift in game.gifts.values() if gift.owner == user_id][0]
+def get_result(user_id: str) -> dict[str, Any]:
+    game: Game = g.game
 
     result: dict[str, Any] = { "self_vote_score": 0, "vote_score": 0, "gift_score": 0, "sabotage_score": 0, "target_correct": 0, "target_wrong": 0, "rounds": []}
 
@@ -113,9 +128,9 @@ def get_result(game_id: str, user_id: str) -> dict[str, Any]:
                             result["target_wrong"] += 1 # De andere gebruiker stemde foutief op deze gebruiker
     return result
 
-def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
+def upload_avatar(user_id: str, file: FileStorage) -> None:
     cache: Cache = Cache.get_instance()
-    game: Game = cache.get_game(game_id)
+    game: Game = g.game
     
     player: User = game.players[user_id]
     # Check file size (limit 4MB)
@@ -128,7 +143,7 @@ def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
     # Determine storage path
     # current_app.root_path is 'backend'
     base_dir = Path(current_app.root_path) / "static" / "avatars"
-    game_dir = base_dir / game_id
+    game_dir = base_dir / game.id
     game_dir.mkdir(parents=True, exist_ok=True)
     
     filepath = game_dir / f"{user_id}.jpg"
@@ -146,7 +161,7 @@ def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
         
         # Update game state
         player.avatar_version += 1
-        player.avatar_path = f"api/{game_id}/players/{user_id}/avatar?version={player.avatar_version}"
+        player.avatar_path = f"api/{game.id}/players/{user_id}/avatar?version={player.avatar_version}"
         
         # Commit to store
         cache.store_game(game)
@@ -158,3 +173,55 @@ def upload_avatar(game_id: str, user_id: str, file: FileStorage) -> None:
         raise e
 
                 
+def make_claim(game_id: str, player_name: str) -> Claim:
+    cache: Cache = Cache.get_instance()
+    game: Game = cache.get_game(game_id)
+
+    if player_name in game.claim_map:
+        claim_id: str = game.claim_map[player_name]
+        claim: Claim = game.get_claim(claim_id)
+
+        # Allow re-claiming if old claim has timed out (timeout thresholds are different for each state)
+        if claim.get_time_delta() > CLAIM_STATE_TIMEOUTS[claim.get_state()]:
+            claim.refresh_token()
+            claim.set_state(ClaimState.PENDING)
+        else:
+            raise ClaimInProgressException
+
+        
+    else:
+        player: User = next(user for user in game.players.values() if user.name == player_name)
+        claim: Claim = game.add_claim(player_name, player.get_id())
+
+        
+    cache.store_game(game)
+
+    return claim
+
+
+def get_claim(claim_id: str) -> ClaimDTO:
+    game: Game = g.game
+
+    claim: Claim = game.get_claim(claim_id)
+
+    if Claim is None or claim.get_time_delta() > CLAIM_STATE_TIMEOUTS[claim.get_state()]:
+        raise InvalidClaimException
+
+    return ClaimDTO.from_model(claim)
+
+def redeem_claim(claim_id: str) -> User:
+    cache: Cache = Cache.get_instance()
+    game: Game = g.game
+
+    claim: Claim | None = game.get_claim(claim_id)
+
+    if claim is None:
+        raise InvalidClaimException
+
+    user: User = game.players[claim.get_player_id()]
+
+    claim.set_state(ClaimState.REDEEMED)
+    cache.store_game(game)
+
+    return user
+

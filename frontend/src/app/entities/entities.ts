@@ -2,10 +2,6 @@ export interface GameCreationResult {
     game_id: string;
 }
 
-export interface LoginResult {
-    user_id: string;
-}
-
 export interface PlayersResult {
     players: Player[];
 }
@@ -46,6 +42,7 @@ export interface UserInfoResult {
     userId: string;
     name: string;
     avatarPath: string;
+    phase: UserPhase;
 }
 
 export enum UserPhase {
@@ -98,3 +95,18 @@ export interface PodiumSlot {
     statLabel?: string;   // e.g. "correcte stemmen"
     delay: number;        // seconds, for the staged reveal
 }
+
+export interface Claim {
+    id: string;
+    state: ClaimState,
+    key: string;
+    playerName: string;
+}
+
+export const OClaimState = {
+    PENDING: "PENDING",
+    APPROVED: "APPROVED",
+    DENIED: "DENIED",
+    REDEEMED: "REDEEMED"
+} as const;
+export type ClaimState = typeof OClaimState[keyof typeof OClaimState]

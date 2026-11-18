@@ -1,0 +1,32 @@
+<!--
+  The overlay is moved to <body> at runtime, so the banner's own CSS can't affect it.
+  The component's host element is just a zero-size marker inside the banner: its position is the hook.
+-->
+<div class="overlay" #overlay>
+
+    <!-- Clips the panel at the banner's bottom edge, so it appears to roll out from underneath it -->
+    <div class="clip" #clip>
+        <section class="panel" #panel aria-label="QR-code om mee te doen">
+            <h3 class="panel-title">Scan om mee te doen</h3>
+
+            <app-styled-qr *ngIf="qrUrl$ | async as url" [data]="url" [size]="240"></app-styled-qr>
+
+            <div class="panel-code" *ngIf="code" aria-label="Spelcode">
+                <span class="panel-code-char" *ngFor="let char of code.split('')">{{ char }}</span>
+            </div>
+
+            <div class="rod"></div>
+        </section>
+    </div>
+
+    <!-- Everything inside is drawn in viewport pixels; the script updates it every frame -->
+    <svg class="cord-layer">
+        <path #hook class="hook"></path>
+        <path #cordShadow class="cord-shadow"></path>
+        <path #cord class="cord"></path>
+        <path #cordStrands class="cord-strands"></path>
+        <circle #ring class="ring"></circle>
+        <!-- The only interactive part: an invisible, larger circle on top of the ring -->
+        <circle #ringHit class="ring-hit" role="button" tabindex="0" aria-label="QR-code tonen of verbergen"></circle>
+    </svg>
+</div>

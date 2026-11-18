@@ -13,71 +13,112 @@ import { PersonalResultsContainerComponent } from './containers/client/personal-
 import { ClientLoginGuard } from './guards/login.guard';
 import { GamePhaseGuard } from './guards/game-phase.guard';
 import { LogoutContainerComponent } from './containers/client/logout/logout.container';
+import { GetTokenContainerComponent } from './containers/host/get-token/get-token.container';
+import { HostShellComponent } from './containers/host/host-shell.container';
 
 const routes: Routes = [
-  {
-    path: 'host/:game_id',
-    children: [
-      {
-        path: 'players',
-        component: PlayersContainerComponent
-      },
-      {
-        path: 'round-progress',
-        component: RoundProgressContainerComponent
-      },
-      {
-        path: 'round-result',
-        component: RoundResultContainerComponent
-      },
-      {
-        path: 'final-results',
-        component: FinalResultContainerComponent
-      }
-    ]
-  },
-  {
-    path: 'client/:game_id',
-    children: [
-      {
-        path: 'logout',
-        component: LogoutContainerComponent
-      },
-      {
-        path: 'login',
-        component: LoginContainerComponent,
-        canActivate: [GamePhaseGuard]
-      },
-      {
-        path: 'waiting',
-        component: WaitingContainerComponent,
-        canActivate: [ClientLoginGuard, GamePhaseGuard]
-      },
-      {
-        path: 'gift-opening',
-        component: GiftOpenContainerComponent,
-        canActivate: [ClientLoginGuard, GamePhaseGuard]
-      },
-      {
-        path: 'vote',
-        component: VoteContainerComponent,
-        canActivate: [ClientLoginGuard, GamePhaseGuard]
-      },
-      {
-        path: 'personal-results',
-        component: PersonalResultsContainerComponent,
-        canActivate: [ClientLoginGuard, GamePhaseGuard]
-      }
-    ]
-  },
-  {
-    path: '**',
-    component: GameSelectionComponent
-  },
+    {
+        path: 'host/:gameId',
+        children: [
+            {
+                path: '',
+                component: HostShellComponent,
+                children: [
+                    {
+                        path: 'players',
+                        component: PlayersContainerComponent
+                    },
+                    {
+                        path: 'round-progress',
+                        component: RoundProgressContainerComponent
+                    },
+                    {
+                        path: 'round-result',
+                        component: RoundResultContainerComponent
+                    },
+                    {
+                        path: 'final-results',
+                        component: FinalResultContainerComponent
+                    }
+                ]
+            },
+            {
+                path: 'token',
+                component: GetTokenContainerComponent
+            }
+        ]
+    },
+    {
+        path: 'client',
+        children: [
+            {
+                path: 'logout', // User used wrong logout path
+                redirectTo: '/'
+            },
+            {
+                path: ':gameId',
+                children: [
+
+                    {
+                        path: 'logout',
+                        component: LogoutContainerComponent
+                    },
+                    {
+                        path: 'login',
+                        component: LoginContainerComponent,
+                        canActivate: [GamePhaseGuard]
+                    },
+                    {
+                        path: 'waiting',
+                        component: WaitingContainerComponent,
+                        canActivate: [ClientLoginGuard, GamePhaseGuard]
+                    },
+                    {
+                        path: 'gift-opening',
+                        component: GiftOpenContainerComponent,
+                        canActivate: [ClientLoginGuard, GamePhaseGuard]
+                    },
+                    {
+                        path: 'vote',
+                        component: VoteContainerComponent,
+                        canActivate: [ClientLoginGuard, GamePhaseGuard]
+                    },
+                    {
+                        path: 'personal-results',
+                        component: PersonalResultsContainerComponent,
+                        canActivate: [ClientLoginGuard, GamePhaseGuard]
+                    },
+                    {
+                        path: '**',
+                        redirectTo: 'waiting'
+                    }
+                ]
+            },
+            {
+                path: '**',
+                redirectTo: '..'
+            }
+        ]
+    },
+    {
+        path: '',
+        component: GameSelectionComponent,
+        pathMatch: 'full'
+    },
+    {
+        path: '**',
+        redirectTo: '/'
+    }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forRoot(
+        routes,
+        {
+            // enableTracing: true
+            paramsInheritanceStrategy: "always"
+        }
+    )],
+    exports: [RouterModule]
 })
 export class AppRoutingModule { }

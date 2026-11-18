@@ -6,6 +6,7 @@ from random import choices, random, choice
 import math
 from typing import Any
 
+from models.claim import Claim, ClaimState
 from models.round import Round
 from models.vote import Vote
 from models.gift import Gift
@@ -21,6 +22,7 @@ class Game():
         game: Game = Game()
         game.id = json["id"]
         game.host_id = json["host_id"]
+        game.host_token = json.get("host_token", '')
         game.random = json.get("random", False)
         game.self_vote = json.get("self_vote", False)
         game.phase = json.get("phase", GamePhase.STARTING)
@@ -28,8 +30,28 @@ class Game():
         game.votes = { id: Vote.from_json(vote) for (id, vote) in json["votes"].items() }
         game.players = { id: User.from_json(user) for (id, user) in json["players"].items() }
         game.gifts = { id: Gift.from_json(gift) for (id, gift) in json["gifts"].items() }
+        game.claims = { id: Claim.from_json(claim) for (id, claim) in json.get("claims", {}).items() }
+        game.claim_map = json.get("claim_map", {})
+        game.token_map = json.get("token_map", {})
 
         return game
+
+    def to_json(self) -> str:
+        return json.dumps({
+            "id": self.id,
+            "host_id": self.host_id,
+            "random": self.random,
+            "self_vote": self.self_vote,
+            "phase": self.phase,
+            "rounds": [round.to_json() for round in self.rounds],
+            "votes": {id: vote.to_json() for (id, vote) in self.votes.items()},
+            "players": {id: player.to_json() for (id, player) in self.players.items()},
+            "gifts": {id: gifts.to_json() for (id, gifts) in self.gifts.items()},
+            "host_token": self.host_token,
+            "token_map": self.token_map,
+            "claims": {id: claim.to_json() for (id, claim) in self.claims.items()},
+            "claim_map": self.claim_map
+        })
 
     def __init__(self):
         host_user: User = User('host', True)
@@ -42,12 +64,17 @@ class Game():
         self.random: bool = False
         self.self_vote: bool = False
         self.phase: GamePhase = GamePhase.STARTING
+        self.host_token: str = ''
+        self.token_map: dict = {}
+        self.claims: dict[str, Claim] = {}
+        self.claim_map: dict[str, str] = {}
 
     def get_user(self, name: str) -> User | None:
         return next((player for player in self.players.values() if player.name == name), None)
 
     def add_user(self, user: User) -> None:
         self.players[user.get_id()] = user
+        self.token_map[user.token] = user.get_id()
 
     def new_round(self) -> None:
         if len(self.rounds) > 0:
@@ -191,21 +218,18 @@ class Game():
     
     def get_unassigned_gifts(self) -> list[Gift]:
         return [gift for gift in self.gifts.values() if not gift.assigned]
+    
+    def add_claim(self, player_name: str, player_id: str) -> Claim:
+        claim: Claim = Claim(player_name=player_name, player_id=player_id)
+        self.claims[claim.get_id()] = claim
+        self.claim_map[player_name] = claim.get_id()
+        return claim
 
-    def to_json(self) -> str:
-        return json.dumps({
-            "id": self.id,
-            "host_id": self.host_id,
-            "random": self.random,
-            "self_vote": self.self_vote,
-            "phase": self.phase,
-            "rounds": [round.to_json() for round in self.rounds],
-            "votes": {id: vote.to_json() for (id, vote) in self.votes.items()},
-            "players": {id: player.to_json() for (id, player) in self.players.items()},
-            "gifts": {id: gifts.to_json() for (id, gifts) in self.gifts.items()}
-        })
-    
-    
+    def get_claim(self, claim_id: str) -> Claim | None:
+        return self.claims.get(claim_id)
+
+    def get_claims(self) -> list[Claim]:
+        return self.claims.values()
 
     # Util
     def set_player_phase(self, player_id: str, phase: UserPhase):

@@ -15,3 +15,18 @@ class GiftCreationException(BaseException):
 
 class InvalidGameException(BaseException):
     pass
+
+class UserExistsException(BaseException):
+    pass
+
+class GameHasHostException(BaseException):
+    pass
+
+class InvalidClaimException(BaseException):
+    pass
+
+class ClaimInProgressException(BaseException):
+    pass
+
+class BadRequestException(BaseException):
+    pass

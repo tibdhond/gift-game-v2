@@ -1,0 +1,28 @@
+<div class="notification-stack" aria-live="polite">
+    <app-tag-card class="notification" *ngFor="let n of notifications$ | async; trackBy: track" [accent]="n.accent"
+        [class.busy]="busy.has(n.key)">
+
+        <h3 class="n-title" *ngIf="n.title">{{ n.title }}</h3>
+        <p class="n-message">
+            <ng-container *ngFor="let part of n.message">
+                <ng-container *ngIf="isText(part); else highlight">{{ part }}</ng-container>
+                <ng-template #highlight><strong>{{ $any(part).strong }}</strong></ng-template>
+            </ng-container>
+        </p>
+        <p class="n-note" *ngIf="n.note">{{ n.note }}</p>
+
+        <button *ngIf="n.detail as detail" type="button" class="n-detail"
+            [class.concealed]="detail.concealed && !revealed.has(n.key)" (click)="toggleReveal(n)">
+            <span class="n-detail-label">{{ detail.label }}</span>
+            <span class="n-detail-value">{{ detail.value }}</span>
+            <span class="n-hint" *ngIf="detail.concealed && !revealed.has(n.key)">klik om te tonen</span>
+        </button>
+
+        <div class="n-actions" *ngIf="n.actions?.length">
+            <button *ngFor="let action of n.actions" type="button" class="action-button n-action"
+                [ngClass]="action.kind ?? 'primary'" [disabled]="busy.has(n.key)" (click)="run(n, action)">
+                {{ action.label }}
+            </button>
+        </div>
+    </app-tag-card>
+</div>
