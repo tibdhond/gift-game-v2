@@ -1,5 +1,5 @@
-# Host waiting screen voter tracking
+# Host waiting screen rework (voter tracking)
 # Gift image upload
-# vote animation (https://animate.style/)
+# Automated testing
 # Gif upload
-
+# vote animation (https://animate.style/)

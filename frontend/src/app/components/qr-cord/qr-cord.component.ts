@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Input, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map, Observable, shareReplay, take, tap } from 'rxjs';
-import { gameIdService } from 'src/app/services/game-id.service';
+import { GlobalsService } from 'src/app/services/globals.service';
 import { UtilService } from 'src/app/services/util.service';
 import { BANNER_SELECTOR } from '../banner/banner.component';
 
@@ -84,20 +84,14 @@ export class QrCordComponent implements AfterViewInit, OnInit, OnDestroy {
 
     public qrUrl$!: Observable<string>;
 
-    constructor(private host: ElementRef<HTMLElement>, private zone: NgZone, private utilService: UtilService, private gameIdService: gameIdService) {
+    constructor(private host: ElementRef<HTMLElement>, private zone: NgZone, private globalsService: GlobalsService) {
     }
 
     ngOnInit(): void {
-        const gameId$: Observable<string> = this.gameIdService.getGameId();
+        const gameId$: Observable<string> = this.globalsService.getGameId();
+        const host$: Observable<string> = this.globalsService.getHost();
 
-        const host$: Observable<string> = this.utilService.getIp().pipe(
-            tap(x => console.log('ip', x)),
-            map(ip => `http://${ip}:5000`),
-            take(1),
-            shareReplay(1)
-        );
-
-        this.qrUrl$ = combineLatest([host$, gameId$.pipe(tap(x => console.log('gameId', x)))]).pipe(
+        this.qrUrl$ = combineLatest([host$, gameId$]).pipe(
             map(([host, gameId]) => `${host}?gameId=${gameId}`)
         );
     }

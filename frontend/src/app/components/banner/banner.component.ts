@@ -7,7 +7,7 @@ import { BaseContainer } from '../../containers/base-container.component';
 import { UserInfoResult } from '../../entities/entities';
 import { LocalStorageService } from '../../services/localstorage.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { gameIdService } from 'src/app/services/game-id.service';
+import { GlobalsService } from 'src/app/services/globals.service';
 
 export const BANNER_SELECTOR: string = "app-banner";
 
@@ -18,6 +18,7 @@ export const BANNER_SELECTOR: string = "app-banner";
 })
 export class BannerComponent extends BaseContainer implements OnInit, OnDestroy {
     @Input() title: string = 'Gift Game';
+    @Input() isHost: boolean = false;
 
     @ViewChild('fileInput') fileInput!: ElementRef;
 
@@ -33,7 +34,7 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
     constructor(
         private client: ClientService,
         private message: MessageService,
-        private gameIdService: gameIdService,
+        private gameIdService: GlobalsService,
     ) {
         super();
     }
@@ -42,7 +43,7 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
         this.gameId$ = this.gameIdService.getGameId();
 
         const userInfo$: Observable<UserInfoResult | null> = combineLatest([this.gameId$, this.refreshTrigger$]).pipe(
-            switchMap(([gameId, _]) => gameId ? this.client.getUserInfo(gameId, true).pipe(
+            switchMap(([gameId, _]) => gameId && !this.isHost ? this.client.getUserInfo(gameId, true).pipe(
                 catchError((e: HttpErrorResponse) => {
                     console.error('Failed fetching user info', e);
                     return of(null);

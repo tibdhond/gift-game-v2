@@ -50,7 +50,12 @@ export class RoundResultContainerComponent extends BaseGameContainer implements 
             map(results => results.playerResults),
             map(results => orderBy(results, ['votes'], ['desc'])),
             shareReplay(1)
-        )
+        );
+
+
+        this.totalVotes$ = playerResults_$.pipe(
+            map(results => results.reduce((totalVotes, result) => totalVotes + result.votes, 0))
+        );
 
         const ranked$ = playerResults_$.pipe(
             map(results => rankPodium(results, result => result.votes)),
@@ -75,10 +80,6 @@ export class RoundResultContainerComponent extends BaseGameContainer implements 
                 stat: this.toPercent.transform(result.votes / total),
             }))),
             shareReplay(1)
-        );
-
-        this.totalVotes$ = playerResults_$.pipe(
-            map(results => results.reduce((totalVotes, result) => totalVotes + result.votes, 0))
         );
 
         this.roundNumber$ = roundResult_$.pipe(
