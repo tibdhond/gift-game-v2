@@ -317,8 +317,7 @@
     right: 1%;
     top: calc(var(--post-size) * -0.28);
     height: calc(var(--post-size) * 0.48);
-    transform: translateX(calc((var(--snow-v, 0.5) - 0.5) * 6%)) scale(calc(0.85 + var(--snow-s, 0.5) * 0.15));
-    transform-origin: 50% 100%;
+    transform: none;
     pointer-events: none;
     filter: drop-shadow(0 0.15rem 0.12rem rgba(30, 60, 100, 0.35));
 }
@@ -335,9 +334,26 @@
     transform-origin: 50% 100%;
     // One continuous silhouette: a flat-ish base, sloping shoulders and an uneven top.
     // The peak sits left of centre, so the pile looks wind-blown rather than stamped.
-    clip-path: polygon(0% 70%, 2% 60%, 7% 51%, 12% 42%, 18% 35%, 24% 31%, 29% 25%,
-            35% 22%, 41% 17%, 46% 14%, 53% 17%, 58% 21%, 64% 24%, 70% 27%,
-            76% 31%, 82% 36%, 88% 42%, 93% 50%, 97% 60%, 100% 70%);
+    clip-path: polygon(0% 70%,
+            2% calc(60% - var(--snow-s, 0.5) * 4%),
+            7% calc(51% + var(--snow-v, 0.5) * 3%),
+            12% calc(42% - var(--snow-v, 0.5) * 4%),
+            18% calc(35% + var(--snow-s, 0.5) * 3%),
+            24% calc(31% - var(--snow-s, 0.5) * 4%),
+            29% calc(25% + var(--snow-v, 0.5) * 3%),
+            35% calc(22% - var(--snow-v, 0.5) * 3%),
+            41% calc(17% + var(--snow-s, 0.5) * 4%),
+            46% calc(14% - var(--snow-s, 0.5) * 3%),
+            53% calc(17% + var(--snow-v, 0.5) * 4%),
+            58% calc(21% - var(--snow-v, 0.5) * 3%),
+            64% calc(24% + var(--snow-s, 0.5) * 3%),
+            70% calc(27% - var(--snow-s, 0.5) * 4%),
+            76% calc(31% + var(--snow-v, 0.5) * 3%),
+            82% calc(36% - var(--snow-v, 0.5) * 4%),
+            88% calc(42% + var(--snow-s, 0.5) * 3%),
+            93% calc(50% - var(--snow-s, 0.5) * 3%),
+            97% 60%,
+            100% 70%);
     // White on top, shading into blue-grey where the snow meets the board
     background: linear-gradient(180deg, #ffffff 0%, #ffffff 40%, #e8f0f8 75%, #c4d6e8 100%);
 }
