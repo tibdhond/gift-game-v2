@@ -50,4 +50,5 @@ Thumbs.db
 /backend/static/frontend/*
 /backend/static/avatars/*
 /backend/static/gift_images/*
+/backend/store/*
 
