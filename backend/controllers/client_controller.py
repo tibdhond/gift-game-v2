@@ -1,5 +1,5 @@
 import os
-from typing import Any
+from typing import Any, Callable
 from PIL import Image
 from pathlib import Path
 from flask import current_app, g
@@ -73,13 +73,31 @@ def get_user_phase(user_id: str) -> dict[str, Any]:
 
     return { "phase": game.players[user_id].phase if user_id in game.players else "UNREGISTERED" }
 
-def add_gift(user_id: str, description: str) -> None:
+def open_gift(user_id: str, description: str) -> None:
     cache: Cache = Cache.get_instance()
     game: Game = g.game
 
-    game.add_gift(description, user_id)
+    game.open_gift(description, user_id)
 
     cache.store_game(game)
+
+def upload_gift_image(file: FileStorage) -> None:
+    cache: Cache = Cache.get_instance()
+    game: Game = g.game
+
+
+    gift: Gift = next(g for g in game.gifts.values() if not g.opened) # Next unopened gift
+    def post_processing() -> None:
+
+        # Update game state
+        gift.image_version += 1
+        gift.image_path = f"api/{game.id}/gifts/{gift.get_id()}/image?version={gift.image_version}"
+    
+        # Commit to store
+        cache.store_game(game)
+    
+    
+    upload_file(file, "avatars", f"{gift.get_id()}.jpg", post_processing)
 
 def get_result(user_id: str) -> dict[str, Any]:
     game: Game = g.game
@@ -131,46 +149,20 @@ def get_result(user_id: str) -> dict[str, Any]:
 def upload_avatar(user_id: str, file: FileStorage) -> None:
     cache: Cache = Cache.get_instance()
     game: Game = g.game
-    
-    player: User = game.players[user_id]
-    # Check file size (limit 4MB)
-    file.seek(0, os.SEEK_END)
-    size = file.tell()
-    file.seek(0)
-    if size > 4 * 1024 * 1024:
-        raise Exception("File too large (max 4MB)")
 
-    # Determine storage path
-    # current_app.root_path is 'backend'
-    base_dir = Path(current_app.root_path) / "static" / "avatars"
-    game_dir = base_dir / game.id
-    game_dir.mkdir(parents=True, exist_ok=True)
-    
-    filepath = game_dir / f"{user_id}.jpg"
-    
-    try:
-        # Open the image from the file stream
-        img = Image.open(file.stream)
-        
-        # Convert to RGB (handles HEIC/HEIF/PNG transparency)
-        if img.mode in ("RGBA", "P") or img.mode != "RGB":
-            img = img.convert("RGB")
-            
-        # Save to the destination
-        img.save(filepath, "JPEG", quality=90)
-        
+
+    def post_processing() -> None:
+        player: User = game.players[user_id]
+
         # Update game state
         player.avatar_version += 1
         player.avatar_path = f"api/{game.id}/players/{user_id}/avatar?version={player.avatar_version}"
-        
+    
         # Commit to store
         cache.store_game(game)
-        
-    except Exception as e:
-        # Rollback: delete the file if it was created
-        if filepath.exists():
-            filepath.unlink()
-        raise e
+    
+    
+    upload_file(file, "avatars", f"{user_id}.jpg", post_processing)
 
                 
 def make_claim(game_id: str, player_name: str) -> Claim:
@@ -225,3 +217,41 @@ def redeem_claim(claim_id: str) -> User:
 
     return user
 
+
+def upload_file(file: FileStorage, base_dir: str, file_name: str, post_processing: Callable):
+    game: Game = g.game
+    
+    # Check file size (limit 4MB)
+    file.seek(0, os.SEEK_END)
+    size = file.tell()
+    file.seek(0)
+    if size > 4 * 1024 * 1024:
+        raise Exception("File too large (max 4MB)")
+
+    # Determine storage path
+    # current_app.root_path is 'backend'
+    base_dir = Path(current_app.root_path) / "static" / base_dir
+    game_dir = base_dir / game.id
+    game_dir.mkdir(parents=True, exist_ok=True)
+    
+    filepath = game_dir / file_name
+    
+    try:
+        # Open the image from the file stream
+        img = Image.open(file.stream)
+        
+        # Convert to RGB (handles HEIC/HEIF/PNG transparency)
+        if img.mode in ("RGBA", "P") or img.mode != "RGB":
+            img = img.convert("RGB")
+            
+        # Save to the destination
+        img.save(filepath, "JPEG", quality=90)
+        
+        # Update game state
+        post_processing()
+        
+    except Exception as e:
+        # Rollback: delete the file if it was created
+        if filepath.exists():
+            filepath.unlink()
+        raise e

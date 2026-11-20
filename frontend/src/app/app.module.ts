@@ -35,6 +35,7 @@ import { UnauthorizedInterceptor } from './injectors/token.interceptor';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { HostShellComponent } from './containers/host/host-shell.container';
 import { QrCordComponent } from './components/qr-cord/qr-cord.component';
+import { AnimatedEyesComponent } from './components/animated-eyes/animated-eyes.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { QrCordComponent } from './components/qr-cord/qr-cord.component';
     GetTokenContainerComponent,
     NotificationsComponent,
     HostShellComponent,
-    QrCordComponent
+    QrCordComponent,
+    AnimatedEyesComponent
   ],
   imports: [
     CommonModule,

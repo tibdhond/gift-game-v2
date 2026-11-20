@@ -1,6 +1,6 @@
 from typing import Any
 
-from models.user import User
+from models.user import User, UserDTO
 from util.auth import new_token
 from models.claim import CLAIM_STATE_TIMEOUTS, Claim, ClaimDTO, ClaimState
 from cache import Cache
@@ -32,10 +32,10 @@ def new_round() -> None:
 def get_round_progress() -> dict[str, str | Any]:
     game: Game = g.game
 
-    players: list[dict[str, str | bool]] = [{"name": player.name, "voted": player.phase == UserPhase.WAITING } for player in game.get_players()]
+    players: list[UserDTO] = [UserDTO.from_model(player, g.role) for player in game.get_players()]
     gift: Gift | None = game.gifts.get(game.current_round().gift_id, None)
 
-    return {"players": sorted(players, key=lambda player: player["name"]), "gift": gift.description if gift else None, "invalid": game.is_round_invalid()}
+    return {"players": sorted(players, key=lambda player: player.name), "gift": gift.description if gift else None, "invalid": game.is_round_invalid()}
 
 def reset_round() -> None:
     cache: Cache = Cache.get_instance()

@@ -10,7 +10,10 @@ class UserHasVotedException(BaseException):
 class GameFinishedException(BaseException):
     pass
 
-class GiftCreationException(BaseException):
+class GiftOpenForbiddenException(BaseException):
+    pass
+
+class NoUnopenedGiftException(BaseException):
     pass
 
 class InvalidGameException(BaseException):

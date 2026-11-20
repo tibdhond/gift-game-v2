@@ -1,5 +1,5 @@
 <div class="banner-container">
-  <div class="banner-hook-slot"><ng-content></ng-content></div>
+  <div class="banner-hook-slot" *ngIf="isHost"><ng-content></ng-content></div>
   <div class="banner-content">
     <h1 class="game-title">{{ title }}</h1>
     <ng-container *ngIf="username$ | async as username">

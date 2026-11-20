@@ -27,7 +27,7 @@ class Cache():
         if not id in self.games:
             if os.path.exists(f"{ROOT_PATH}/store/{id}.json"):
                 with open(f"{ROOT_PATH}/store/{id}.json", "r") as f:
-                    self.games[id] = Game.from_json(json.load(f))
+                    self.games[id] = self.validate_and_fix_stored_game(Game.from_json(json.load(f)))
             else:
                 raise InvalidGameException()
         return self.games[id]
@@ -42,4 +42,17 @@ class Cache():
         with open(f"{ROOT_PATH}/store/{game.id}.json", "w+") as f:
             f.write(game_as_json)
 
-    
+
+    # Check that stored files still match newer rules
+    # Should only contain quick checks, may contain longer fixes
+    def validate_and_fix_stored_game(self, game: Game) -> Game:
+        # Check that there's a gift for every player
+        modified: bool = False
+        if len(game.gifts) < len(game.players):
+            for _ in range(len(game.players) - len(game.gifts)):
+                game.add_gift()
+            modified = True
+
+        if modified:
+            self.store_game(game)
+        return game

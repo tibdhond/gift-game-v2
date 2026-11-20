@@ -1,11 +1,9 @@
 import { Component, Input, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { ClientService } from '../../services/client.service';
 import { MessageService } from '../../services/message.service';
-import { NavigationEnd, Params, Router } from '@angular/router';
-import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs';
 import { BaseContainer } from '../../containers/base-container.component';
 import { UserInfoResult } from '../../entities/entities';
-import { LocalStorageService } from '../../services/localstorage.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { GlobalsService } from 'src/app/services/globals.service';
 

@@ -10,7 +10,6 @@ import { VoteContainerComponent } from './containers/client/vote/vote-container.
 import { RoundResultContainerComponent } from './containers/host/round-result/round-result-container.component';
 import { FinalResultContainerComponent } from './containers/host/final-results/final-results-container.component';
 import { PersonalResultsContainerComponent } from './containers/client/personal-results/personal-results-container.component';
-import { ClientLoginGuard } from './guards/login.guard';
 import { GamePhaseGuard } from './guards/game-phase.guard';
 import { LogoutContainerComponent } from './containers/client/logout/logout.container';
 import { GetTokenContainerComponent } from './containers/host/get-token/get-token.container';
@@ -58,7 +57,6 @@ const routes: Routes = [
             {
                 path: ':gameId',
                 children: [
-
                     {
                         path: 'logout',
                         component: LogoutContainerComponent
@@ -71,22 +69,22 @@ const routes: Routes = [
                     {
                         path: 'waiting',
                         component: WaitingContainerComponent,
-                        canActivate: [ClientLoginGuard, GamePhaseGuard]
+                        canActivate: [GamePhaseGuard]
                     },
                     {
                         path: 'gift-opening',
                         component: GiftOpenContainerComponent,
-                        canActivate: [ClientLoginGuard, GamePhaseGuard]
+                        canActivate: [GamePhaseGuard]
                     },
                     {
                         path: 'vote',
                         component: VoteContainerComponent,
-                        canActivate: [ClientLoginGuard, GamePhaseGuard]
+                        canActivate: [GamePhaseGuard]
                     },
                     {
                         path: 'personal-results',
                         component: PersonalResultsContainerComponent,
-                        canActivate: [ClientLoginGuard, GamePhaseGuard]
+                        canActivate: [GamePhaseGuard]
                     },
                     {
                         path: '**',

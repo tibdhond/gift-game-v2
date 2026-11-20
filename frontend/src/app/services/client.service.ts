@@ -23,7 +23,7 @@ export class ClientService extends GameService {
     }
 
     public getClaim(gameId: string): Observable<Claim> {
-        return this.get(`${gameId}/claims/me`);
+        return this.get(`${gameId}/claims/me`, new HttpHeaders(), new HttpContext().set(SKIP_AUTH_REDIRECT, true));
     }
 
     public makeClaim(gameId: string, name: string): Observable<Claim> {

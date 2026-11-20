@@ -120,19 +120,27 @@ class Game():
             player: User = choice([player for player in self.get_players() if not player.has_opened_gift])
             self.set_player_phase(player.get_id(), UserPhase.GIFT_OPENING)
 
+    def add_gift(self) -> None:
+        gift: Gift = Gift("")
+        self.gifts[gift.get_id()] = gift
 
-    def add_gift(self, description: str, user_id: str) -> None:
+    def open_gift(self, description: str, user_id: str) -> None:
         if self.phase != GamePhase.EARLY:
-            raise GiftCreationException()
+            raise GiftOpenForbiddenException()
         
         player: User = self.players[user_id]
         if player.phase != UserPhase.GIFT_OPENING:
-            raise GiftCreationException()
+            raise GiftOpenForbiddenException()
         player.has_opened_gift = True
 
         current_round: Round = self.current_round()
-        gift: Gift = Gift(description)
-        self.gifts[gift.get_id()] = gift
+        gift: Gift | None = next(gift for gift in self.gifts.values() if not gift.opened)
+
+        if gift is None:
+            raise NoUnopenedGiftException
+
+        gift.description = description
+        gift.opened = True
         current_round.gift_id = gift.get_id()
         gift.last_accessed = current_round.get_round_number()
 

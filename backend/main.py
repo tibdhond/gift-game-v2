@@ -259,6 +259,7 @@ def logout():
 
     resp = make_response({}, 201)
     resp.delete_cookie(f"player_{game.id}", path=f"/")
+    return resp
         
 
 @app.route('/api/<string:game_id>/vote', methods=['POST'])
@@ -301,19 +302,36 @@ def get_user_phase(user_id: str):
 
 @app.route('/api/<string:game_id>/gifts', methods=['POST'])
 @auth_required("player")
-def add_gift():
+def open_gift():
     result = request.get_json()
     player: User = g.player
     description: str = result["description"]
 
     try:
-        client.add_gift(player.get_id(), description)
+        client.open_gift(player.get_id(), description)
         return make_response("", 201)
-    except GiftCreationException as e:
-        return make_error(errCode="EGiftCreationError", message="You are not allowed to create a gift at this time", status=403)
+    except GiftOpenForbiddenException as e:
+        return make_error(errCode="EGiftOpenForbiddenError", message="You are not allowed to open a gift at this time", status=403)
+    except NoUnopenedGiftException as e:
+        return make_error(errCode="ENoGiftsError", message="No unopened gifts could be found", status=404)
     except Exception as e:
         print(e)
         return make_response(e, 400)
+
+@app.route('/api/<string:game_id>/gifts/current/image', methods=['POST'])
+@auth_required("player")
+def upload_gift_image():
+    file: FileStorage | None = request.files.get('image')
+
+    if not file:
+        return make_response({"errCode": "NoFile", "msg": "No image file provided"}, 400)
+    
+    try:
+        client.upload_gift_image(file)
+        return make_response("", 201)
+    except Exception as e:
+        print(e)
+        return make_error(errCode="UploadError", messgage="Something went wrong while uploading the image", status=500)
 
 @app.route('/api/<string:game_id>/players/<string:user_id>/result', methods=["GET"])
 @auth_required("player")

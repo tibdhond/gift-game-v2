@@ -9,13 +9,14 @@ export interface PlayersResult {
 export interface Player {
     id: string,
     name: string,
-    voted?: boolean,
+    phase?: UserPhase,
     avatarPath?: string
 }
 
 export interface RoundProgress {
     players: Player[];
     gift?: string,
+    giftImagePath?: string;
     invalid: boolean;
 }
 

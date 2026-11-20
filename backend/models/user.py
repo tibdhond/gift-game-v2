@@ -15,6 +15,7 @@ class User():
         user.has_opened_gift = json.get("has_opened_gift", False)
         user.is_finished = json.get("is_finished", False)
         user.avatar_path = json.get("avatar_path")
+        user.avatar_version = json.get("avatar_version", 0)
         user.token = json.get("token")
         return user
 
@@ -44,8 +45,8 @@ class UserDTO(DTO):
 
     @classmethod
     def from_model(cls: UserDTO, user: User, role: str, own: bool = False) -> UserDTO:
-        user: UserDTO = cls(id=user.get_id(), name=user.name, avatar_path=user.avatar_path)
+        dtoUser: UserDTO = cls(id=user.get_id(), name=user.name, avatar_path=user.avatar_path)
 
         if role == "host" or own:
-            user.phase = user.phase
-        return user
+            dtoUser.phase = user.phase
+        return dtoUser
