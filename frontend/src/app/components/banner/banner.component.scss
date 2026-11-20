@@ -1,42 +1,47 @@
- .banner-container {
-     background: #1a1a1a;
-     border-bottom: 1px solid #333;
-     padding: 10px 20px;
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     position: sticky;
-     top: 0;
-     z-index: 1000;
-     width: 100vw;
- }
+:host {
+    position: fixed;
+    z-index: 1;
+}
 
- .banner-content {
-     display: flex;
-     gap: 40px;
-     align-items: center;
- }
+.banner-container {
+    background: #1a1a1a;
+    border-bottom: 1px solid #333;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100vw;
+}
 
- .game-title {
-     margin: 0;
-     font-size: 1.5rem;
-     color: white;
- }
+.banner-content {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
 
- .user-identity {
-     display: flex;
-     gap: 15px;
-     align-items: center;
- }
+.game-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: white;
+}
 
- .username {
-     color: #ccc;
- }
+.user-identity {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
 
- .banner-hook-slot {
-     position: absolute;
-     left: 5rem; // the hook's x position; the panel centres 56px to its right
-     bottom: 0; // on the banner's bottom edge
-     width: 0;
-     height: 0;
- }
+.username {
+    color: #ccc;
+}
+
+.banner-hook-slot {
+    position: absolute;
+    left: 5rem; // the hook's x position; the panel centres 56px to its right
+    bottom: 0; // on the banner's bottom edge
+    width: 0;
+    height: 0;
+}

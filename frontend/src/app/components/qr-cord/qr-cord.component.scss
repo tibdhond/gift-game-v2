@@ -5,8 +5,6 @@
     height: 0;
 }
 
-// Fixed, full viewport, and click-through: only the ring's hit area reacts.
-// Below the notification stack (z-index 1000), so claim notifications stay on top of an open panel.
 .overlay {
     position: fixed;
     top: 0;
