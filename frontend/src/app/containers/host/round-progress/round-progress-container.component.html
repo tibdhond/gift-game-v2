@@ -1,39 +1,39 @@
 <div class="stage" *ngIf="{ layout: layout$ | async } as v" [style.--ch]="v.layout?.horizontal ?? 4"
     [style.--cv]="v.layout?.vertical ?? 3" [style.--fit]="fit">
 
-    <!-- Signposts: one grid per edge; players who haven't voted stay faded against the edge -->
-    <ng-container *ngIf="v.layout as layout">
-        <div class="edge" *ngFor="let edge of layout.edges; trackBy: trackEdge" [ngClass]="edge.name"
-            [style.--cells]="edge.cells">
+    <ng-container *ngIf="(gift$ | async) as gift; else noGift">
 
-            <!-- trackBy keeps the same element per player, which is what lets the pop-out animate -->
-            <div class="slot" *ngFor="let slot of edge.slots; trackBy: trackSlot" role="img"
-                [attr.aria-label]="slot.player.name + ((slot.player.phase === 'WAITING') ? ' heeft gestemd' : ' moet nog stemmen')"
-                [class.voted]="(slot.player.phase === 'WAITING')" [style.grid-column]="slot.gridColumn"
-                [style.grid-row]="slot.gridRow" [style.--k]="slot.k" [style.--t]="slot.t"
-                [attr.data-post-id]="slot.player.id" [class.arrived]="arrivedVoted.has(slot.player.id)"
-                [style.--snow-s]="slot.snowSize" [style.--snow-v]="slot.snowShift" [style.--sway-p]="slot.swayPeriod"
-                [style.--sway-d]="slot.swayPhase">
+        <!-- Signposts: one grid per edge; players who haven't voted stay faded against the edge -->
+        <ng-container *ngIf="v.layout as layout">
+            <div class="edge" *ngFor="let edge of layout.edges; trackBy: trackEdge" [ngClass]="edge.name"
+                [style.--cells]="edge.cells">
 
-                <div class="post">
-                    <div class="pole"></div>
-                    <div class="board">
-                        <div class="face" [ngClass]="'shape-' + slot.shape">
-                            <app-player-image [avatarPath]="slot.player.avatarPath"
-                                [bordered]="true"></app-player-image>
-                            <span class="name">{{ slot.player.name }}</span>
+                <!-- trackBy keeps the same element per player, which is what lets the pop-out animate -->
+                <div class="slot" *ngFor="let slot of edge.slots; trackBy: trackSlot" role="img"
+                    [attr.aria-label]="slot.player.name + ((slot.player.phase === 'WAITING') ? ' heeft gestemd' : ' moet nog stemmen')"
+                    [class.voted]="(slot.player.phase === 'WAITING')" [style.grid-column]="slot.gridColumn"
+                    [style.grid-row]="slot.gridRow" [style.--k]="slot.k" [style.--t]="slot.t"
+                    [attr.data-post-id]="slot.player.id" [class.arrived]="arrivedVoted.has(slot.player.id)"
+                    [style.--snow-s]="slot.snowSize" [style.--snow-v]="slot.snowShift"
+                    [style.--sway-p]="slot.swayPeriod" [style.--sway-d]="slot.swayPhase">
+
+                    <div class="post">
+                        <div class="pole"></div>
+                        <div class="board">
+                            <div class="face" [ngClass]="'shape-' + slot.shape">
+                                <app-player-image [avatarPath]="slot.player.avatarPath"
+                                    [bordered]="true"></app-player-image>
+                                <span class="name">{{ slot.player.name }}</span>
+                            </div>
+                            <div class="snow" aria-hidden="true"></div>
                         </div>
-                        <div class="snow" aria-hidden="true"></div>
                     </div>
                 </div>
             </div>
-        </div>
-    </ng-container>
+        </ng-container>
 
-    <!-- The middle of the screen -->
-    <div class="center">
-        <ng-container *ngIf="(gift$ | async) as gift; else noGift">
-
+        <!-- The middle of the screen -->
+        <div class="center">
             <div class="headline-row">
                 <div class="gift-image" *ngIf="giftImagePath$ | async as imagePath">
                     <img [src]="imagePath" [alt]="gift">
@@ -61,10 +61,15 @@
                 <mat-icon fontIcon="restart_alt" aria-hidden="true"></mat-icon>
                 Ronde resetten
             </button>
-        </ng-container>
+        </div>
+    </ng-container>
 
-        <ng-template #noGift>
-            <p class="lead">Het pakje is nog niet geopend.</p>
-        </ng-template>
-    </div>
+
+    <ng-template #noGift>
+        <div class="center">
+            <app-tag-card class="description-card" accent="#d9a441">
+                <p class="lead">Het pakje is nog niet geopend.</p>
+            </app-tag-card>
+        </div>
+    </ng-template>
 </div>

@@ -1,7 +1,8 @@
-from typing import Any
+from typing import Any, TypeGuard, cast
 
 from flask import Flask, Response, current_app, make_response, request, send_from_directory, g
-from werkzeug.datastructures import FileStorage
+from flask.typing import ResponseReturnValue
+from werkzeug.datastructures import FileStorage, Headers
 from flask_cors import CORS, cross_origin
 
 import os
@@ -23,22 +24,29 @@ import controllers.host_controller as host
 from entities.exceptions import *
 from random import choice
 
+type DTOTuple = tuple[DTO, *tuple[Any, ...]]
+
+def _is_dto_tuple(rv: object) -> TypeGuard[tuple[DTO, *tuple[Any, ...]]]:
+    return isinstance(rv, tuple) and len(rv) > 0 and isinstance(rv[0], DTO)
+
 class MyFlask(Flask):
     json_provider_class = DTOJSONProvider
-    def make_response(self, rv):
-        status = headers = None
-        if isinstance(rv, tuple) and rv and isinstance(rv[0], DTO):
-            # support (dto, status) / (dto, status, headers) / (dto, headers)
-            rv, *rest = rv
-            for r in rest:
-                if isinstance(r, int): status = r
-                else: headers = r
+    def make_response(self, rv: ResponseReturnValue | DTO | DTOTuple) -> Response:
         if isinstance(rv, DTO):
-            resp = self.json.response(rv.to_dict())
-            if status: resp.status_code = status
-            if headers: resp.headers.update(headers)
+            return super().make_response(rv.to_dict())
+
+        if _is_dto_tuple(rv):
+            dto, *rest = rv
+            resp = super().make_response(dto.to_dict())
+            for item in rest:
+                if isinstance(item, int):
+                    resp.status_code = item
+                elif item is not None:
+                    resp.headers.update(Headers(item))
             return resp
-        return super().make_response(rv)
+
+        # rv is now narrowed to plain ResponseReturnValue
+        return super().make_response(cast(ResponseReturnValue, rv))
 
 app = MyFlask(__name__, static_folder="static/frontend")
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -100,18 +108,19 @@ def get_ip():
 
 @app.route('/api/<string:game_id>/players/<string:user_id>/avatar', methods=['GET'])
 @auth_required("host", "player")
-def get_avatar(game_id: str, user_id: str):
+def get_avatar(user_id: str):
     ROOT_PATH = Path(current_app.root_path)
 
     player: User | None = g.player
+    game: Game = g.game
     
     if user_id == "me":
         if player is None:
             return make_error(errCode="EBadRequest", message="Host cannot request personal avatar", status=400)
         user_id = player.get_id()
 
-    if os.path.isfile(f'{ROOT_PATH}/static/avatars/{game_id}/{user_id}.jpg'):
-        return send_from_directory(f'{ROOT_PATH}/static/avatars/{game_id}', f'{user_id}.jpg')
+    if os.path.isfile(f'{ROOT_PATH}/static/avatars/{game.id}/{user_id}.jpg'):
+        return send_from_directory(f'{ROOT_PATH}/static/avatars/{game.id}', f'{user_id}.jpg')
     else:
         return make_response("User does not have an avatar", 404)
 
@@ -124,6 +133,18 @@ def get_players():
         return make_response({"players": players})
     except InvalidGameException:
         return game_does_not_exist()
+
+@app.route('/api/<string:game_id>/gifts/<string:gift_id>/image', methods=['GET'])
+@auth_required("host", "player")
+def get_gift_image(gift_id: str):
+    ROOT_PATH = Path(current_app.root_path)
+
+    game: Game = g.game
+
+    if os.path.isfile(f'{ROOT_PATH}/static/gift_images/{game.id}/{gift_id}.jpg'):
+        return send_from_directory(f'{ROOT_PATH}/static/gift_images/{game.id}', f'{gift_id}.jpg')
+    else:
+        return make_response("Gift does not have an image", 404)
 
 # endregion
 
@@ -303,12 +324,17 @@ def get_user_phase(user_id: str):
 @app.route('/api/<string:game_id>/gifts', methods=['POST'])
 @auth_required("player")
 def open_gift():
-    result = request.get_json()
+    result = request.form
     player: User = g.player
-    description: str = result["description"]
+    description: str | None = result.get("description")
+    file: FileStorage | None = request.files.get('image')
+
+
+    if not description:
+        return make_error(errCode="EBadRequest", message="No description provide", status=400)
 
     try:
-        client.open_gift(player.get_id(), description)
+        client.open_gift(player.get_id(), description, file)
         return make_response("", 201)
     except GiftOpenForbiddenException as e:
         return make_error(errCode="EGiftOpenForbiddenError", message="You are not allowed to open a gift at this time", status=403)
@@ -318,30 +344,15 @@ def open_gift():
         print(e)
         return make_response(e, 400)
 
-@app.route('/api/<string:game_id>/gifts/current/image', methods=['POST'])
-@auth_required("player")
-def upload_gift_image():
-    file: FileStorage | None = request.files.get('image')
-
-    if not file:
-        return make_response({"errCode": "NoFile", "msg": "No image file provided"}, 400)
-    
-    try:
-        client.upload_gift_image(file)
-        return make_response("", 201)
-    except Exception as e:
-        print(e)
-        return make_error(errCode="UploadError", messgage="Something went wrong while uploading the image", status=500)
-
 @app.route('/api/<string:game_id>/players/<string:user_id>/result', methods=["GET"])
 @auth_required("player")
-def get_user_result(game_id: str, user_id: str):
+def get_user_result(user_id: str):
     player: User = g.player
     
     if user_id == "me":
         user_id = player.get_id()
     if user_id == player.get_id():
-        return make_response(client.get_result(game_id, user_id), 200)
+        return make_response(client.get_result(user_id), 200)
     return user_does_not_exist()
 
 

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, fields
-from typing import Any
+from typing import Any, override
 from flask.json.provider import DefaultJSONProvider
 
 class _Unset:
@@ -26,7 +26,7 @@ def _serialize(v: Any):
 
 @dataclass
 class DTO:
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         # UNSET fields are skipped; None is kept as null
         return {
             f.name: _serialize(getattr(self, f.name))
@@ -36,6 +36,7 @@ class DTO:
 
 class DTOJSONProvider(DefaultJSONProvider):
     @staticmethod
+    @override
     def default(o):
         if isinstance(o, DTO):
             return o.to_dict()

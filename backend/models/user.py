@@ -40,12 +40,12 @@ class User():
 class UserDTO(DTO):
     id: str | _Unset = UNSET
     name: str | _Unset = UNSET
-    avatar_path: str | None | _Unset = UNSET
+    avatarPath: str | None | _Unset = UNSET
     phase: UserPhase | _Unset = UNSET
 
     @classmethod
-    def from_model(cls: UserDTO, user: User, role: str, own: bool = False) -> UserDTO:
-        dtoUser: UserDTO = cls(id=user.get_id(), name=user.name, avatar_path=user.avatar_path)
+    def from_model(cls, user: User, role: str, own: bool = False) -> UserDTO:
+        dtoUser: UserDTO = cls(id=user.get_id(), name=user.name, avatarPath=user.avatar_path)
 
         if role == "host" or own:
             dtoUser.phase = user.phase

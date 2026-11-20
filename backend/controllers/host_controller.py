@@ -35,7 +35,7 @@ def get_round_progress() -> dict[str, str | Any]:
     players: list[UserDTO] = [UserDTO.from_model(player, g.role) for player in game.get_players()]
     gift: Gift | None = game.gifts.get(game.current_round().gift_id, None)
 
-    return {"players": sorted(players, key=lambda player: player.name), "gift": gift.description if gift else None, "invalid": game.is_round_invalid()}
+    return {"players": sorted(players, key=lambda player: player.name), "gift": gift.description if gift else None, "giftImagePath": gift.image_path if gift else None, "invalid": game.is_round_invalid()}
 
 def reset_round() -> None:
     cache: Cache = Cache.get_instance()

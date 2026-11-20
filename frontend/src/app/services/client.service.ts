@@ -71,8 +71,13 @@ export class ClientService extends GameService {
 
 
     // #region Other
-    public addGift(gameId: string, description: string): Observable<void> {
-        return this.post(`${gameId}/gifts`, { description });
+    public openGift(gameId: string, description: string, file?: File | null): Observable<void> {
+        const formData = new FormData();
+        formData.append('description', description)
+        if (file) {
+            formData.append('image', file);
+        }
+        return this.post(`${gameId}/gifts`, formData);
     }
 
     public vote(gameId: string, targetId: string): Observable<void> {

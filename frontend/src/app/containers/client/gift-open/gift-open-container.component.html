@@ -1,11 +1,41 @@
-<div class="container" id="container">
-    <h1>Het is jouw beurt om een pakje open te maken!</h1><br />
-    <div class="field">
-        <input class="form-control" id="title" type="text" name="gift" placeholder="Geef een beschrijving in"
-            [formControl]="giftController" />
-        <div class="button-container">
-            <button class="btn action-button" type="submit" (click)="onGiftAdd()">Pakje
-                toevoegen</button>
+<div class="gift-page">
+    <h2 class="page-title">Het is jouw beurt om een pakje open te maken!</h2>
+
+    <div class="polaroid" [class.has-photo]="previewUrl" [class.is-loaded]="!imageLoading" [class.wiggle]="!interacted">
+        <button type="button" class="photo-window" aria-label="Foto van het pakje toevoegen" (click)="onPhotoClick()">
+            <span class="photo">
+                <img *ngIf="previewUrl" [src]="previewUrl" alt="">
+                <mat-icon *ngIf="!previewUrl" class="photo-icon" fontIcon="add_a_photo" aria-hidden="true"></mat-icon>
+                <span class="preview" aria-hidden="true">
+                    <span class="shine"></span>
+                </span>
+
+                <span class="vignette" aria-hidden="true"></span>
+                <span class="grain" aria-hidden="true"></span>
+            </span>
+        </button>
+        <div class="polaroid-caption">
+            <span>{{ previewUrl ? 'Tik om te wijzigen' : 'Tik om een foto toe te voegen' }}</span>
+            <span class="film-mark" aria-hidden="true">600</span>
         </div>
+    </div>
+
+    <input #fileInput type="file" accept="image/*" capture="environment" class="visually-hidden"
+        (change)="onFileSelected($event)">
+
+
+    <app-tag-card class="description-card" accent="#d9a441">
+        <label class="field-label" for="giftDescription">
+            <mat-icon class="field-icon" fontIcon="edit" aria-hidden="true"></mat-icon>
+            Wat zit erin?
+        </label>
+        <input class="game-input description-input" id="giftDescription" type="text" name="gift"
+            placeholder="Bijv. een trui met een rendier" [formControl]="giftController" />
+    </app-tag-card>
+
+    <div class="button-container">
+        <button type="button" class="action-button" [disabled]="giftController.invalid" (click)="onGiftAdd()">
+            Pakje toevoegen
+        </button>
     </div>
 </div>

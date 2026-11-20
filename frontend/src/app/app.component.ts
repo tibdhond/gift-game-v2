@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ClientService } from './services/client.service';
-import { distinctUntilChanged, filter, map, Observable, startWith } from 'rxjs';
+import { distinctUntilChanged, filter, map, Observable, startWith, tap } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
@@ -20,8 +20,10 @@ export class AppComponent {
 	ngOnInit() {
 		this.isHostArea$ = this.router.events.pipe(
 			filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-			startWith(null),
-			map(() => this.router.url.startsWith('/host')),
+			map(event => event.urlAfterRedirects),
+			startWith(this.router.navigated ? this.router.url : null),
+			filter((url): url is string => url !== null),
+			map(url => url.startsWith('/host')),
 			distinctUntilChanged()
 		);
 	}

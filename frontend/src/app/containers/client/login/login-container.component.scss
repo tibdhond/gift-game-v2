@@ -31,37 +31,6 @@
     gap: 0.5rem;
     align-items: center;
 }
-
-.game-input {
-    box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
-    height: var(--control-size, 3.4rem);
-    padding: 0 0.75rem;
-    border: 3px solid transparent;
-    border-radius: 10px;
-    background: var(--snow, #f7f4ee);
-    color: #10261f;
-    font-size: 1.3rem;
-    font-weight: 800;
-    text-align: center;
-
-    &:focus {
-        outline: none;
-        border-color: #d9a441;
-    }
-
-    &.invalid {
-        border-color: #d6504f;
-    }
-
-    // Game codes: spaced out, like on the selection page
-    &.code {
-        font-size: 1.5rem;
-        letter-spacing: 0.2em;
-    }
-}
-
 .confirm-text {
     margin: 0 0 0.75rem;
     font-size: 1.15rem;

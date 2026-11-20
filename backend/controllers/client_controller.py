@@ -1,6 +1,6 @@
 import os
 from typing import Any, Callable
-from PIL import Image
+from PIL import Image, ImageOps
 from pathlib import Path
 from flask import current_app, g
 from werkzeug.datastructures import FileStorage
@@ -13,7 +13,6 @@ from models.user import User, UserDTO
 from models.gift import Gift
 from models.vote import Vote
 from pillow_heif import register_heif_opener
-from datetime import datetime
 
 register_heif_opener()
 
@@ -73,31 +72,29 @@ def get_user_phase(user_id: str) -> dict[str, Any]:
 
     return { "phase": game.players[user_id].phase if user_id in game.players else "UNREGISTERED" }
 
-def open_gift(user_id: str, description: str) -> None:
-    cache: Cache = Cache.get_instance()
-    game: Game = g.game
-
-    game.open_gift(description, user_id)
-
-    cache.store_game(game)
-
-def upload_gift_image(file: FileStorage) -> None:
+def open_gift(user_id: str, description: str, file: FileStorage | None = None) -> None:
     cache: Cache = Cache.get_instance()
     game: Game = g.game
 
 
-    gift: Gift = next(g for g in game.gifts.values() if not g.opened) # Next unopened gift
-    def post_processing() -> None:
+    if file is not None:
+        gift: Gift = next(g for g in game.gifts.values() if not g.opened) # Next unopened gift
+        def post_processing() -> None:
 
-        # Update game state
-        gift.image_version += 1
-        gift.image_path = f"api/{game.id}/gifts/{gift.get_id()}/image?version={gift.image_version}"
-    
-        # Commit to store
+            # Update game state
+            gift.image_version += 1
+            gift.image_path = f"api/{game.id}/gifts/{gift.get_id()}/image?version={gift.image_version}"
+            game.open_gift(description, user_id)
+        
+            # Commit to store
+            cache.store_game(game)
+        
+        
+        upload_file(file, "gift_images", f"{gift.get_id()}.jpg", post_processing)
+    else:
+        game.open_gift(description, user_id)
         cache.store_game(game)
     
-    
-    upload_file(file, "avatars", f"{gift.get_id()}.jpg", post_processing)
 
 def get_result(user_id: str) -> dict[str, Any]:
     game: Game = g.game
@@ -225,7 +222,7 @@ def upload_file(file: FileStorage, base_dir: str, file_name: str, post_processin
     file.seek(0, os.SEEK_END)
     size = file.tell()
     file.seek(0)
-    if size > 4 * 1024 * 1024:
+    if size > 8 * 1024 * 1024:
         raise Exception("File too large (max 4MB)")
 
     # Determine storage path
@@ -239,6 +236,7 @@ def upload_file(file: FileStorage, base_dir: str, file_name: str, post_processin
     try:
         # Open the image from the file stream
         img = Image.open(file.stream)
+        img = ImageOps.exif_transpose(img)
         
         # Convert to RGB (handles HEIC/HEIF/PNG transparency)
         if img.mode in ("RGBA", "P") or img.mode != "RGB":

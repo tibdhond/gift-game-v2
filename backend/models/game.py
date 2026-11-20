@@ -145,7 +145,7 @@ class Game():
         gift.last_accessed = current_round.get_round_number()
 
         # Don't count host
-        if len(self.gifts) == len(self.players)-1:
+        if len([gift for gift in self.gifts.values() if gift.opened]) == len(self.players)-1:
             self.phase = GamePhase.MID
         
             
