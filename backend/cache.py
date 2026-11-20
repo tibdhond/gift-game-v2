@@ -48,8 +48,8 @@ class Cache():
     def validate_and_fix_stored_game(self, game: Game) -> Game:
         # Check that there's a gift for every player
         modified: bool = False
-        if len(game.gifts) < len(game.players):
-            for _ in range(len(game.players) - len(game.gifts)):
+        if len(game.gifts) < len(game.players) - 1:
+            for _ in range(len(game.players) - 1 - len(game.gifts)):
                 game.add_gift()
             modified = True
 

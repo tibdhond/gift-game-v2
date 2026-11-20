@@ -49,4 +49,5 @@ Thumbs.db
 /frontend/dist
 /backend/static/frontend/*
 /backend/static/avatars/*
+/backend/static/gift_images/*
 

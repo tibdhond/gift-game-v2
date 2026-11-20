@@ -16,12 +16,8 @@ export const BANNER_SELECTOR: string = "app-banner";
 })
 export class BannerComponent extends BaseContainer implements OnInit, OnDestroy {
     @Input() title: string = 'Gift Game';
-    public _isHost!: boolean;
 
-    @Input() set isHost(isHot: boolean) {
-        this._isHost = isHot;
-        console.log('set', isHot);
-    }
+    @Input() isHost!: boolean;
 
     @ViewChild('fileInput') fileInput!: ElementRef;
 
@@ -46,7 +42,7 @@ export class BannerComponent extends BaseContainer implements OnInit, OnDestroy 
         this.gameId$ = this.gameIdService.getGameId();
 
         const userInfo$: Observable<UserInfoResult | null> = combineLatest([this.gameId$, this.refreshTrigger$]).pipe(
-            switchMap(([gameId, _]) => gameId && !this._isHost ? this.client.getUserInfo(gameId, true).pipe(
+            switchMap(([gameId, _]) => gameId && !this.isHost ? this.client.getUserInfo(gameId, true).pipe(
                 catchError((e: HttpErrorResponse) => {
                     console.error('Failed fetching user info', e);
                     return of(null);
