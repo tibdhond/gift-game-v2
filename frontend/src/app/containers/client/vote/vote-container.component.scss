@@ -16,7 +16,8 @@
 }
 
 .player-container {
-    margin-top: 0.5rem;
+    margin-top: 3.5rem;
+    margin-bottom: 5rem;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -27,7 +28,97 @@
     justify-content: center;
 }
 
+.is-sending {
+    touch-action: none;
+}
 
 .row {
     justify-content: center;
+}
+
+.tile-list {
+    // Keeps the last tile from hiding behind the bar
+    padding-bottom: calc(9rem + env(safe-area-inset-bottom));
+}
+
+.confirm-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    padding: 0 0.75rem calc(0.75rem + env(safe-area-inset-bottom));
+    pointer-events: none; // only the tag itself is interactive
+    animation: bar-in 0.25s ease-out;
+}
+
+.confirm-tag {
+    pointer-events: auto;
+    max-width: 520px;
+    margin: 0 auto;
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.4);
+}
+
+.confirm-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: left;
+}
+
+.confirm-text {
+    flex: 1;
+    min-width: 0; // allows ellipsis in a flex child
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.confirm-label {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.confirm-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.confirm-btn {
+    flex: 0 0 auto;
+    min-height: 48px; // comfortable touch target
+    padding: 0 1.4rem;
+    border: none;
+    border-radius: 24px;
+    background: #c0392b;
+    color: #fff;
+    font-weight: 700;
+    transition: transform 0.1s ease, opacity 0.2s ease;
+
+    &:active {
+        transform: scale(0.97);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+}
+
+@keyframes bar-in {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .confirm-bar {
+        animation: none;
+    }
 }

@@ -1,4 +1,5 @@
 from typing import Any, TypeGuard, cast
+from typing_extensions import TypeAlias, Unpack
 
 from flask import Flask, Response, current_app, make_response, request, send_from_directory, g
 from flask.typing import ResponseReturnValue
@@ -24,9 +25,9 @@ import controllers.host_controller as host
 from entities.exceptions import *
 from random import choice
 
-type DTOTuple = tuple[DTO, *tuple[Any, ...]]
+DTOTuple: TypeAlias = tuple[DTO, ...]
 
-def _is_dto_tuple(rv: object) -> TypeGuard[tuple[DTO, *tuple[Any, ...]]]:
+def _is_dto_tuple(rv: object) -> TypeGuard[tuple[DTO, Unpack[tuple[Any, ...]]]]:
     return isinstance(rv, tuple) and len(rv) > 0 and isinstance(rv[0], DTO)
 
 class MyFlask(Flask):

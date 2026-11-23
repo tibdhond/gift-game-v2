@@ -78,7 +78,7 @@ export class LoginContainerComponent extends BaseGameContainer implements OnInit
             this.busy = true;
             this.gameId$.pipe(
                 switchMap(gameId => this.clientService.login(gameId, this.loginControl.value?.trim())),
-                withLatestFrom(this.gameId$),
+                switchMap(() => this.gameId$),
                 take(1),
                 catchError((e: HttpErrorResponse) => {
                     if (e.status === 409) {
@@ -92,15 +92,14 @@ export class LoginContainerComponent extends BaseGameContainer implements OnInit
                 }),
                 finalize(() => this.busy = false),
                 takeUntil(this.destroy$)
-            ).subscribe(([result, gameId]) => {
-                this.resolveLogin(result.userId, gameId);
+            ).subscribe((gameId) => {
+                this.resolveLogin(gameId);
             })
         }
     }
 
 
-    private resolveLogin(userId: string, gameId: string): void {
-        this.localStorageService.setUserId(userId);
+    private resolveLogin(gameId: string): void {
         this.router.navigate(['client', gameId, 'waiting']);
     }
 
@@ -175,15 +174,15 @@ export class LoginContainerComponent extends BaseGameContainer implements OnInit
         this.redeemError = false;
         this.gameId$.pipe(
             switchMap(gameId => this.clientService.redeemClaim(gameId)),
-            withLatestFrom(this.gameId$),
+            switchMap(() => this.gameId$),
             catchError((e: HttpErrorResponse) => {
                 this.redeemError = true;
                 return EMPTY;
             }),
             take(1),
             takeUntil(this.destroy$)
-        ).subscribe(([user, gameId]) => {
-            this.resolveLogin(user.userId, gameId);
+        ).subscribe(gameId => {
+            this.resolveLogin(gameId);
         })
     }
 

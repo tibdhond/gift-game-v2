@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 
 @Component({
     selector: 'app-player-tile',
@@ -15,10 +15,89 @@ export class PlayerTileComponent {
     @Input() deleteIcon: boolean = false;
     @Input() infoText?: string;
     @Input() clickable: boolean = false
+    @Input() selected: boolean = false
 
     @Output() onTileClicked: EventEmitter<void> = new EventEmitter();
     @Output() onDeleteClicked: EventEmitter<void> = new EventEmitter();
 
+    @ViewChild('wrap') wrap!: ElementRef<HTMLElement>;
+    @ViewChild('card') card!: ElementRef<HTMLElement>;
+    @ViewChild('front') front!: ElementRef<HTMLElement>;
+    @ViewChild('flap') flap!: ElementRef<HTMLElement>;
+    @ViewChild('slot') slot!: ElementRef<HTMLElement>;
+    @ViewChild('flapLayer') flapLayer!: ElementRef<HTMLElement>;
+
+    private anims: Animation[] = [];
+
+    private run(el: HTMLElement, keyframes: Keyframe[], options: KeyframeAnimationOptions): Animation {
+        const anim = el.animate(keyframes, { fill: 'both', ...options });
+        this.anims.push(anim);
+        return anim;
+    }
+
+    async pack(): Promise<void> {
+        const card = this.card.nativeElement;
+        const front = this.front.nativeElement;
+        const flap = this.flap.nativeElement;
+
+        const SCALE = 0.87;           // tile shrinks by 13%
+        const TILT = 'rotate(-2deg)'; // same tilt as the envelope layers
+        const V_DEPTH = 0.55;         // must match the 55% in .env-front's clip-path
+
+        // Measure before anything moves
+        const c = card.getBoundingClientRect();
+        const f = front.getBoundingClientRect();
+        const cardCenterY = c.top + c.height / 2;
+        const envCenterY = f.top + f.height / 2;
+
+        // Rise until the shrunken tile's bottom edge clears the top of the envelope.
+        // The -4 is the selected state's translateY(-4px) the animation starts from.
+        const rise = f.top - 8 - (cardCenterY + (c.height * SCALE) / 2);
+        const start = 'translateY(-4px) scale(1) rotate(0deg)';
+        const raised = `translateY(${-4 + rise}px) scale(${SCALE}) ${TILT}`;
+        const inside = `translateY(${-4 + (envCenterY - cardCenterY)}px) scale(${SCALE}) ${TILT}`;
+
+        // 3a) tile moves up and shrinks
+        await this.run(card, [{ transform: start }, { transform: raised }],
+            { duration: 400, easing: 'ease-out' }).finished;
+
+        // 3b) pocket appears in front of the tile (they don't overlap yet, so no visible pop),
+        //     and the slot starts clipping everything below the envelope's bottom edge
+        await this.run(front, [{ opacity: 0 }, { opacity: 1 }], { duration: 1 }).finished;
+        this.slot.nativeElement.style.clipPath = 'inset(-2000px -2000px -4px -2000px)';
+
+        // 3c) tile slides down into the envelope, behind the pocket
+        await this.run(card, [{ transform: raised }, { transform: inside }],
+            { duration: 550, delay: 100, easing: 'ease-in-out' }).finished;
+
+        // 4) the flap jumps above the pocket and folds shut
+        this.flapLayer.nativeElement.style.zIndex = '3';
+        const k = (front.offsetHeight * V_DEPTH) / flap.offsetHeight;
+        await this.run(flap, [
+            { transform: 'perspective(800px) rotateX(0deg) scaleY(1)', background: '#e3d2ad' },
+            { transform: `perspective(800px) rotateX(180deg) scaleY(${k})`, background: '#eadbb8' },
+        ], { duration: 500, easing: 'ease-in-out' }).finished;
+    }
+
+    /** Step 5: the closed envelope leaves to the right */
+    async flyAway(): Promise<void> {
+        const el = this.wrapEl;
+        const dx = window.innerWidth - el.getBoundingClientRect().left + 40;
+        await this.run(el, [{ transform: 'translateX(0)' }, { transform: `translateX(${dx}px)` }],
+            { duration: 600, easing: 'cubic-bezier(0.5, 0, 0.9, 0.4)' }).finished;
+    }
+
+    /** If the request fails: play everything backwards */
+    async unpack(): Promise<void> {
+        for (const anim of [...this.anims].reverse()) {
+            anim.reverse();
+            await anim.finished;
+        }
+        this.anims.forEach(a => a.cancel());
+        this.anims = [];
+        this.slot.nativeElement.style.clipPath = '';
+        this.flapLayer.nativeElement.style.zIndex = '';
+    }
 
     public onClick(): void {
         this.onTileClicked.emit();
@@ -27,4 +106,7 @@ export class PlayerTileComponent {
     public onDeleteClick(): void {
         this.onDeleteClicked.emit();
     }
+
+
+    get wrapEl(): HTMLElement { return this.wrap.nativeElement; }
 }

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, fields
-from typing import Any, override
+from typing import Any
 from flask.json.provider import DefaultJSONProvider
 
 class _Unset:
@@ -36,7 +36,6 @@ class DTO:
 
 class DTOJSONProvider(DefaultJSONProvider):
     @staticmethod
-    @override
     def default(o):
         if isinstance(o, DTO):
             return o.to_dict()

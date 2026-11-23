@@ -40,7 +40,7 @@ export interface UserPhaseResult {
 }
 
 export interface UserInfoResult {
-    userId: string;
+    id: string;
     name: string;
     avatarPath: string;
     phase: UserPhase;

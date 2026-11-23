@@ -1,10 +1,31 @@
-<div class="container">
-    <h2>Breng je stem uit voor het huidige cadeau</h2>
-    <div class="player-container" *ngIf="players$ | async as players">
-        <ng-container *ngFor="let player of players">
-            <app-player-tile [avatarPath]="player.avatarPath" [badge]="userId === player.id"
-                [badgeMessage]="'MIJN CADEAU'" [highlight]="userId === player.id" [isProcessing]="isProcessing"
-                [name]="player.name" [clickable]="true" (onTileClicked)="onVote(player.id)"></app-player-tile>
-        </ng-container>
+<ng-container *ngIf="currentUser$ | async as currentUser">
+    <div class="container">
+        <h2>Breng je stem uit voor het huidige cadeau</h2>
+        <div class="player-container" *ngIf="players$ | async as players" [class.is-sending]="isSending">
+            <ng-container *ngFor="let player of players">
+                <app-player-tile [avatarPath]="player.avatarPath" [badge]="currentUser.id === player.id"
+                    [badgeMessage]="'MIJN CADEAU'" [highlight]="currentUser.id === player.id" [name]="player.name"
+                    [clickable]="!isSending" [selected]="selectedPlayer?.id === player.id"
+                    (onTileClicked)="onVote(player)"></app-player-tile>
+            </ng-container>
+        </div>
     </div>
-</div>
+    <div class="confirm-bar" *ngIf="selectedPlayer && !isSending">
+        <app-tag-card class="confirm-tag" [style.--tag-padding]="'1.3rem 1rem 0.8rem'">
+            <div class="confirm-content">
+                <div class="confirm-avatar">
+                    <app-player-image [avatarPath]="selectedPlayer.avatarPath"></app-player-image>
+                </div>
+                <div class="confirm-text">
+                    <span class="confirm-label">Stem voor</span>
+                    <strong class="confirm-name">{{ currentUser.id === selectedPlayer.id ? "Jezelf" :
+                        selectedPlayer.name }}</strong>
+                </div>
+                <button type="button" class="action-button round" [disabled]="isProcessing" (click)="confirmVote()"
+                    aria-label="Bevestigen">
+                    <mat-icon fontIcon="send" aria-hidden="true"></mat-icon>
+                </button>
+            </div>
+        </app-tag-card>
+    </div>
+</ng-container>
