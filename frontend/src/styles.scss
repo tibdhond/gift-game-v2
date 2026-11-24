@@ -2,15 +2,13 @@
 @import 'https://fonts.googleapis.com/icon?family=Material+Icons';
 @import '@angular/cdk/overlay-prebuilt.css';
 
-$primary-color: linear-gradient(180deg,
-        #1e3d2f 0%,
-        #163024 100%);
+
 $font-color: #fdf6e3;
 
 body {
     color: $font-color !important;
     font-family: var(--font-body);
-    background-color: $primary-color;
+    background-color: transparent;
     min-height: 100%;
 }
 

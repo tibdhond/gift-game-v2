@@ -23,7 +23,6 @@ import { PersonalResultsContainerComponent } from './containers/client/personal-
 import { BannerComponent } from './components/banner/banner.component';
 import { MessageDisplayComponent } from './components/message-display/message-display.component';
 import { PlayerImageComponent } from './components/player-image/player-image.component';
-import { DialogModule } from './components/dialogs/dialog.module';
 import { PlayerTileComponent } from './components/player-tile/player-tile.component';
 import { PodiumComponent } from './components/podium/podium.component';
 import { PlayerRestListComponent } from './components/player-rest-list/player-rest-list.component';
@@ -74,8 +73,7 @@ import { AnimatedEyesComponent } from './components/animated-eyes/animated-eyes.
     ReactiveFormsModule,
     BrowserModule,
     AppRoutingModule,
-    MatIconModule,
-    DialogModule,
+    MatIconModule
   ],
   providers: [
     HttpClient,

@@ -45,7 +45,6 @@ def get_local_ip():
 
     try:
         s.connect(("8.8.8.8", 80))
-        print(s.getsockname())
         return s.getsockname()[0]
     except OSError:
         return None

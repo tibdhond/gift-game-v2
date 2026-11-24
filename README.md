@@ -19,6 +19,12 @@ Run
 ### In the backend folder
 Run ```pip install -r requirements.txt```
 
+Generate a private key and certificate by running 
+```python generate_cert.py```
+
+Note that this will cause users to see security warnings (because of the self-signed certificate).
+If you do not want this, remove the ```ssl_context``` property from ```app.run``` at the bottom of ````main.py``` to switch to http serving.
+
 
 ## Running the app
 

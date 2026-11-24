@@ -41,14 +41,15 @@ testem.log
 .DS_Store
 Thumbs.db
 
-/backend/venv/
-/backend/**/__pycache__/
 /frontend/.angular/
 /frontend/node_modules/
 /frontend/.vscode
 /frontend/dist
+/backend/venv/
+/backend/**/__pycache__/
 /backend/static/frontend/*
 /backend/static/avatars/*
 /backend/static/gift_images/*
 /backend/store/*
+/backend/certs/*
 

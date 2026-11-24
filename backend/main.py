@@ -437,4 +437,5 @@ def apply_global_headers(response):
 
 
 if __name__  == '__main__':
-    app.run(host="0.0.0.0")
+    context = ('certs/server.crt', 'certs/server.key')
+    app.run(host="0.0.0.0", ssl_context=context)
