@@ -11,12 +11,12 @@ import { heicTo, isHeic } from 'heic-to';
     templateUrl: './gift-open-container.component.html',
     styleUrls: ['./gift-open-container.component.scss']
 })
-export class GiftOpenContainerComponent extends BaseGameContainer implements OnDestroy{
+export class GiftOpenContainerComponent extends BaseGameContainer implements OnDestroy {
     public giftController: FormControl = new FormControl(null, [Validators.required]);
 
     public previewUrl: string | null = null;
     public interacted: boolean = false;
-    private selectedFile: File | null = null;
+    public selectedFile: File | null = null;
 
     public imageLoading: boolean = false;
 

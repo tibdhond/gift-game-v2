@@ -34,7 +34,8 @@
     </app-tag-card>
 
     <div class="button-container">
-        <button type="button" class="action-button" [disabled]="giftController.invalid" (click)="onGiftAdd()">
+        <button type="button" class="action-button" [disabled]="giftController.invalid || !selectedFile"
+            (click)="onGiftAdd()">
             Pakje toevoegen
         </button>
     </div>
