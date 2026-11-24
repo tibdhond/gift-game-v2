@@ -47,14 +47,14 @@
 
             <div class="middle">
                 <div class="headline" *ngIf="!(invalid$ | async); else invalidGift">
-                    <p class="lead">Mensen zijn aan het stemmen voor</p>
                     <h2 class="page-title gift">{{ gift }}</h2>
+                    <p class="lead">Van wie is dit pakje?</p>
                 </div>
 
                 <ng-template #invalidGift>
                     <div class="headline">
-                        <p class="lead">Ongeldige ronde voor</p>
                         <h2 class="page-title gift">{{ gift }}</h2>
+                        <p class="lead">Deze ronde is ongeldig</p>
                         <p class="note">Het pakje werd niet toegekend of meerdere mensen kenden het pakje aan zichzelf
                             toe.</p>
                     </div>

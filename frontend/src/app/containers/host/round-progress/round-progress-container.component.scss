@@ -287,13 +287,13 @@
 
 .lead {
     margin: 0;
-    font-size: 1.3rem;
-    opacity: 0.85;
+    font-size: 1.5rem;
+    opacity: 0.9;
 }
 
 .gift {
     margin: 0;
-    font-size: clamp(2rem, 5vw, 4rem);
+    font-size: clamp(1.8rem, 3vw, 3.2rem);
     color: #e0b04a;
     overflow-wrap: anywhere;
 }
