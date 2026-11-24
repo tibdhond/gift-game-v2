@@ -32,11 +32,11 @@ export class HostService extends GameService {
         return this.post(`${gameId}/round/reset`, {});
     }
 
-    public roundResult(gameId: string): Observable<RoundResult> {
+    public getroundResult(gameId: string): Observable<RoundResult> {
         return this.get(`${gameId}/round/result`);
     }
 
-    public gameResults(gameId: string): Observable<GameResult[]> {
+    public getGameResults(gameId: string): Observable<GameResult[]> {
         return this.get(`${gameId}/result`)
     }
 

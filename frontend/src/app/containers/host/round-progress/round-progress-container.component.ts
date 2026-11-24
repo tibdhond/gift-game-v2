@@ -50,6 +50,7 @@ export class RoundProgressContainerComponent extends BaseGameContainer implement
         this.initFinishedListener();
 
         const progress$: Observable<RoundProgress> = interval(3000).pipe(
+            startWith(null),
             switchMap(() => this.invalid$.pipe(
                 filter(invalid => !invalid),
                 distinctUntilChanged(),
@@ -66,14 +67,14 @@ export class RoundProgressContainerComponent extends BaseGameContainer implement
         );
 
         this.gift$ = progress$.pipe(
-            map(progress => progress.gift),
+            map(progress => progress.gift?.description),
             distinctUntilChanged(),
             shareReplay(1)
         );
 
 
         this.giftImagePath$ = progress$.pipe(
-            map(progress => progress.giftImagePath),
+            map(progress => progress.gift?.imagePath),
             distinctUntilChanged(),
             shareReplay(1)
         );

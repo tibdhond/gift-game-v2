@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from uuid import uuid4
 import json
+
+from models.dto import DTO, UNSET, _Unset
 
 class Gift():
     @classmethod
@@ -33,3 +36,15 @@ class Gift():
 
     def to_json(self) -> dict:
         return self.__dict__
+
+@dataclass
+class GiftDTO(DTO):
+    id: str | _Unset = UNSET
+    description: str | _Unset = UNSET
+    imagePath: str | None | _Unset = UNSET
+
+    @classmethod
+    def from_model(cls, gift: Gift) -> GiftDTO:
+        dtoGift: GiftDTO = cls(id=gift.get_id(), description=gift.description, imagePath=gift.image_path)
+
+        return dtoGift

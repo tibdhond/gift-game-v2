@@ -15,15 +15,19 @@ export interface Player {
 
 export interface RoundProgress {
     players: Player[];
-    gift?: string,
-    giftImagePath?: string;
+    gift?: Gift;
     invalid: boolean;
+}
+
+export interface Gift {
+    id: string;
+    imagePath?: string;
+    description: string;
 }
 
 export interface RoundResult {
     roundNumber: number;
-    gift: string;
-    giftImagePath?: string;
+    gift: Gift;
     playerResults: {
         [playerId: string]: PlayerResult
     }

@@ -159,7 +159,7 @@ def get_host_token(game_id: str):
         resp = make_response({ "game_id": game.id }, 201)
         return set_auth_cookie(resp, f"host_{game.id}", game.host_token)
     except GameHasHostException:
-        make_error(errCode="EGameHasHost", message="This game already has a host", status=403)
+        return make_error(errCode="EGameHasHost", message="This game already has a host", status=403)
 
 
 @app.route('/api/<string:game_id>/players/<string:user_id>', methods=['DELETE'])

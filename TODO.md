@@ -1,5 +1,3 @@
-# Activate gift images on other screens
-# Larger gift images on round progress screen
 # Automated testing
 # User Gif upload (television antenna?)
 # Track slowest voter

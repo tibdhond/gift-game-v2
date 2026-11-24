@@ -5,7 +5,7 @@ from util.auth import new_token
 from models.claim import CLAIM_STATE_TIMEOUTS, Claim, ClaimDTO, ClaimState
 from cache import Cache
 from models.game import Game
-from models.gift import Gift
+from models.gift import Gift, GiftDTO
 from models.vote import Vote
 from models.round import Round
 from entities.enums import UserPhase
@@ -35,7 +35,7 @@ def get_round_progress() -> dict[str, str | Any]:
     players: list[UserDTO] = [UserDTO.from_model(player, g.role) for player in game.get_players()]
     gift: Gift | None = game.gifts.get(game.current_round().gift_id, None)
 
-    return {"players": sorted(players, key=lambda player: player.name), "gift": gift.description if gift else None, "giftImagePath": gift.image_path if gift else None, "invalid": game.is_round_invalid()}
+    return {"players": sorted(players, key=lambda player: player.name), "gift": GiftDTO.from_model(gift) if gift else None, "invalid": game.is_round_invalid()}
 
 def reset_round() -> None:
     cache: Cache = Cache.get_instance()
@@ -61,7 +61,7 @@ def get_round_result() -> dict[str, Any]:
 
     round: Round = game.current_round()
     gift: Gift = game.gifts[round.gift_id]
-    round_result: dict[str, Any] = { "roundNumber": round.get_round_number(), "gift": gift.description, "playerResults": player_results}
+    round_result: dict[str, Any] = { "roundNumber": round.get_round_number(), "gift": GiftDTO.from_model(gift), "playerResults": player_results}
 
     return round_result
 

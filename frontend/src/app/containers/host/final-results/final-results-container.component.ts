@@ -58,7 +58,7 @@ export class FinalResultContainerComponent extends BaseGameContainer implements 
         super.ngOnInit();
 
         const gameResult_$: Observable<GameResult[]> = this.gameId$.pipe(
-            switchMap(gameId => this.hostService.gameResults(gameId)),
+            switchMap(gameId => this.hostService.getGameResults(gameId)),
             shareReplay(1)
         );
 

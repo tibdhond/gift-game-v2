@@ -1,6 +1,6 @@
 import { Component, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, Observable, combineLatest, map, of, shareReplay, startWith, switchMap, take, } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, map, of, shareReplay, startWith, switchMap, take, tap, } from 'rxjs';
 import { PlayerResult, PodiumSlot, RoundResult } from 'src/app/entities/entities';
 import { HostService } from 'src/app/services/host.service';
 import { BaseGameContainer } from '../../base-game-container.component';
@@ -37,12 +37,7 @@ export class RoundResultContainerComponent extends BaseGameContainer implements 
         super.ngOnInit();
 
         const roundResult_$: Observable<RoundResult> = this.gameId$.pipe(
-            switchMap(gameId => this.hostService.roundResult(gameId)),
-            shareReplay(1)
-        );
-
-        this.giftImagePath$ = roundResult_$.pipe(
-            map(result => result.giftImagePath),
+            switchMap(gameId => this.hostService.getroundResult(gameId)),
             shareReplay(1)
         );
 
@@ -88,7 +83,12 @@ export class RoundResultContainerComponent extends BaseGameContainer implements 
         );
 
         this.gift$ = roundResult_$.pipe(
-            map(result => result.gift),
+            map(result => result.gift.description),
+            shareReplay(1)
+        );
+
+        this.giftImagePath$ = roundResult_$.pipe(
+            map(result => result.gift.imagePath),
             shareReplay(1)
         );
     }

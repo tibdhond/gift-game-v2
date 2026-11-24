@@ -33,34 +33,46 @@
         </ng-container>
 
         <!-- The middle of the screen -->
-        <div class="center">
-            <div class="headline-row">
-                <div class="gift-image" *ngIf="giftImagePath$ | async as imagePath">
-                    <img [src]="imagePath" [alt]="gift">
-                </div>
+        <ng-template #giftImage let-src>
+            <figure class="gift-image">
+                <img [src]="src" [alt]="gift">
+            </figure>
+        </ng-template>
+
+        <div class="center" *ngIf="{ image: giftImagePath$ | async } as g" [class.has-image]="!!g.image">
+
+            <div class="image-cell left" *ngIf="g.image">
+                <ng-container *ngTemplateOutlet="giftImage; context: { $implicit: g.image }"></ng-container>
+            </div>
+
+            <div class="middle">
                 <div class="headline" *ngIf="!(invalid$ | async); else invalidGift">
                     <p class="lead">Mensen zijn aan het stemmen voor</p>
                     <h2 class="page-title gift">{{ gift }}</h2>
                 </div>
-            </div>
 
-            <ng-template #invalidGift>
-                <div class="headline">
-                    <p class="lead">Ongeldige ronde voor</p>
-                    <h2 class="page-title gift">{{ gift }}</h2>
-                    <p class="note">Het pakje werd niet toegekend of meerdere mensen kenden het pakje aan zichzelf toe.
-                    </p>
+                <ng-template #invalidGift>
+                    <div class="headline">
+                        <p class="lead">Ongeldige ronde voor</p>
+                        <h2 class="page-title gift">{{ gift }}</h2>
+                        <p class="note">Het pakje werd niet toegekend of meerdere mensen kenden het pakje aan zichzelf
+                            toe.</p>
+                    </div>
+                </ng-template>
+
+                <div class="spacer">
+                    <app-animated-eyes [posts]="(eyePosts$ | async) ?? []" [locate]="locateBoard"></app-animated-eyes>
                 </div>
-            </ng-template>
 
-            <div class="spacer">
-                <app-animated-eyes [posts]="(eyePosts$ | async) ?? []" [locate]="locateBoard"></app-animated-eyes>
+                <button type="button" class="action-button reset" (click)="onResetRound()">
+                    <mat-icon fontIcon="restart_alt" aria-hidden="true"></mat-icon>
+                    Ronde resetten
+                </button>
             </div>
 
-            <button type="button" class="action-button reset" (click)="onResetRound()">
-                <mat-icon fontIcon="restart_alt" aria-hidden="true"></mat-icon>
-                Ronde resetten
-            </button>
+            <div class="image-cell right" *ngIf="g.image">
+                <ng-container *ngTemplateOutlet="giftImage; context: { $implicit: g.image }"></ng-container>
+            </div>
         </div>
     </ng-container>
 
