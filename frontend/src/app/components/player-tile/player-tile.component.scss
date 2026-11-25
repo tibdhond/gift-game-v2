@@ -67,7 +67,6 @@
     border-radius: 0 0 6px 6px;
     background: #efe0bf;
     clip-path: polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%);
-    opacity: 0; // faded in by the pack animation
 }
 
 .env-flap {
@@ -95,7 +94,7 @@
 
 // flow-root keeps the card's margin inside
 .env-above {
-    z-index: 2;
+    z-index: 0;
 }
 
 // The tile lifts out of the envelope
@@ -105,10 +104,9 @@
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
 }
 
-.icon-tile-content {
-    .selected .card {
+.selected {
+    .icon-tile-content {
         .card-title {
-
             color: #000;
         }
     }

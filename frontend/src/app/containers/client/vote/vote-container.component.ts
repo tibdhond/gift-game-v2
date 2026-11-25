@@ -42,9 +42,7 @@ export class VoteContainerComponent extends BaseClientContainerComponent impleme
         );
 
         this.currentUser$ = this.gameId$.pipe(
-            tap(x => console.log('current 1', x)),
             switchMap(gameId => this.client.getUserInfo(gameId)),
-            tap(x => console.log('current 2', x)),
             shareReplay(1)
         )
     }
